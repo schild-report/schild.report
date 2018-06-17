@@ -1,0 +1,32 @@
+/*
+export const someMutation = (state) => {}
+ */
+
+export const updateSchule = (state, data) => {
+  state.schule = data
+}
+export const updateKlasse = (state, data) => {
+  state.klasse = data
+}
+export const updateKlasseSortiert = (state, data) => {
+  state.klasseSortiert = data
+}
+export const updateSelected = (state, data) => {
+  state.selected = data
+}
+export const updateSchuelerfoto = (state, data) => {
+  state.schuelerfoto = data
+}
+export const updateComponents = (state, data) => {
+  console.log('Components aktualisiert …')
+  state.components = data
+}
+export const updateComponentsPath = (state, data) => {
+  state.componentsPath = data
+}
+export const updateKnex = (state, data) => {
+  state.knex = data
+}
+export const updateAuth = (state, data) => {
+  state.auth = data
+}
