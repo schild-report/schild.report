@@ -29,11 +29,7 @@ global.ipc = () => {
       {
         target: document.querySelector('svelte'),
         data: {
-          schule: args.schule,
-          klasse: args.klasse,
-          schueler: args.schueler,
-          jahr: args.jahr,
-          abschnitt: args.abschnitt,
+          ...args.reportData,
           knex: args.knex
         }
       }

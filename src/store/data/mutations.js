@@ -11,6 +11,9 @@ export const updateKlasse = (state, data) => {
 export const updateKlasseSortiert = (state, data) => {
   state.klasseSortiert = data
 }
+export const updateSchuelerGewaehlt = (state, data) => {
+  state.schuelerGewaehlt = data
+}
 export const updateSelected = (state, data) => {
   state.selected = data
 }

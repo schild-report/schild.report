@@ -168,6 +168,7 @@ export default {
         .then((response) => {
           this.$q.loading.hide()
           this.$store.commit('data/updateKlasse', [response.toJSON()])
+          this.$store.commit('data/updateSchuelerGewaehlt', [response.toJSON()])
         })
         .catch((error) => {
           this.error = error.toString()

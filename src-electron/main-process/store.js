@@ -15,6 +15,7 @@ const store = new Vuex.Store({
 })
 
 store.subscribe((mutation, state) => {
+  console.log('veränderung')
   clients.forEach(client => {
     client.send('vuex-apply-mutation', mutation)
   })

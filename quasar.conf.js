@@ -93,7 +93,8 @@ module.exports = function (ctx) {
         'QFabAction',
         'QPageSticky',
         'QBreadcrumbs',
-        'QBreadcrumbsEl'
+        'QBreadcrumbsEl',
+        'QModal'
       ],
       directives: [
         'Ripple'

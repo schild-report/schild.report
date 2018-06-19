@@ -122,6 +122,12 @@ export default {
             'x': {titel: 'Inaktive Schüler', schueler: inaktiv, status: 'negative'}
           })
           this.$store.commit('data/updateKlasse', klasse)
+          let selection
+          if (aktiv.length > 0) selection = aktiv
+          else if (fertig > 0) selection = fertig
+          else selection = klasse
+          this.$store.commit('data/updateSchuelerGewaehlt', selection)
+
           this.$q.loading.hide()
         })
         .catch((error) => {
@@ -135,6 +141,7 @@ export default {
     },
     updateSelected () {
       this.$store.commit('data/updateSelected', this.selected)
+      this.$store.commit('data/updateSchuelerGewaehlt', this.selected)
     },
     rowClick (row) {
       this.$router.push('/schueler/' + row.ID)

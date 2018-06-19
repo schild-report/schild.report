@@ -5,7 +5,9 @@ import configFile from './configstore'
 import * as componentCompiler from './rollup'
 import { Repo } from './remote-repos'
 import { is } from 'electron-util'
-import './store'
+import store from './store'
+
+// console.log(store)
 
 const componentsPath = is.development
   ? `${__statics}/plugins`
@@ -120,7 +122,8 @@ async function compileDokumente () {
       second: 'numeric'
     })
   )
-  mainWindow.webContents.send('recompile')
+  // mainWindow.webContents.send('recompile')
+  store.dispatch('data/updateComponents', componentsPath)
 }
 
 ipc.answerRenderer('getRemoteRepos', async getRemoteRepos => {
