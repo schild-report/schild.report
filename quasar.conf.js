@@ -155,7 +155,8 @@ module.exports = function (ctx) {
         // do something with cfg
       },
       packager: {
-        asar: true
+        // asar: true
+        asar: false
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',

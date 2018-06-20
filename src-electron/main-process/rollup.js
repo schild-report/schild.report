@@ -20,11 +20,12 @@ export const rollupSetup = (options) => {
     input: path.join(source, '/plugin-loader.js'),
     plugins: [
       json({ preferConst: true }),
-      resolve({
-        customResolveOptions: {
-          moduleDirectory: 'node_modules'
-        }
-      }),
+      resolve(),
+      // {
+      //   customResolveOptions: {
+      //     moduleDirectory: 'node_modules'
+      //   }
+      // }),
       commonjs(),
       globImport({
         format: 'default',

@@ -98,6 +98,7 @@ function statusFeedback (status) {
 export default {
   name: 'LayoutDefault',
   created () {
+    if (!this.components) this.$store.dispatch('data/updateComponents', this.componentsPath)
     this.$root.$on('setzeKlassenLinks', states => {
       this.schuelerLink = states.schuelerLink
     })
