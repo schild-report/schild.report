@@ -5,9 +5,7 @@ import configFile from './configstore'
 import * as componentCompiler from './rollup'
 import { Repo } from './remote-repos'
 import { is } from 'electron-util'
-import store from './store'
-
-// console.log(store)
+import './store'
 
 const componentsPath = is.development
   ? `${__statics}/plugins`
@@ -54,7 +52,7 @@ function createWindow () {
   })
 
   mainWindow.loadURL(process.env.APP_URL)
-  // mainWindow.openDevTools()
+  mainWindow.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -64,8 +62,8 @@ function createWindow () {
     configFile.set('windowBounds.main', { width, height })
   })
 
-  mainWindow.webContents.on('did-finish-load', () => {
-    const watcher = componentCompiler.rollupWatch()
+  mainWindow.webContents.on('did-finish-load', async () => {
+    const watcher = await componentCompiler.rollupWatch()
     watcher.on('event', event => {
       if (event.code === 'END') {
         console.log(
@@ -122,8 +120,7 @@ async function compileDokumente () {
       second: 'numeric'
     })
   )
-  // mainWindow.webContents.send('recompile')
-  store.dispatch('data/updateComponents', componentsPath)
+  mainWindow.webContents.send('recompile')
 }
 
 ipc.answerRenderer('getRemoteRepos', async getRemoteRepos => {

@@ -19,7 +19,7 @@ const configFile = new Store({
       remoteRepos: ''
     },
     db: {},
-    passAuth: true
+    passAuth: false
   }
 })
 

@@ -30,6 +30,9 @@ export const updateComponentsPath = (state, data) => {
 export const updateKnex = (state, data) => {
   state.knex = data
 }
+export const updateDB = (state, data) => {
+  state.DB = data
+}
 export const updateAuth = (state, data) => {
   state.auth = data
 }

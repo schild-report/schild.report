@@ -75,7 +75,7 @@ export const rollupSetup = (options) => {
   )
 }
 
-export const rollupBuild = () => {
+export const rollupBuild = async () => {
   return rollup
     .rollup(inputOptions)
     .then(bundle => {
@@ -89,7 +89,7 @@ export const rollupBuild = () => {
     })
 }
 
-export const rollupWatch = () => {
+export const rollupWatch = async () => {
   const watcher = rollup.watch(watchOptions).on('event', event => {
     // event.code: START, BUNDLE_START, BUNDLE_END, END, ERROR, FATAL
     console.log(new Date().toLocaleDateString('de-DE', { hour: 'numeric', minute: 'numeric', second: 'numeric' }))

@@ -14,7 +14,10 @@ export default {
   watch: {
     db: function () {
       ipc.callMain('setDB', this.db)
-        .then(res => this.$router.push('/'))
+        .then(res => {
+          this.$store.dispatch('data/updateSchild', this.db)
+          this.$router.push('/')
+        })
         .catch(err => console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err))
     }
   },

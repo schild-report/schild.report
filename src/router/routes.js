@@ -6,10 +6,17 @@ import Klasse from 'pages/klasse'
 import Schueler from 'pages/schueler'
 import Dokument from 'pages/dokument'
 import Einstellungen from 'pages/einstellungen'
+import store from '../store'
+
 export default [
   {
     path: '/',
     component: DefaultLayout,
+    beforeEnter: (to, from, next) => {
+      if (!store.state.data.auth) {
+        next({name: 'login'})
+      } else next()
+    },
     children: [
       { path: '', component: Index },
       { path: 'klasse/:id', name: 'klasse', component: Klasse },
@@ -18,8 +25,8 @@ export default [
       { path: 'dokument/:id', name: 'dokument', component: Dokument }
     ]
   },
-  { path: 'app/datenbank', name: 'datenbank', component: Datenbank },
-  { path: 'app/login', name: 'login', component: Login },
+  { path: '/app/datenbank', name: 'datenbank', component: Datenbank },
+  { path: '/app/login', name: 'login', component: Login },
 
   { // Always leave this as last one
     path: '*',
