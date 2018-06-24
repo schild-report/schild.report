@@ -1,11 +1,14 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import ipc from 'electron-better-ipc'
 import path from 'path'
+import * as fs from 'fs'
 import configFile from './configstore'
 import * as componentCompiler from './rollup'
-import { Repo } from './remote-repos'
+import { Repo } from './dugite'
 import { is } from 'electron-util'
+import schild from 'schild'
 import './store'
+import CheapWatch from 'cheap-watch'
 
 const componentsPath = is.development
   ? `${__statics}/plugins`
@@ -15,16 +18,9 @@ if (process.env.PROD) {
   global.__statics = path.join(__dirname, 'statics').replace(/\\/g, '\\\\')
 }
 
-console.log('Rollup watch starten …')
-componentCompiler.rollupSetup({
-  statics: __statics,
-  source: configFile.get('plugins.source'),
-  dest: componentsPath,
-  is: is
-})
-
 let mainWindow
 let pdfWindow = null
+let watcher
 
 function createPDFWindow () {
   pdfWindow = new BrowserWindow({
@@ -52,7 +48,7 @@ function createWindow () {
   })
 
   mainWindow.loadURL(process.env.APP_URL)
-  mainWindow.openDevTools()
+  if (is.development) mainWindow.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -60,22 +56,6 @@ function createWindow () {
   mainWindow.on('resize', () => {
     let { width, height } = mainWindow.getBounds()
     configFile.set('windowBounds.main', { width, height })
-  })
-
-  mainWindow.webContents.on('did-finish-load', async () => {
-    const watcher = await componentCompiler.rollupWatch()
-    watcher.on('event', event => {
-      if (event.code === 'END') {
-        console.log(
-          new Date().toLocaleDateString('de-DE', {
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
-          })
-        )
-        mainWindow.webContents.send('recompile')
-      }
-    })
   })
 }
 
@@ -91,7 +71,7 @@ app.on('activate', () => {
   }
 })
 
-ipcMain.on('view-pdf', () => {
+ipc.answerRenderer('view-pdf', async () => {
   if (pdfWindow === null) {
     createPDFWindow()
   }
@@ -99,29 +79,63 @@ ipcMain.on('view-pdf', () => {
   pdfWindow.show()
 })
 
-ipcMain.on('compileDokumente', () => {
-  compileDokumente()
+ipc.answerRenderer('source', async () => {
+  return configFile.get('plugins.source')
 })
 
-ipcMain.on('pullDokumente', (event, arg) => {
+function scanSource () {
+  const isDirectory = source => fs.lstatSync(source).isDirectory()
+  const getDirectories = source =>
+    fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
+  const source = configFile.get('plugins.source')
+  const obj = {}
+  getDirectories(source).forEach(element => {
+    obj[path.basename(element)] = fs.readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
+  })
+  ipc.callRenderer(mainWindow, 'updateRepos', obj)
+}
+
+ipc.answerRenderer('repos', async () => {
+  scanSource()
+  const fileWatcher = new CheapWatch({
+    dir: configFile.get('plugins.source'),
+    filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
+  })
+  await fileWatcher.init()
+  fileWatcher.on('+', ({ path, stats, isNew }) => { if (isNew) scanSource() })
+  fileWatcher.on('-', ({ path, stats }) => { scanSource() })
+})
+
+ipc.answerRenderer('compileDokumente', async (file) => {
+  console.log('Rollup starten …')
+  await componentCompiler.rollupSetup({
+    statics: __statics,
+    source: path.join(configFile.get('plugins.source'), file),
+    dest: componentsPath,
+    is: is
+  })
+  if (watcher) watcher.close()
+  watcher = await componentCompiler.rollupWatch()
+  watcher.on('event', event => {
+    // console.log(event.code)
+    switch (event.code) {
+      case 'FATAL':
+        ipc.callRenderer(mainWindow, 'message', event.error)
+        break
+      case 'END':
+        console.log('Modul aktualisiert, webview aktualisieren …')
+        ipc.callRenderer(mainWindow, 'hmr')
+        break
+    }
+  })
+})
+
+ipc.answerRenderer('pullDokumente', async (event, arg) => {
   configFile.get('plugins.remoteRepos').forEach(repo => {
-    const repoPath = `${configFile.get('plugins.source')}/${repo.name}`
+    const repoPath = path.join(configFile.get('plugins.source'), repo.name)
     Repo.pull(repoPath)
   })
-  compileDokumente()
 })
-
-async function compileDokumente () {
-  await componentCompiler.rollupBuild()
-  console.log(
-    new Date().toLocaleDateString('de-DE', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric'
-    })
-  )
-  mainWindow.webContents.send('recompile')
-}
 
 ipc.answerRenderer('getRemoteRepos', async getRemoteRepos => {
   return configFile.get('plugins.remoteRepos') || []
@@ -131,11 +145,33 @@ ipc.answerRenderer('setRemoteRepos', async remoteRepos => {
 })
 ipc.answerRenderer('cloneRemoteRepo', async remoteRepo => {
   const pluginsSource = configFile.get('plugins.source')
-  const name = await Repo.clone(remoteRepo, pluginsSource)
-  compileDokumente()
-  return name
+  await Repo.clone(remoteRepo, pluginsSource)
 })
 ipc.answerRenderer('setDB', async db => {
   console.log('Verbindungsdaten speichern …')
   configFile.set('db', db)
+})
+ipc.answerRenderer('schildConnect', async data => {
+  return schild.connect(data.arg, data.arg2)
+})
+ipc.answerRenderer('schildTestConnection', async data => {
+  return schild.testConnection()
+})
+ipc.answerRenderer('schildSuche', async data => {
+  return schild.suche(data.arg)
+})
+ipc.answerRenderer('schildGetKlasse', async data => {
+  return schild.getKlasse(data.arg)
+})
+ipc.answerRenderer('schildGetSchule', async data => {
+  return schild.getSchule()
+})
+ipc.answerRenderer('schildGetSchueler', async data => {
+  return schild.getSchueler(data.arg)
+})
+ipc.answerRenderer('schildGetSchuelerfoto', async data => {
+  return schild.getSchuelerfoto(data.arg)
+})
+ipc.answerRenderer('schildGetNutzer', async data => {
+  return schild.getNutzer(data.arg)
 })

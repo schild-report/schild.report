@@ -25,15 +25,9 @@
       </q-toolbar>
     </q-layout-header>
 
-    <q-layout-drawer
-      v-model="dokumentenauswahlZeigen"
-      content-class="bg-grey-2"
-    >
+    <q-layout-drawer v-model="dokumentenauswahlZeigen" content-class="bg-grey-2">
       <template v-if="dokumentenauswahlZeigen">
-        <div class="q-pa-md"><b>Dokumentenauswahl
-          <div class="float-right" @click="$ipcRenderer.send('pullDokumente')" :style="{ cursor: 'pointer' }"><q-icon name="refresh" /></div></b>
-        </div>
-
+        <div class="q-pa-md"><b>Dokumentenauswahl</b></div>
         <q-list
           no-border
           link
@@ -43,8 +37,8 @@
           :key="repo"
         >
           <q-list-header style="line-height: 1.15em">{{repo}}</q-list-header>
-            <q-item @click.native="openDokument(dokument[0])" v-for="dokument in dokumente" :key="dokument[0]">
-              {{ dokument[1].bez || dokument[0].split('___')[1] }}
+            <q-item @click.native="openDokument(`${repo}/${dokument}`)" v-for="(dokument) in dokumente" :key="dokument">
+              {{ dokument.slice(0, -5) }}
             </q-item>
         </q-list>
       </template>
@@ -54,16 +48,9 @@
       <router-view />
     </q-page-container>
       <q-page-sticky position="top-right" :offset="[18, 18]" v-if="dokumentenauswahlZeigen">
-        <q-btn
-          round
-          color="red"
-          @click="opened = true"
-        ><b>{ }</b></q-btn>
+        <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
       </q-page-sticky>
-      <q-modal
-        v-model="opened"
-        content-css="padding: 30px"
-        >
+      <q-modal v-model="opened" content-css="padding: 30px">
         <div v-json-content="reportData()" v-if="opened"></div>
       </q-modal>
   </q-layout>
@@ -78,45 +65,47 @@ import Vue from 'vue'
 
 Vue.use(VueJsonContent)
 
-const ipcRenderer = require('electron').ipcRenderer
-const app = require('electron').remote.require('electron').app
+const ipc = require('electron-better-ipc')
+const { api } = require('electron-util')
 const sortierfolge = [2, 6, 3, 8, 9, 0, 1]
 
 function statusFeedback (status) {
   switch (status) {
-    case 0: return {color: 'blue', icon: 'person_add'}
-    case 1: return {color: 'light', icon: 'hourglass_full'}
-    case 2: return {color: 'green', icon: 'done'}
-    case 3: return {color: 'teal', icon: 'pause'}
-    case 6: return {color: 'info', icon: 'swap_horiz'}
-    case 8: return {color: 'warning', icon: 'done_all'}
-    case 9: return {color: 'negative', icon: 'clear'}
-    default: return {color: '', icon: ''}
+    case 0: return { color: 'blue', icon: 'person_add' }
+    case 1: return { color: 'light', icon: 'hourglass_full' }
+    case 2: return { color: 'green', icon: 'done' }
+    case 3: return { color: 'teal', icon: 'pause' }
+    case 6: return { color: 'info', icon: 'swap_horiz' }
+    case 8: return { color: 'warning', icon: 'done_all' }
+    case 9: return { color: 'negative', icon: 'clear' }
+    default: return { color: '', icon: '' }
   }
 }
 
 export default {
   name: 'LayoutDefault',
   created () {
-    if (!this.components) this.$store.dispatch('data/updateComponents', this.componentsPath)
     this.$root.$on('setzeKlassenLinks', states => {
       this.schuelerLink = states.schuelerLink
     })
-    ipcRenderer.on('recompile', (event, arg) => {
-      this.$store.dispatch('data/updateComponents', this.componentsPath)
+    ipc.callMain('source').then(source => {
+      this.$store.commit('data/updateDocumentSource', source)
     })
+  },
+  mounted () {
+    ipc.callMain('repos')
+    ipc.answerMain('updateRepos', repos => { this.repos = repos })
   },
   data () {
     return {
       terms: '',
       schuelerLink: null,
       pdfLink: null,
-      opened: false
+      opened: false,
+      repos: null
     }
   },
   computed: {
-    components () { return this.$store.state.data.components },
-    componentsPath () { return this.$store.state.data.componentsPath },
     klasse () { return this.$store.state.data.klasse },
     schueler () { return this.klasse[0] },
     schule () { return this.$store.state.data.schule || '' },
@@ -126,12 +115,6 @@ export default {
       return this.schueler
         ? `Zurück zu ${this.schueler.Vorname} ${this.schueler.Name}, ${this.schueler.Klasse}`
         : `Zurück zur ${this.klasse.Klasse}`
-    },
-    repos () {
-      return _(this.components)
-        .toPairs()
-        .groupBy(c => c[0].split('___')[0])
-        .value()
     }
   },
   methods: {
@@ -140,54 +123,49 @@ export default {
       return this.$store.getters['data/reportData']
     },
     search (terms, done) {
-      this.$schild.suche(terms).then((response) => {
-        let completions = _
-          .sortBy(response, e => sortierfolge.indexOf(e.status))
-          .map(d => {
-            var status = statusFeedback(d.status)
-            return {
-              label: d.value,
-              searchlink: (status.icon ? '/schueler/' : '/klasse/') + d.id,
-              icon: status.icon || 'group',
-              stamp: String(d.jahr || ''),
-              leftColor: status.color
-            }
-          })
-        done(completions)
-      },
-      (error) => {
-        // Toast.create('Es gab einen Fehler bei der Suchanfrage (' + error + '/')
-        console.log(error)
-        done([])
-      })
+      ipc.callMain('schildSuche', { arg: terms })
+        .then(response => {
+          let completions = _
+            .sortBy(response, e => sortierfolge.indexOf(e.status))
+            .map(d => {
+              var status = statusFeedback(d.status)
+              return {
+                label: d.value,
+                searchlink: (status.icon ? '/schueler/' : '/klasse/') + d.id,
+                icon: status.icon || 'group',
+                stamp: String(d.jahr || ''),
+                leftColor: status.color
+              }
+            })
+          done(completions)
+        },
+        (error) => {
+          console.log(error)
+          done([])
+        })
     },
-    selected (item) { this.goto(item.searchlink) },
+    selected (item, keyboard) { if (!keyboard) this.goto(item.searchlink) },
     goto (dest) { this.$router.push(dest) },
+    pullRepos () { ipc.callMain('pullDokumente') },
     openDokument (key) { this.$router.push('/dokument/' + key) },
     pdfName () {
       const s = this.schueler
       const d = this.$route.params.id.split('___')[1]
-      // if (this.schuelerGewaehlt.length > 1) {
       return `${s.AktSchuljahr}_${s.AktAbschnitt}_${s.Klasse}_${d}.pdf`
-      // } else {
-      //   return `${s.AktSchuljahr}_${s.AktAbschnitt}_${s.Klasse}_${s.Name}_${d}.pdf`
-      // }
     },
     openPdf (options = {}) {
       const webview = document.querySelector('webview')
       options = {
-        // pageSize: options.pageSize || 'A4',
-        // landscape: options.landscape || false,
         marginsType: options.marginsType || 1,
         printBackground: options.printBackground || true,
         pdfName: this.pdfName
       }
       webview.printToPDF({ ...options }, (error, data) => {
         if (error) throw error
-        fs.writeFile(`${app.getPath('userData')}/print.pdf`, data, error => {
+        fs.writeFile(`${api.app.getPath('userData')}/print.pdf`, data, error => {
           if (error) throw error
         })
-        ipcRenderer.send('view-pdf')
+        ipc.callMain('view-pdf')
       })
     }
   }

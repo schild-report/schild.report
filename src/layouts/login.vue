@@ -24,6 +24,8 @@
 </template>
 
 <script>
+const ipc = require('electron-better-ipc')
+
 function crypt (password) {
   const p = Array.from(password)
   return String.fromCodePoint(...p
@@ -42,7 +44,7 @@ export default {
   },
   methods: {
     login () {
-      this.$schild.getNutzer(this.user)
+      ipc.callMain('schildGetNutzer', { arg: this.user })
         .then(user => {
           if (user.US_Password === crypt(this.password)) {
             this.$store.commit('data/updateAuth', user)

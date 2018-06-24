@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="row">
-    <q-card inline style="width: 600px">
+    <q-card inline style="width: 600px; margin: 5px">
       <q-card-title>
         Externe Dokumentensammlungen
       </q-card-title>
@@ -29,7 +29,11 @@
         </q-list>
       </q-card-main>
     </q-card>
-    <datenbank v-model="db"></datenbank>
+    <datenbank></datenbank>
+    <q-dialog v-model="dialogModel">
+      <span slot="title">{{dialogTitle}}</span>
+      <span slot="message" v-html="dialogMessage"></span>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -46,15 +50,10 @@ export default {
   data () {
     return {
       remoteRepos: [],
-      db: null,
-      remoteRepoAddress: ''
-    }
-  },
-  watch: {
-    db: function () {
-      ipc.callMain('setDB', this.db)
-        .then(res => this.$router.push('/'))
-        .catch(err => console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err))
+      remoteRepoAddress: '',
+      dialogModel: false,
+      dialogTitle: '',
+      dialogMessage: ''
     }
   },
   methods: {
@@ -73,11 +72,18 @@ export default {
     hinzufuegen () {
       ipc.callMain('cloneRemoteRepo', this.remoteRepoAddress)
         .then(name => {
+          console.log(name)
           this.remoteRepos.push({ address: this.remoteRepoAddress, name: name })
           this.remoteRepoAddress = ''
           this.save()
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err)
+          this.dialogTitle = 'Fehler'
+          /* eslint no-control-regex: 0 */
+          this.dialogMessage = err.replace(new RegExp('\r?\n', 'g'), '<br />')
+          this.dialogModel = true
+        })
     },
     entfernen (repo) {
       this.remoteRepos.splice(this.remoteRepos.indexOf(repo), 1)

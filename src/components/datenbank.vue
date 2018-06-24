@@ -1,5 +1,5 @@
 <template>
-  <q-card inline style="width: 300px">
+  <q-card inline style="width: 300px; margin: 5px">
     <q-card-title>
       Verbindungsdaten zur Datenbank
     </q-card-title>
@@ -22,7 +22,7 @@
       <q-input float-label="Benutzername" v-model="db.user"/>
     </q-card-main>
     <q-card-main>
-      <q-input float-label="Passwort" v-model="db.password"/>
+      <q-input type="password" no-pass-toggle float-label="Passwort" v-model="db.password"/>
     </q-card-main>
     <q-card-main>
       <q-btn color="primary" @click="handleSubmit">{{checkConnection}}</q-btn>
@@ -32,40 +32,45 @@
 </template>
 
 <script>
+const ipc = require('electron-better-ipc')
+
 export default {
   data () {
     return {
       checkConnection: 'Verbindung prüfen …',
-      testing: null,
-      db: {
-        host: '',
-        name: '',
-        user: '',
-        password: ''
-      }
+      db: this.$store.state.data.knex,
+      testing: null
     }
   },
   methods: {
     handleSubmit () {
-      this.$schild.connect({
-        testing: {
-          client: 'mysql',
-          useNullAsDefault: true,
-          connection: {
-            host: this.db.host,
-            database: this.db.name,
-            user: this.db.user,
-            password: this.db.password,
-            charset: 'utf8'
-          }
-        }
-      }, 'testing')
+      ipc.callMain(
+        'schildConnect', {
+          arg: {
+            testing: {
+              client: 'mysql',
+              useNullAsDefault: true,
+              connection: {
+                host: this.db.host,
+                database: this.db.name,
+                user: this.db.user,
+                password: this.db.password,
+                charset: 'utf8'
+              }
+            }
+          },
+          arg2: 'testing'
+        })
+        .then(res => console.log(res)).catch(e => console.log(e))
       if (this.testing !== 'green') {
-        this.$schild.testConnection()
+        ipc.callMain('schildTestConnection')
           .then(res => {
             if (!res) throw new Error('Die Verbindung konnte nicht hergestellt werden.')
             else this.testing = 'green'
             this.checkConnection = 'Verbindungsdaten speichern'
+            ipc.callMain('setDB', this.db)
+              .then(res => this.$router.push('/'))
+              .catch(err => console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err))
           })
           .catch(error => {
             console.log(error)

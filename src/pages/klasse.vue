@@ -60,7 +60,8 @@
 </template>
 
 <script>
-// import _ from 'lodash'
+const ipc = require('electron-better-ipc')
+
 export default {
   name: 'Klasse',
   data () {
@@ -73,13 +74,13 @@ export default {
         rowsPerPage: 100
       },
       columns: [
-        {name: 'Index', field: 'Index', label: '', align: 'left'},
-        {name: 'Name', field: 'Name', label: 'Name', align: 'left'},
-        {name: 'Vorname', field: 'Vorname', label: 'Vorname', align: 'left'},
-        {name: 'Adresse', field: 'adresse', label: 'Adresse', align: 'left'},
-        {name: 'Telefon', field: 'Telefon', label: 'Telefon', align: 'left'},
-        {name: 'Geburtstag', field: 'geburtstag', label: 'Geburtstag', align: 'left'},
-        {name: 'Info', field: 'Info', label: 'Info', align: 'left'}
+        { name: 'Index', field: 'Index', label: '', align: 'left' },
+        { name: 'Name', field: 'Name', label: 'Name', align: 'left' },
+        { name: 'Vorname', field: 'Vorname', label: 'Vorname', align: 'left' },
+        { name: 'Adresse', field: 'adresse', label: 'Adresse', align: 'left' },
+        { name: 'Telefon', field: 'Telefon', label: 'Telefon', align: 'left' },
+        { name: 'Geburtstag', field: 'geburtstag', label: 'Geburtstag', align: 'left' },
+        { name: 'Info', field: 'Info', label: 'Info', align: 'left' }
       ]
     }
   },
@@ -103,9 +104,9 @@ export default {
       this.$q.loading.show()
       this.selected = []
       this.error = null
-      this.$schild.getKlasse(this.$route.params.id)
+      ipc.callMain('schildGetKlasse', { arg: this.$route.params.id })
         .then((response) => {
-          const klasse = response.toJSON()
+          const klasse = response
           const inaktiv = [], aktiv = [], fertig = [], neu = []
           klasse.schueler.forEach((s) => {
             if (s.Status === 2 && s.Geloescht === '-' && s.Gesperrt === '-') aktiv.push(s)
@@ -116,10 +117,10 @@ export default {
           // const gruppen = [inaktiv, aktiv, fertig, neu]
           // gruppen.forEach(e => _(e).sortBy(s => s.Vorname).sortBy(s => s.Name))
           this.$store.commit('data/updateKlasseSortiert', {
-            '2': {titel: 'Aktive Schüler', schueler: aktiv, status: 'positive'},
-            '8': {titel: 'Ausbildung beendet', schueler: fertig, status: 'positive'},
-            '0': {titel: 'Neue Schüler', schueler: neu, status: 'blue'},
-            'x': {titel: 'Inaktive Schüler', schueler: inaktiv, status: 'negative'}
+            '2': { titel: 'Aktive Schüler', schueler: aktiv, status: 'positive' },
+            '8': { titel: 'Ausbildung beendet', schueler: fertig, status: 'positive' },
+            '0': { titel: 'Neue Schüler', schueler: neu, status: 'blue' },
+            'x': { titel: 'Inaktive Schüler', schueler: inaktiv, status: 'negative' }
           })
           this.$store.commit('data/updateKlasse', klasse)
           let selection

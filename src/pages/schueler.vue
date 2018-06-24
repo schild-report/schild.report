@@ -4,7 +4,7 @@
       <div class="q-display-1">
         <router-link class="text-secondary" :style="{ textDecoration: 'none' }" color="secondary" v-bind:to="'/klasse/' + schueler.Klasse">{{schueler.Klasse}}</router-link> > {{schueler.Vorname}} {{schueler.Name}} ({{schueler.Geschlecht === 3 ? "&#x2642;" : "&#x2640;"}} {{alter}})
       </div>
-      <q-card inline v-if="tabelle.length > 0">
+      <q-card inline v-if="tabelle.length > 0" style="margin: 5px">
         <q-card-title>Leistungsübersicht</q-card-title>
         <q-card-separator />
         <q-card-main>
@@ -31,7 +31,7 @@
           </q-table>
         </q-card-main>
       </q-card>
-      <q-card inline style="width: 300px">
+      <q-card inline style="width: 300px; margin: 5px">
         <q-card-title>{{schueler.AktSchuljahr}}/{{schueler.AktAbschnitt}}</q-card-title>
         <q-card-separator />
         <q-card-main>
@@ -45,9 +45,10 @@
           <p></p>
           <br>{{schueler.Telefon}}
           <br>{{schueler.EMail}}
+          <br>{{(new Date(schueler.Geburtsdatum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'}))}}
         </q-card-main>
       </q-card>
-      <q-card inline v-if="schueler.vermerke.length > 0" style="width: 300px">
+      <q-card inline v-if="schueler.vermerke.length > 0" style="width: 300px; margin: 5px">
         <q-card-title>Vermerke</q-card-title>
         <q-card-separator />
         <q-card-main>
@@ -60,7 +61,7 @@
           </q-list>
         </q-card-main>
       </q-card>
-      <q-card inline v-if="abschlussInfo.some(a => a)" style="width: 300px">
+      <q-card inline v-if="abschlussInfo.some(a => a)" style="width: 300px; margin: 5px">
         <q-card-title>Abschluss</q-card-title>
         <q-card-separator />
         <q-card-main v-for="abschluss in abschlussInfo" :key="abschluss">
@@ -72,6 +73,8 @@
 </template>
 
 <script>
+const ipc = require('electron-better-ipc')
+
 export default {
   name: 'Schueler',
   data () {
@@ -95,12 +98,12 @@ export default {
   },
   computed: {
     tabelle () {
-      return Object.entries(this.faecher()).map(e => { return {name: e[0], ...e[1]} })
+      return Object.entries(this.faecher()).map(e => { return { name: e[0], ...e[1] } })
     },
     columns () {
       if (this.tabelle.length === 0) return
       let a = [
-        {name: 'Fach', field: 'name', label: 'Abschnitt', align: 'left'}
+        { name: 'Fach', field: 'name', label: 'Abschnitt', align: 'left' }
       ]
       this.tabelle.find(e => e).data.noten.forEach((hj, i) => {
         a.push({
@@ -154,7 +157,7 @@ export default {
           if (faecher[note.fach.FachKrz]) {
             faecher[note.fach.FachKrz].data.noten[i] = note
           } else {
-            faecher[note.fach.FachKrz] = {data: {noten: new Array(this.schueler.abschnitte.length), fach: note.fach}}
+            faecher[note.fach.FachKrz] = { data: { noten: new Array(this.schueler.abschnitte.length), fach: note.fach } }
             faecher[note.fach.FachKrz].data.noten[i] = note
           }
         })
@@ -164,20 +167,20 @@ export default {
     getSchueler () {
       this.error = null
       this.$q.loading.show()
-      this.$schild.getSchueler(this.$route.params.id)
-        .then((response) => {
+      ipc.callMain('schildGetSchueler', { arg: this.$route.params.id })
+        .then(response => {
           this.$q.loading.hide()
-          this.$store.commit('data/updateKlasse', [response.toJSON()])
-          this.$store.commit('data/updateSchuelerGewaehlt', [response.toJSON()])
+          this.$store.commit('data/updateKlasse', [response])
+          this.$store.commit('data/updateSchuelerGewaehlt', [response])
         })
-        .catch((error) => {
+        .catch(error => {
           this.error = error.toString()
           this.$q.loading.hide()
         })
     },
     getSchuelerfoto () {
-      this.$schild.getSchuelerfoto(this.$route.params.id)
-        .then((response) => {
+      ipc.callMain('schildGetSchuelerfoto', { arg: this.$route.params.id })
+        .then(response => {
           this.$store.commit('data/updateSchuelerfoto', response)
         })
         .catch((error) => {

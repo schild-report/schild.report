@@ -1,0 +1,25 @@
+image: Visual Studio 2017
+platform: x64
+
+# Test against the latest version of this Node.js version
+# environment:
+#   nodejs_version: "10"
+
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js or io.js
+  # - ps: Install-Product node $env:nodejs_version
+  # install modules
+  - npm install -g vue-cli
+  - npm install quasar-cli
+
+test_script:
+  - node --version
+  - npm --version
+
+build_script:
+  - ./node_modules/.bin/quasar build -m electron
+
+artifacts:
+  - path: dist/electron-mat
+    name: Schild.Report

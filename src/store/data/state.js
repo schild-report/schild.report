@@ -8,6 +8,6 @@ export default {
   components: null,
   componentsPath: null,
   knex: null,
-  DB: null,
-  auth: null
+  auth: null,
+  documentSource: null
 }

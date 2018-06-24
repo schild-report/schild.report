@@ -1,12 +1,11 @@
 // Configuration for your app
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const NormalModuleReplacementPlugin = require('webpack').NormalModuleReplacementPlugin
 
 module.exports = function (ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
-      'vuex', 'schild'
+      'vuex'
     ],
     css: [
       'app.styl'
@@ -28,7 +27,6 @@ module.exports = function (ctx) {
       // useNotifier: false,
       extendWebpack (cfg) {
         cfg.devtool = 'eval'
-        cfg.plugins.push(new UglifyJsPlugin({uglifyOptions: {mangle: false}}))
         cfg.plugins.push(new NormalModuleReplacementPlugin(/\.\.\/migrate/, '../util/noop.js'))
         cfg.plugins.push(new NormalModuleReplacementPlugin(/\.\.\/seed/, '../util/noop.js'))
         cfg.module.rules.push({
@@ -37,7 +35,6 @@ module.exports = function (ctx) {
           loader: 'eslint-loader',
           exclude: /(node_modules|quasar|dist|plugins)/
         })
-        cfg.module.noParse = /require-wrapper/
         cfg.externals = {
           'sqlite3': 'sqlite3',
           'mariasql': 'mariasql',
@@ -94,14 +91,14 @@ module.exports = function (ctx) {
         'QPageSticky',
         'QBreadcrumbs',
         'QBreadcrumbsEl',
-        'QModal'
+        'QModal',
+        'QDialog'
       ],
       directives: [
         'Ripple'
       ],
       // Quasar plugins
       plugins: [
-        'Notify',
         'Loading'
       ]
     },
@@ -155,8 +152,8 @@ module.exports = function (ctx) {
         // do something with cfg
       },
       packager: {
-        // asar: true
-        asar: false
+        asar: true
+        // asar: false
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',

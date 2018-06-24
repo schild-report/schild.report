@@ -12,20 +12,16 @@ global.R = {
 global.ipc = () => {
   const mark = new Mark(document.querySelector('body'))
   let svelte
-  let components
-
-  ipcRenderer.on('loadComponents', (event, args) => {
-    delete require.cache[require.resolve(args.componentsPath)]
-    console.log('Plugins laden: ' + args.componentsPath)
-    components = require(args.componentsPath)
-  })
 
   ipcRenderer.on('editContent', (event, edit) => {
     document.querySelector('#content').setAttribute('contenteditable', edit)
   })
+
   ipcRenderer.on('updateComponents', (event, args) => {
+    delete require.cache[require.resolve(args.componentsPath)]
+    const Component = require(args.componentsPath)
     if (svelte) svelte.destroy()
-    svelte = new components[args.component](
+    svelte = new Component(
       {
         target: document.querySelector('svelte'),
         data: {

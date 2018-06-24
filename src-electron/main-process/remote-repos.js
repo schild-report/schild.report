@@ -1,14 +1,15 @@
 const git = require('isomorphic-git')
 const fs = require('fs')
+const path = require('path')
 const GitUrlParse = require('git-url-parse')
 
 export const Repo = {
   clone: async function (address, destination) {
     const name = GitUrlParse(address).name
-    const path = `${destination}/${name}`
+    const repoPath = path.join(destination, name)
     await git.clone({
       fs,
-      dir: path,
+      dir: repoPath,
       url: address
     })
     console.log(name + ' cloned')

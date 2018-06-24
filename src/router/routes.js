@@ -14,7 +14,7 @@ export default [
     component: DefaultLayout,
     beforeEnter: (to, from, next) => {
       if (!store.state.data.auth) {
-        next({name: 'login'})
+        next({ name: 'login' })
       } else next()
     },
     children: [
@@ -22,7 +22,7 @@ export default [
       { path: 'klasse/:id', name: 'klasse', component: Klasse },
       { path: 'schueler/:id', name: 'schueler', component: Schueler },
       { path: 'app/einstellungen', name: 'einstellungen', component: Einstellungen },
-      { path: 'dokument/:id', name: 'dokument', component: Dokument }
+      { path: 'dokument/:repo/:id', name: 'dokument', component: Dokument }
     ]
   },
   { path: '/app/datenbank', name: 'datenbank', component: Datenbank },
