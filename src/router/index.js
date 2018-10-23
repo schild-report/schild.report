@@ -1,17 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import _ from 'lodash'
+import { isEmpty } from 'lodash'
 import configFile from '../../src-electron/main-process/configstore'
 import store from '../store'
-import { is } from 'electron-util'
-const ipc = require('electron-better-ipc')
-
+import ipc from 'electron-better-ipc'
 import routes from './routes'
 
 let db = configFile.get('db')
-const componentsPath = is.development
-  ? `${__statics}/plugins`
-  : configFile.get('plugins.destination')
 
 Vue.use(VueRouter)
 
@@ -22,7 +17,7 @@ const Router = new VueRouter({
   routes
 })
 
-if (_.isEmpty(db)) {
+if (isEmpty(db)) {
   console.log('Verbindungsdaten zur Schilddatenbank fehlen')
   Router.push({ name: 'datenbank' })
 } else {
@@ -55,8 +50,8 @@ if (_.isEmpty(db)) {
     .catch((error) => {
       console.log(error)
     })
-  store.commit('data/updateComponentsPath', componentsPath)
+  store.commit('data/updateComponentsPath', configFile.get('plugins.destination'))
 }
-if (configFile.get('passAuth') === true) store.commit('data/updateAuth', true)
+store.commit('data/updateAuth', configFile.get('passAuth'))
 
 export default Router

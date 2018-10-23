@@ -1,4 +1,4 @@
-import DefaultLayout from 'layouts/default'
+import Layout from 'layouts/default'
 import Datenbank from 'layouts/datenbank'
 import Login from 'layouts/login'
 import Index from 'pages/index'
@@ -11,11 +11,10 @@ import store from '../store'
 export default [
   {
     path: '/',
-    component: DefaultLayout,
+    component: Layout,
     beforeEnter: (to, from, next) => {
-      if (!store.state.data.auth) {
-        next({ name: 'login' })
-      } else next()
+      if (store.state.data.auth) next()
+      else next({ name: 'login' })
     },
     children: [
       { path: '', component: Index },

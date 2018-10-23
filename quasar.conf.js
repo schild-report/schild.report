@@ -1,6 +1,4 @@
 // Configuration for your app
-const NormalModuleReplacementPlugin = require('webpack').NormalModuleReplacementPlugin
-
 module.exports = function (ctx) {
   return {
     // app plugins (/src/plugins)
@@ -27,25 +25,12 @@ module.exports = function (ctx) {
       // useNotifier: false,
       extendWebpack (cfg) {
         cfg.devtool = 'eval'
-        cfg.plugins.push(new NormalModuleReplacementPlugin(/\.\.\/migrate/, '../util/noop.js'))
-        cfg.plugins.push(new NormalModuleReplacementPlugin(/\.\.\/seed/, '../util/noop.js'))
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /(node_modules|quasar|dist|plugins)/
         })
-        cfg.externals = {
-          'sqlite3': 'sqlite3',
-          'mariasql': 'mariasql',
-          'mssql': 'mssql',
-          'mysql2': 'mysql2',
-          'oracle': 'oracle',
-          'strong-oracle': 'strong-oracle',
-          'oracledb': 'oracledb',
-          'pg': 'pg',
-          'pg-query-stream': 'pg-query-stream'
-        }
       }
     },
     devServer: {
@@ -153,7 +138,6 @@ module.exports = function (ctx) {
       },
       packager: {
         asar: true
-        // asar: false
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',

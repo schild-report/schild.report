@@ -59,7 +59,7 @@
 <script>
 import { openURL } from 'quasar'
 import _ from 'lodash'
-import * as fs from 'fs'
+import { writeFile, unlink } from 'fs'
 import VueJsonContent from 'vue-json-content'
 import Vue from 'vue'
 
@@ -83,7 +83,7 @@ function statusFeedback (status) {
 }
 
 export default {
-  name: 'LayoutDefault',
+  name: 'Layout',
   created () {
     this.$root.$on('setzeKlassenLinks', states => {
       this.schuelerLink = states.schuelerLink
@@ -150,7 +150,7 @@ export default {
     openDokument (key) { this.$router.push('/dokument/' + key) },
     pdfName () {
       const s = this.schueler
-      const d = this.$route.params.id.split('___')[1]
+      const d = this.$route.params.id.fn.slice(-5)
       return `${s.AktSchuljahr}_${s.AktAbschnitt}_${s.Klasse}_${d}.pdf`
     },
     openPdf (options = {}) {
@@ -158,14 +158,18 @@ export default {
       options = {
         marginsType: options.marginsType || 1,
         printBackground: options.printBackground || true,
-        pdfName: this.pdfName
+        pdfName: this.pdfName()
       }
       webview.printToPDF({ ...options }, (error, data) => {
         if (error) throw error
-        fs.writeFile(`${api.app.getPath('userData')}/print.pdf`, data, error => {
+        const pdfPath = `${api.app.getPath('userData')}/${options.pdfName}`
+        writeFile(pdfPath, data, error => {
           if (error) throw error
         })
-        ipc.callMain('view-pdf')
+        ipc.callMain('view-pdf', options.pdfName)
+          .then(() => unlink(pdfPath, (err) => {
+            if (err) throw err
+          }))
       })
     }
   }

@@ -38,7 +38,7 @@ export default {
   data () {
     return {
       checkConnection: 'Verbindung prüfen …',
-      db: this.$store.state.data.knex,
+      db: this.$store.state.data.knex || { host: '', database: '', user: '', password: '' },
       testing: null
     }
   },

@@ -16,7 +16,7 @@ module.exports = {
   ],
   // required to lint *.vue files
   plugins: [
-    'vue'
+    'vue',
   ],
   globals: {
     'ga': true, // Google Analytics

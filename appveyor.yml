@@ -1,17 +1,15 @@
 image: Visual Studio 2017
-platform: x64
 
-# Test against the latest version of this Node.js version
-# environment:
-#   nodejs_version: "10"
-
-# Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of Node.js or io.js
-  # - ps: Install-Product node $env:nodejs_version
-  # install modules
+  - set path=c:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
   - npm install -g vue-cli
   - npm install quasar-cli
+  - 'echo "export const VERSION = \"Build ID: $APPVEYOR_BUILD_ID, Build No: $APPVEYOR_BUILD_NUMBER, Git Hash: $APPVEYOR_REPO_COMMIT, Git Message: $APPVEYOR_REPO_COMMIT_MESSAGE\"" > src-electron/main-process/version.js'
+
+cache:
+  - node_modules -> package.json
+  - '%AppData%\npm\node_modules'
+  - '%USERPROFILE%\.electron'
 
 test_script:
   - node --version
@@ -19,7 +17,8 @@ test_script:
 
 build_script:
   - ./node_modules/.bin/quasar build -m electron
+  - node create-msi.js
 
 artifacts:
-  - path: dist/electron-mat
-    name: Schild.Report
+  - path: dist/msi/schild.report.msi
+    name: schild.report

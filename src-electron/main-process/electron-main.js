@@ -1,26 +1,27 @@
 import { app, BrowserWindow } from 'electron'
+import { VERSION } from './version'
+console.log(VERSION)
+if (process.argv.some(a => a === '-v')) app.exit()
+
 import ipc from 'electron-better-ipc'
-import path from 'path'
-import * as fs from 'fs'
+import { join, basename, dirname } from 'path'
+import { lstatSync, readdirSync } from 'fs'
 import configFile from './configstore'
-import * as componentCompiler from './rollup'
+import { rollupSetup, rollupBuild } from './rollup'
 import { Repo } from './dugite'
 import { is } from 'electron-util'
 import schild from 'schild'
 import './store'
 import CheapWatch from 'cheap-watch'
-
-const componentsPath = is.development
-  ? `${__statics}/plugins`
-  : configFile.get('plugins.destination')
-
 if (process.env.PROD) {
-  global.__statics = path.join(__dirname, 'statics').replace(/\\/g, '\\\\')
+  global.__statics = join(__dirname, 'statics').replace(/\\/g, '\\\\')
 }
+
+configFile.set('passAuth', process.argv.some(a => a === '--no-login') || is.development)
 
 let mainWindow
 let pdfWindow = null
-let watcher
+let watcher = []
 
 function createPDFWindow () {
   pdfWindow = new BrowserWindow({
@@ -44,11 +45,11 @@ function createWindow () {
     width: width,
     height: height,
     useContentSize: true,
-    icon: path.join(__dirname, '../icons/linux-256x256.png')
+    icon: join(__dirname, '../icons/linux-256x256.png')
   })
 
   mainWindow.loadURL(process.env.APP_URL)
-  if (is.development) mainWindow.openDevTools()
+  if (is.development || process.argv.find(a => a === '--devtools')) mainWindow.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -71,11 +72,11 @@ app.on('activate', () => {
   }
 })
 
-ipc.answerRenderer('view-pdf', async () => {
+ipc.answerRenderer('view-pdf', async (pdfName) => {
   if (pdfWindow === null) {
     createPDFWindow()
   }
-  pdfWindow.loadURL(`file://${app.getPath('userData')}/print.pdf`)
+  await pdfWindow.loadURL(`file://${app.getPath('userData')}/${pdfName}`)
   pdfWindow.show()
 })
 
@@ -84,13 +85,13 @@ ipc.answerRenderer('source', async () => {
 })
 
 function scanSource () {
-  const isDirectory = source => fs.lstatSync(source).isDirectory()
+  const isDirectory = source => lstatSync(source).isDirectory()
   const getDirectories = source =>
-    fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
+    readdirSync(source).map(name => join(source, name)).filter(isDirectory)
   const source = configFile.get('plugins.source')
   const obj = {}
   getDirectories(source).forEach(element => {
-    obj[path.basename(element)] = fs.readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
+    obj[basename(element)] = readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
   })
   ipc.callRenderer(mainWindow, 'updateRepos', obj)
 }
@@ -106,33 +107,47 @@ ipc.answerRenderer('repos', async () => {
   fileWatcher.on('-', ({ path, stats }) => { scanSource() })
 })
 
-ipc.answerRenderer('compileDokumente', async (file) => {
-  console.log('Rollup starten …')
-  await componentCompiler.rollupSetup({
-    statics: __statics,
-    source: path.join(configFile.get('plugins.source'), file),
-    dest: componentsPath,
-    is: is
+const compileDokumente = async (file) => {
+  await rollupSetup({
+    source: join(configFile.get('plugins.source'), file),
+    dest: configFile.get('plugins.destination')
   })
-  if (watcher) watcher.close()
-  watcher = await componentCompiler.rollupWatch()
-  watcher.on('event', event => {
-    // console.log(event.code)
-    switch (event.code) {
-      case 'FATAL':
-        ipc.callRenderer(mainWindow, 'message', event.error)
-        break
-      case 'END':
-        console.log('Modul aktualisiert, webview aktualisieren …')
-        ipc.callRenderer(mainWindow, 'hmr')
-        break
+  try {
+    const moduleIDs = await rollupBuild()
+    ipc.callRenderer(mainWindow, 'hmr')
+    return moduleIDs
+  } catch (err) {
+    ipc.callRenderer(mainWindow, 'messageRollup', {
+      ...err,
+      code: err.code,
+      stack: err.stack,
+      message: err.message
+    })
+  }
+}
+ipc.answerRenderer('compileDokumente', async (file) => {
+  console.log('Rollup starten für …')
+  const moduleIDs = await compileDokumente(file)
+  console.log(moduleIDs)
+  while (watcher.length) { watcher.pop().close() }
+  moduleIDs.forEach(async (moduleID) => {
+    if (!moduleID.includes('node_modules')) {
+      const emitter = new CheapWatch({
+        dir: dirname(moduleID),
+        debounce: 50,
+        filter: ({ path, stats }) => moduleID.endsWith(path)
+      })
+      console.log('Beobachte: ' + moduleID)
+      await emitter.init()
+      emitter.on('+', ({ path, stats, isNew }) => { if (!isNew) { console.log('Änderungen bei: ' + path); compileDokumente(file) } })
+      watcher.push(emitter)
     }
   })
 })
 
 ipc.answerRenderer('pullDokumente', async (event, arg) => {
   configFile.get('plugins.remoteRepos').forEach(repo => {
-    const repoPath = path.join(configFile.get('plugins.source'), repo.name)
+    const repoPath = join(configFile.get('plugins.source'), repo.name)
     Repo.pull(repoPath)
   })
 })
@@ -145,7 +160,7 @@ ipc.answerRenderer('setRemoteRepos', async remoteRepos => {
 })
 ipc.answerRenderer('cloneRemoteRepo', async remoteRepo => {
   const pluginsSource = configFile.get('plugins.source')
-  await Repo.clone(remoteRepo, pluginsSource)
+  return Repo.clone(remoteRepo, pluginsSource)
 })
 ipc.answerRenderer('setDB', async db => {
   console.log('Verbindungsdaten speichern …')
@@ -158,20 +173,22 @@ ipc.answerRenderer('schildTestConnection', async data => {
   return schild.testConnection()
 })
 ipc.answerRenderer('schildSuche', async data => {
+  // suche returns array
   return schild.suche(data.arg)
 })
 ipc.answerRenderer('schildGetKlasse', async data => {
-  return schild.getKlasse(data.arg)
+  return (await schild.getKlasse(data.arg)).toJSON()
 })
 ipc.answerRenderer('schildGetSchule', async data => {
-  return schild.getSchule()
+  return (await schild.getSchule()).toJSON()
 })
 ipc.answerRenderer('schildGetSchueler', async data => {
-  return schild.getSchueler(data.arg)
+  const schueler = await schild.getSchueler(data.arg)
+  return schueler.toJSON()
 })
 ipc.answerRenderer('schildGetSchuelerfoto', async data => {
   return schild.getSchuelerfoto(data.arg)
 })
 ipc.answerRenderer('schildGetNutzer', async data => {
-  return schild.getNutzer(data.arg)
+  return (await schild.getNutzer(data.arg)).toJSON()
 })

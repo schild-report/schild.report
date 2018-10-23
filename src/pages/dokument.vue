@@ -19,7 +19,13 @@
         @click="toggleDevTools"
       />
     </q-page-sticky>
-    <q-dialog v-model="dialogModel" v-if="dialogModel">
+    <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError">
+      <span slot="title">{{dialogMessage.code}}</span>
+      <div slot="body">
+        <b>{{dialogMessage.message}}</b>:
+      </div>
+    </q-dialog>
+    <q-dialog v-model="dialogModelSvelteError" v-if="dialogModelSvelteError">
       <span slot="title">{{dialogMessage.pluginCode}}</span>
       <div slot="body">
         Fehler in <b>{{dialogMessage.filename}}</b>:
@@ -33,7 +39,7 @@
 </template>
 
 <script>
-import path from 'path'
+import { join } from 'path'
 const ipc = require('electron-better-ipc')
 let webview
 
@@ -44,13 +50,14 @@ export default {
   },
   data () {
     return {
-      preload: 'file://' + path.join(__statics, '/preload.js'),
+      preload: 'file://' + join(__statics, '/preload.js'),
       edit: false,
       editColor: 'red',
       devTools: false,
       devToolsColor: 'red',
       load: false,
-      dialogModel: false,
+      dialogModelRollupError: false,
+      dialogModelSvelteError: false,
       dialogMessage: ''
     }
   },
@@ -60,9 +67,14 @@ export default {
       this.createSvelte()
       this.$q.loading.hide()
     })
-    ipc.answerMain('message', async (message) => {
+    ipc.answerMain('messageRollup', async (message) => {
       this.$q.loading.hide()
-      this.dialogModel = true
+      console.log(message)
+      if (message.plugin) {
+        this.dialogModelSvelteError = true
+      } else {
+        this.dialogModelRollupError = true
+      }
       this.dialogMessage = message
     })
     const loadPage = () => {

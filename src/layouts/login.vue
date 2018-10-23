@@ -8,6 +8,7 @@
       <q-input
         stack-label="Benutzername"
         v-model="user"
+        autofocus
       />
     </q-card-main>
     <q-card-main>
@@ -15,6 +16,7 @@
         type="password"
         stack-label="Passwort"
         v-model="password"
+        @keyup.enter="login"
       />
     </q-card-main>
     <q-card-main>
