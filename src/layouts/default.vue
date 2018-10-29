@@ -60,6 +60,7 @@
 import { openURL } from 'quasar'
 import _ from 'lodash'
 import { writeFile, unlink } from 'fs'
+import { parse } from 'path'
 import VueJsonContent from 'vue-json-content'
 import Vue from 'vue'
 
@@ -150,7 +151,7 @@ export default {
     openDokument (key) { this.$router.push('/dokument/' + key) },
     pdfName () {
       const s = this.schueler
-      const d = this.$route.params.id.fn.slice(-5)
+      const d = parse(this.$route.params.id).name
       return `${s.AktSchuljahr}_${s.AktAbschnitt}_${s.Klasse}_${d}.pdf`
     },
     openPdf (options = {}) {
