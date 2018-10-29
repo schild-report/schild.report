@@ -31,7 +31,8 @@ export const rollupSetup = (options) => {
   outputOptions = {
     file: join(dest, '/bundle.js'),
     format: 'cjs',
-    name: 'components'
+    name: 'components',
+    sourcemap: true
   }
 }
 

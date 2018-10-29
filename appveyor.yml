@@ -4,7 +4,9 @@ install:
   - set path=c:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
   - npm install -g vue-cli
   - npm install quasar-cli
-  - 'echo "export const VERSION = \"Build ID: $APPVEYOR_BUILD_ID, Build No: $APPVEYOR_BUILD_NUMBER, Git Hash: $APPVEYOR_REPO_COMMIT, Git Message: $APPVEYOR_REPO_COMMIT_MESSAGE\"" > src-electron/main-process/version.js'
+  - |-
+      echo 'export const VERSION = "Build ID: %APPVEYOR_BUILD_ID%, Build No: %APPVEYOR_BUILD_NUMBER%, Git Hash: %APPVEYOR_REPO_COMMIT%, Git Message: %APPVEYOR_REPO_COMMIT_MESSAGE%" > src-electron/main-process/version.js
+  - cat src-electron/main-process/version.js
 
 cache:
   - node_modules -> package.json
