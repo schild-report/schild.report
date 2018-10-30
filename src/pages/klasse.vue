@@ -19,7 +19,6 @@
             :columns="columns"
             :pagination.sync="pagination"
             row-key="ID"
-            dense
             hide-bottom
             selection="multiple"
             :selected.sync="selected"

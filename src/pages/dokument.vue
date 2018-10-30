@@ -58,7 +58,7 @@ export default {
       load: false,
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
-      dialogMessage: ''
+      dialogMessage: null
     }
   },
   mounted () {
@@ -128,10 +128,8 @@ export default {
 
 <style>
   webview {
-    display: block;
     border: none;
-    height: 100vh;
-    width: 100vw;
-    display: inline-flex !important;
+    height: -webkit-fill-available;
+    padding: 7px 0 0 7px;
   }
 </style>
