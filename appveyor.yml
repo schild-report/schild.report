@@ -5,7 +5,7 @@ install:
   - npm install -g vue-cli
   - npm install quasar-cli
   - |-
-      echo export const VERSION = "Build ID: %APPVEYOR_BUILD_ID%, Build No: %APPVEYOR_BUILD_NUMBER%, Git Hash: %APPVEYOR_REPO_COMMIT%, Git Message: %APPVEYOR_REPO_COMMIT_MESSAGE%" > src-electron/main-process/version.js
+      echo export const VERSION = { buildID: "%APPVEYOR_BUILD_ID%", buildVersion: "%APPVEYOR_BUILD_VERSION%", buildNo: "%APPVEYOR_BUILD_NUMBER%", gitHash: "%APPVEYOR_REPO_COMMIT%", gitMessage: "%APPVEYOR_REPO_COMMIT_MESSAGE%" } > src-electron/main-process/version.js
   - cat src-electron/main-process/version.js
 
 cache:

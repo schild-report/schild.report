@@ -8,7 +8,8 @@ const msiCreator = new MSICreator({
   exe: 'schild.report.exe',
   name: 'schild.report',
   manufacturer: 'Bernd Homuth',
-  version: '1.0.0',
+  upgradeCode: 'ea8c350b-5e9b-4345-a464-69073812c43f',
+  version: process.env['APPVEYOR_BUILD_VERSION'],
   outputDirectory: path.resolve(__dirname, 'dist/msi'),
   shortcutFolderName: 'schild.report',
   language: 1031
