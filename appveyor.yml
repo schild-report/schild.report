@@ -11,7 +11,6 @@ install:
 cache:
   - node_modules -> package.json
   - '%AppData%\npm\node_modules'
-  - '%USERPROFILE%\.electron'
 
 test_script:
   - node --version

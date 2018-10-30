@@ -36,7 +36,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "devtron": "",
-    "electron": "^3.0.6",
+    "electron": "^2.0.12",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "",
     "electron-packager": "^12.2.0",
