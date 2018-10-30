@@ -59,7 +59,7 @@
 <script>
 import { openURL } from 'quasar'
 import _ from 'lodash'
-import { writeFile, unlink } from 'fs'
+import { writeFile } from 'fs'
 import { parse } from 'path'
 import VueJsonContent from 'vue-json-content'
 import Vue from 'vue'
@@ -168,9 +168,6 @@ export default {
           if (error) throw error
         })
         ipc.callMain('view-pdf', options.pdfName)
-          .then(() => unlink(pdfPath, (err) => {
-            if (err) throw err
-          }))
       })
     }
   }
