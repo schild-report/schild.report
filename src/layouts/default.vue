@@ -150,7 +150,7 @@ export default {
     pullRepos () { ipc.callMain('pullDokumente') },
     openDokument (key) { this.$router.push('/dokument/' + key) },
     pdfName () {
-      const s = this.schueler
+      const s = this.schueler || this.klasse.schueler[0]
       const d = parse(this.$route.params.id).name
       return `${s.AktSchuljahr}_${s.AktAbschnitt}_${s.Klasse}_${d}.pdf`
     },
