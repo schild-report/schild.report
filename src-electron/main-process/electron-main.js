@@ -123,6 +123,7 @@ const compileDokumente = async (file) => {
       stack: err.stack,
       message: err.message
     })
+    return [err.filename]
   }
 }
 ipc.answerRenderer('compileDokumente', async (file) => {

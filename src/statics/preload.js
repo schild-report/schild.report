@@ -16,6 +16,9 @@ global.ipc = () => {
   ipcRenderer.on('editContent', (event, edit) => {
     document.querySelector('#content').setAttribute('contenteditable', edit)
   })
+  ipcRenderer.on('setAbschnitt', (event, abschnitt) => {
+    svelte.set({ jahr: abschnitt.jahr, abschnitt: abschnitt.abschnitt })
+  })
 
   ipcRenderer.on('updateComponents', (event, args) => {
     delete require.cache[require.resolve(args.componentsPath)]

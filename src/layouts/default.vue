@@ -47,7 +47,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-      <q-page-sticky position="top-right" :offset="[18, 18]" v-if="dokumentenauswahlZeigen">
+      <q-page-sticky position="top-right" :offset="[18, 85]" v-if="dokumentenauswahlZeigen">
         <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
       </q-page-sticky>
       <q-modal v-model="opened" content-css="padding: 30px">

@@ -184,6 +184,7 @@ export default {
           this.$store.commit('data/updateSchuelerfoto', response)
         })
         .catch((error) => {
+          this.$store.commit('data/updateSchuelerfoto', '')
           this.error = error.toString()
         })
     }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <webview src="about:blank" :preload="preload" autosize disablewebsecurity></webview>
-    <q-page-sticky position="top-right" :offset="[18, 70]">
+    <q-page-sticky position="top-right" :offset="[18, 137]">
       <q-btn
         round
         contenteditable="false"
@@ -10,7 +10,7 @@
         @click="editContent"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[18, 122]">
+    <q-page-sticky position="top-right" :offset="[18, 189]">
       <q-btn
         round
         devTools="false"
@@ -18,6 +18,21 @@
         icon="build"
         @click="toggleDevTools"
       />
+    </q-page-sticky>
+    <q-page-sticky position="top-right" :offset="[18, 18]">
+      <q-fab
+        ref="abschnitte"
+        round
+        color="blue"
+        icon="date_range"
+        direction="left"
+      >
+        <q-fab-action v-for="(a, index) in $store.state.data.schuelerGewaehlt[0].abschnitte" :key="index"
+          color="primary"
+          icon=""
+          @click="setAbschnitt(a)"
+        >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
+      </q-fab>
     </q-page-sticky>
     <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError">
       <span slot="title">{{dialogMessage.code}}</span>
@@ -85,6 +100,9 @@ export default {
     webview.addEventListener('dom-ready', loadPage)
   },
   methods: {
+    setAbschnitt (a) {
+      webview.send('setAbschnitt', { jahr: a.Jahr, abschnitt: a.Abschnitt })
+    },
     editContent () {
       this.edit = !this.edit
       this.editColor = this.edit ? 'green' : 'red'
@@ -112,6 +130,7 @@ export default {
         webview.removeEventListener('dom-ready', sendIPC)
       }
       console.log('updateComponent')
+      // diese dataurl entspricht der webview.html
       webview.loadURL(
         `data:text/html;charset=utf-8;base64,
         PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
@@ -130,6 +149,6 @@ export default {
   webview {
     border: none;
     height: -webkit-fill-available;
-    padding: 7px 0 0 7px;
+    /* padding: 7px 0 0 7px; */
   }
 </style>
