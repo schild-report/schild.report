@@ -20,6 +20,8 @@
             :pagination.sync="pagination"
             row-key="ID"
             hide-bottom
+            dense
+            table-style="overflow-y:hidden"
             selection="multiple"
             :selected.sync="selected"
             >
