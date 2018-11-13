@@ -7,12 +7,21 @@ import Schueler from 'pages/schueler'
 import Dokument from 'pages/dokument'
 import Einstellungen from 'pages/einstellungen'
 import store from '../store'
+import ipc from 'electron-better-ipc'
 
 export default [
   {
     path: '/',
     component: Layout,
     beforeEnter: (to, from, next) => {
+      ipc.callMain('schildGetSchule')
+        .then(response => {
+          store.commit('data/updateSchule', response)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+
       if (store.state.data.auth) next()
       else next({ name: 'login' })
     },

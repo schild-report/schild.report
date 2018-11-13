@@ -9,6 +9,7 @@
         stack-label="Server"
         placeholder="Serveradresse, z.B. localhost oder 192.168.178.99"
         v-model="db.host"
+        autofocus
       />
     </q-card-main>
     <q-card-main>
@@ -22,7 +23,13 @@
       <q-input float-label="Benutzername" v-model="db.user"/>
     </q-card-main>
     <q-card-main>
-      <q-input type="password" no-pass-toggle float-label="Passwort" v-model="db.password"/>
+      <q-input
+        type="password"
+        no-pass-toggle
+        float-label="Passwort"
+        v-model="db.password"
+        @keyup.enter="handleSubmit"
+      />
     </q-card-main>
     <q-card-main>
       <q-btn color="primary" @click="handleSubmit">{{checkConnection}}</q-btn>

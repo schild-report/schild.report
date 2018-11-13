@@ -42,16 +42,8 @@ if (isEmpty(db)) {
     .then(res => console.log(res)).catch(e => console.log(e))
 
   store.commit('data/updateKnex', db)
-
-  ipc.callMain('schildGetSchule')
-    .then(response => {
-      store.commit('data/updateSchule', response)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  store.commit('data/updateComponentsPath', configFile.get('plugins.destination'))
 }
 store.commit('data/updateAuth', configFile.get('passAuth'))
+store.commit('data/updateComponentsPath', configFile.get('plugins.destination'))
 
 export default Router
