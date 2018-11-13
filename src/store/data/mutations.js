@@ -36,3 +36,6 @@ export const updateAuth = (state, data) => {
 export const updateDocumentSource = (state, data) => {
   state.documentSource = data
 }
+export const updateAbschnitt = (state, data) => {
+  state.abschnitt = data
+}

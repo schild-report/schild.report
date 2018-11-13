@@ -101,7 +101,9 @@ export default {
   },
   methods: {
     setAbschnitt (a) {
-      webview.send('setAbschnitt', { jahr: a.Jahr, abschnitt: a.Abschnitt })
+      const abschnitt = { jahr: a.Jahr, abschnitt: a.Abschnitt }
+      webview.send('setAbschnitt', abschnitt)
+      this.$store.commit('data/updateAbschnitt', abschnitt)
     },
     editContent () {
       this.edit = !this.edit
@@ -115,11 +117,14 @@ export default {
       is ? webview.closeDevTools() : webview.openDevTools()
     },
     createSvelte () {
+      const data = this.$store.getters['data/reportData']
       webview.send('updateComponents', {
         componentsPath: this.$store.state.data.componentsPath + '/bundle.js',
         knex: this.$store.state.data.knex,
-        reportData: this.$store.getters['data/reportData']
+        reportData: data
       })
+      const abschnitt = { jahr: data.jahr, abschnitt: data.abschnitt }
+      this.$store.commit('data/updateAbschnitt', abschnitt)
       console.log('svelte created', Date())
     },
     updateComponent () {

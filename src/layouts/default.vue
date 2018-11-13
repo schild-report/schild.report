@@ -59,10 +59,11 @@
 <script>
 import { openURL } from 'quasar'
 import _ from 'lodash'
-import { writeFile } from 'fs'
-import { parse } from 'path'
+import { writeFile, existsSync, mkdirSync } from 'fs'
+import { parse, join, dirname } from 'path'
 import VueJsonContent from 'vue-json-content'
 import Vue from 'vue'
+import { shell } from 'electron'
 
 Vue.use(VueJsonContent)
 
@@ -81,6 +82,15 @@ function statusFeedback (status) {
     case 9: return { color: 'negative', icon: 'clear' }
     default: return { color: '', icon: '' }
   }
+}
+
+function ensureDirectoryExistence (filePath) {
+  const dir = dirname(filePath)
+  if (existsSync(dir)) {
+    return true
+  }
+  ensureDirectoryExistence(dir)
+  mkdirSync(dir)
 }
 
 export default {
@@ -152,7 +162,9 @@ export default {
     pdfName () {
       const s = this.schueler || this.klasse.schueler[0]
       const d = parse(this.$route.params.id).name
-      return `${s.AktSchuljahr}_${s.AktAbschnitt}_${s.Klasse}_${d}.pdf`
+      const jahr = this.$store.state.data.abschnitt.jahr || s.AktSchuljahr
+      const abschnitt = this.$store.state.data.abschnitt.abschnitt || s.AktAbschnitt
+      return `${jahr}_${abschnitt}_${s.Klasse}_${d}.pdf`
     },
     openPdf (options = {}) {
       const webview = document.querySelector('webview')
@@ -163,11 +175,15 @@ export default {
       }
       webview.printToPDF({ ...options }, (error, data) => {
         if (error) throw error
-        const pdfPath = `${api.app.getPath('userData')}/${options.pdfName}`
+        const s = this.schueler || this.klasse.schueler[0]
+        const jahr = this.$store.state.data.abschnitt.jahr || s.AktSchuljahr
+        const dir = join(api.app.getPath('documents'), api.app.getName(), 'pdf', jahr.toString())
+        const pdfPath = join(dir, options.pdfName)
+        ensureDirectoryExistence(pdfPath)
         writeFile(pdfPath, data, error => {
           if (error) throw error
         })
-        ipc.callMain('view-pdf', options.pdfName)
+        if (!shell.openItem(pdfPath)) ipc.callMain('view-pdf', options.pdfName)
       })
     }
   }

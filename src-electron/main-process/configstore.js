@@ -15,7 +15,7 @@ const configFile = new Store({
       dokument: { width: 1800, height: 800 }
     },
     plugins: {
-      source: join(api.app.getPath('documents'), api.app.getName()),
+      source: join(api.app.getPath('documents'), api.app.getName(), 'vorlagen'),
       destination: join(api.app.getPath('userData'), 'plugins'),
       remoteRepos: ''
     },

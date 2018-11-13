@@ -9,5 +9,6 @@ export default {
   componentsPath: null,
   knex: null,
   auth: null,
-  documentSource: null
+  documentSource: null,
+  abschnitt: {}
 }
