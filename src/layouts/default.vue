@@ -2,7 +2,18 @@
   <q-layout view="hHh LpR lFf">
     <q-layout-header>
       <q-toolbar color="primary">
-        <q-btn flat @click="goto('/')"><q-icon name="home" class="q-px-md"/>{{schule.Bezeichnung2}}</q-btn>
+        <q-btn
+          flat round dense
+          icon="home"
+          @click="goto('/')"
+        />
+        <q-toolbar-title shrink>
+          {{schule.Bezeichnung1}}
+          <span slot="subtitle">
+            {{schule.Bezeichnung2}}
+          </span>
+        </q-toolbar-title>
+        <!-- <q-btn flat @click="goto('/')"><q-icon name="home" class="q-px-md"/>{{schule.Bezeichnung2}}</q-btn> -->
         <q-search
           v-model="terms"
           placeholder="Name oder Klasse eingeben"

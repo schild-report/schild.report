@@ -7,8 +7,7 @@ import ipc from 'electron-better-ipc'
 import { join, basename, dirname } from 'path'
 import { lstatSync, readdirSync } from 'fs'
 import configFile from './configstore'
-import { rollupSetup, rollupBuild } from './rollup'
-import { Repo } from './dugite'
+import { rollupBuild } from './rollup'
 import { is } from 'electron-util'
 import schild from 'schild'
 import './store'
@@ -49,7 +48,7 @@ function createWindow () {
   })
 
   mainWindow.loadURL(process.env.APP_URL)
-  if (is.development || process.argv.find(a => a === '--devtools')) mainWindow.openDevTools()
+  if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -108,12 +107,11 @@ ipc.answerRenderer('repos', async () => {
 })
 
 const compileDokumente = async (file) => {
-  await rollupSetup({
-    source: join(configFile.get('plugins.source'), file),
-    dest: configFile.get('plugins.destination')
-  })
   try {
-    const moduleIDs = await rollupBuild()
+    const moduleIDs = await rollupBuild({
+      source: join(configFile.get('plugins.source'), file),
+      dest: configFile.get('plugins.destination')
+    })
     ipc.callRenderer(mainWindow, 'hmr')
     return moduleIDs
   } catch (err) {

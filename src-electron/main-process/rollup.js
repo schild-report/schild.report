@@ -1,19 +1,16 @@
+import { join } from 'path'
 import { rollup } from 'rollup'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import svelte from 'rollup-plugin-svelte'
 import json from 'rollup-plugin-json'
-import { join } from 'path'
 
-let inputOptions, outputOptions
+let cache
 
-export const rollupSetup = (options) => {
-  const source = options.source
-  const dest = options.dest
-  console.log(source)
-
-  inputOptions = {
-    input: source,
+export const rollupBuild = async (options) => {
+  const inputOptions = {
+    input: options.source,
+    cache,
     plugins: [
       json({ preferConst: true }),
       resolve(),
@@ -27,18 +24,15 @@ export const rollupSetup = (options) => {
       })
     ]
   }
-
-  outputOptions = {
-    file: join(dest, '/bundle.js'),
+  const outputOptions = {
+    file: join(options.dest, '/bundle.js'),
     format: 'cjs',
     name: 'components',
     sourcemap: true
   }
-}
-
-export const rollupBuild = async () => {
   try {
     const bundle = await rollup(inputOptions)
+    cache = bundle.cache
     await bundle.write(outputOptions)
     console.log('Komponenten erfolgreich kompiliert')
     return bundle.modules.map(m => m.id)
