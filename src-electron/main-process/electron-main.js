@@ -144,23 +144,6 @@ ipc.answerRenderer('compileDokumente', async (file) => {
   })
 })
 
-ipc.answerRenderer('pullDokumente', async (event, arg) => {
-  configFile.get('plugins.remoteRepos').forEach(repo => {
-    const repoPath = join(configFile.get('plugins.source'), repo.name)
-    Repo.pull(repoPath)
-  })
-})
-
-ipc.answerRenderer('getRemoteRepos', async getRemoteRepos => {
-  return configFile.get('plugins.remoteRepos') || []
-})
-ipc.answerRenderer('setRemoteRepos', async remoteRepos => {
-  configFile.set('plugins.remoteRepos', remoteRepos)
-})
-ipc.answerRenderer('cloneRemoteRepo', async remoteRepo => {
-  const pluginsSource = configFile.get('plugins.source')
-  return Repo.clone(remoteRepo, pluginsSource)
-})
 ipc.answerRenderer('setDB', async db => {
   console.log('Verbindungsdaten speichern …')
   configFile.set('db', db)

@@ -11,6 +11,8 @@ export const rollupBuild = async (options) => {
   const inputOptions = {
     input: options.source,
     cache,
+    perf: true,
+    treeshake: false,
     plugins: [
       json({ preferConst: true }),
       resolve(),
@@ -35,6 +37,7 @@ export const rollupBuild = async (options) => {
     cache = bundle.cache
     await bundle.write(outputOptions)
     console.log('Komponenten erfolgreich kompiliert')
+    console.log(bundle.getTimings())
     return bundle.modules.map(m => m.id)
   } catch (err) {
     console.log(err)

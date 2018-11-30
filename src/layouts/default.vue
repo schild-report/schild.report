@@ -13,7 +13,6 @@
             {{schule.Bezeichnung2}}
           </span>
         </q-toolbar-title>
-        <!-- <q-btn flat @click="goto('/')"><q-icon name="home" class="q-px-md"/>{{schule.Bezeichnung2}}</q-btn> -->
         <q-search
           v-model="terms"
           placeholder="Name oder Klasse eingeben"

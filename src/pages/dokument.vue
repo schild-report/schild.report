@@ -93,7 +93,6 @@ export default {
       this.dialogMessage = message
     })
     const loadPage = () => {
-      console.log('loadPage')
       this.updateComponent()
       webview.removeEventListener('dom-ready', loadPage)
     }
@@ -125,16 +124,13 @@ export default {
       })
       const abschnitt = { jahr: data.jahr, abschnitt: data.abschnitt }
       this.$store.commit('data/updateAbschnitt', abschnitt)
-      console.log('svelte created', Date())
     },
     updateComponent () {
       this.$q.loading.show()
       const sendIPC = async () => {
-        console.log('sendIPC')
         await ipc.callMain('compileDokumente', `${this.$route.params.repo}/${this.$route.params.id}`)
         webview.removeEventListener('dom-ready', sendIPC)
       }
-      console.log('updateComponent')
       // diese dataurl entspricht der webview.html
       webview.loadURL(
         `data:text/html;charset=utf-8;base64,
@@ -143,7 +139,6 @@ export default {
         fX08L3N0eWxlPjwvaGVhZD48Ym9keT48c2NyaXB0PmlwYygpPC9zY3JpcHQ+PGRpdiBpZD0iY29u
         dGVudCIgY29udGVudGVkaXRhYmxlPSJmYWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2Jv
         ZHk+PC9odG1sPg==`, { baseURLForDataURL: `file://${this.$store.state.data.documentSource}/${this.$route.params.repo}/` })
-      console.log(`baseURL für Dokument: file://${this.$store.state.data.documentSource}/${this.$route.params.repo}`)
       webview.addEventListener('dom-ready', sendIPC)
     }
   }
@@ -154,6 +149,5 @@ export default {
   webview {
     border: none;
     height: -webkit-fill-available;
-    /* padding: 7px 0 0 7px; */
   }
 </style>
