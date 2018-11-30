@@ -22,7 +22,7 @@
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-svelte": "^4.3.2",
+    "rollup-plugin-svelte": "^4.4.0",
     "schild": "^0.3.5",
     "svelte": "^2.15.3",
     "vue": "^2.5.17",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "devtron": "",
-    "electron": "^3.0.9",
+    "electron": "^3.0.10",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "",
     "electron-packager": "^12.2.0",
