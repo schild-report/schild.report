@@ -27,8 +27,8 @@ export default [
     },
     children: [
       { path: '', component: Index },
-      { path: 'klasse/:id', name: 'klasse', component: Klasse },
-      { path: 'schueler/:id', name: 'schueler', component: Schueler },
+      { path: 'klasse', name: 'klasse', component: Klasse },
+      { path: 'schueler', name: 'schueler', component: Schueler },
       { path: 'app/einstellungen', name: 'einstellungen', component: Einstellungen },
       { path: 'dokument/:repo/:id', name: 'dokument', component: Dokument }
     ]

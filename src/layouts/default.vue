@@ -106,8 +106,8 @@ function ensureDirectoryExistence (filePath) {
 export default {
   name: 'Layout',
   created () {
-    this.$root.$on('setzeKlassenLinks', states => {
-      this.schuelerLink = states.schuelerLink
+    this.$root.$on('sucheSchueler', states => {
+      this.updateDaten(states)
     })
     ipc.callMain('source').then(source => {
       this.$store.commit('data/updateDocumentSource', source)
@@ -120,10 +120,10 @@ export default {
   data () {
     return {
       terms: '',
-      schuelerLink: null,
       pdfLink: null,
       opened: false,
-      repos: null
+      repos: null,
+      error: null
     }
   },
   computed: {
@@ -136,13 +136,11 @@ export default {
       return this.schueler
         ? `Zurück zu ${this.schueler.Vorname} ${this.schueler.Name}, ${this.schueler.Klasse}`
         : `Zurück zur ${this.klasse.Klasse}`
-    }
+    },
+    schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
   methods: {
     openURL,
-    reportData () {
-      return this.$store.getters['data/reportData']
-    },
     search (terms, done) {
       ipc.callMain('schildSuche', { arg: terms })
         .then(response => {
@@ -152,7 +150,7 @@ export default {
               var status = statusFeedback(d.status)
               return {
                 label: d.value,
-                searchlink: (status.icon ? '/schueler/' : '/klasse/') + d.id,
+                searchlink: { klasse: (!status.icon), id: d.id },
                 icon: status.icon || 'group',
                 stamp: String(d.jahr || ''),
                 leftColor: status.color
@@ -165,36 +163,102 @@ export default {
           done([])
         })
     },
-    selected (item, keyboard) { if (!keyboard) this.goto(item.searchlink) },
+    selected (item, keyboard) { if (!keyboard) this.updateDaten(item.searchlink) },
+    updateDaten (o) {
+      o.klasse ? this.updateKlasse(o.id) : this.updateSchueler(o.id)
+      if (!['dokument'].includes(this.$route.name)) this.$router.push(o.klasse ? '/klasse' : '/schueler')
+    },
+    updateSchueler (id) {
+      if (this.schueler && id === this.schueler.ID) return
+      this.getSchueler(id)
+      this.getSchuelerfoto(id)
+      this.$store.commit('data/updateSelected', [])
+      this.$store.commit('data/updateKlasseSortiert', null)
+    },
+    getSchueler (id) {
+      this.error = null
+      this.$q.loading.show()
+      ipc.callMain('schildGetSchueler', { arg: id })
+        .then(response => {
+          this.$q.loading.hide()
+          this.$store.commit('data/updateKlasse', [response])
+          this.$store.commit('data/updateSchuelerGewaehlt', [response])
+        })
+        .catch(error => {
+          this.error = error.toString()
+          this.$q.loading.hide()
+        })
+    },
+    getSchuelerfoto (id) {
+      ipc.callMain('schildGetSchuelerfoto', { arg: id })
+        .then(response => {
+          this.$store.commit('data/updateSchuelerfoto', response)
+        })
+        .catch((error) => {
+          this.$store.commit('data/updateSchuelerfoto', '')
+          this.error = error.toString()
+        })
+    },
+    updateKlasse (id) {
+      if (this.klasse && id === this.klasse.Klasse) return
+      this.$q.loading.show()
+      this.$store.commit('data/updateSelected', [])
+      this.error = null
+      ipc.callMain('schildGetKlasse', { arg: id })
+        .then((response) => {
+          const klasse = response
+          const inaktiv = [], aktiv = [], fertig = [], neu = []
+          klasse.schueler.forEach((s) => {
+            if (s.Status === 2 && s.Geloescht === '-' && s.Gesperrt === '-') aktiv.push(s)
+            else if (s.Status === 8 && s.Geloescht === '-' && s.Gesperrt === '-') fertig.push(s)
+            else if (s.Status === 0 && s.Geloescht === '-' && s.Gesperrt === '-') neu.push(s)
+            else inaktiv.push(s)
+          })
+          // const gruppen = [inaktiv, aktiv, fertig, neu]
+          // gruppen.forEach(e => _(e).sortBy(s => s.Vorname).sortBy(s => s.Name))
+          this.$store.commit('data/updateKlasseSortiert', {
+            '2': { titel: 'Aktive Schüler', schueler: aktiv, status: 'positive' },
+            '8': { titel: 'Ausbildung beendet', schueler: fertig, status: 'positive' },
+            '0': { titel: 'Neue Schüler', schueler: neu, status: 'blue' },
+            'x': { titel: 'Inaktive Schüler', schueler: inaktiv, status: 'negative' }
+          })
+          this.$store.commit('data/updateKlasse', klasse)
+          let selection
+          if (aktiv.length > 0) selection = aktiv
+          else if (fertig.length > 0) selection = fertig
+          else if (neu.length > 0) selection = neu
+          else selection = klasse.schueler
+          this.$store.commit('data/updateSchuelerGewaehlt', selection)
+          this.$q.loading.hide()
+        })
+        .catch((error) => {
+          this.error = error.toString()
+          this.$q.loading.hide()
+        })
+    },
     goto (dest) { this.$router.push(dest) },
-    pullRepos () { ipc.callMain('pullDokumente') },
     openDokument (key) { this.$router.push('/dokument/' + key) },
-    pdfName () {
+    openPdf (options = {}) {
+      const webview = document.querySelector('webview')
       const s = this.schueler || this.klasse.schueler[0]
       const d = parse(this.$route.params.id).name
       const jahr = this.$store.state.data.abschnitt.jahr || s.AktSchuljahr
       const abschnitt = this.$store.state.data.abschnitt.abschnitt || s.AktAbschnitt
-      return `${jahr}_${abschnitt}_${s.Klasse}_${d}.pdf`
-    },
-    openPdf (options = {}) {
-      const webview = document.querySelector('webview')
+      const dir = join(api.app.getPath('documents'), api.app.getName(), 'pdf', jahr.toString())
+      const pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${d}.pdf`
+      const pdfPath = join(dir, pdfName)
       options = {
         marginsType: options.marginsType || 1,
-        printBackground: options.printBackground || true,
-        pdfName: this.pdfName()
+        printBackground: options.printBackground || true
       }
       webview.printToPDF({ ...options }, (error, data) => {
         if (error) throw error
-        const s = this.schueler || this.klasse.schueler[0]
-        const jahr = this.$store.state.data.abschnitt.jahr || s.AktSchuljahr
-        const dir = join(api.app.getPath('documents'), api.app.getName(), 'pdf', jahr.toString())
-        const pdfPath = join(dir, options.pdfName)
         ensureDirectoryExistence(pdfPath)
         writeFile(pdfPath, data, error => {
           if (error) throw error
         })
-        if (!shell.openItem(pdfPath)) ipc.callMain('view-pdf', options.pdfName)
       })
+      shell.openItem(pdfPath)
     }
   }
 }

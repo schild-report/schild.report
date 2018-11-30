@@ -2,7 +2,7 @@
   <q-page padding class="row">
     <div v-if="schueler" class="content">
       <div class="q-display-1">
-        <router-link class="text-secondary" :style="{ textDecoration: 'none' }" color="secondary" v-bind:to="'/klasse/' + schueler.Klasse">{{schueler.Klasse}}</router-link> > {{schueler.Vorname}} {{schueler.Name}} ({{schueler.Geschlecht === 3 ? "&#x2642;" : "&#x2640;"}} {{alter}})
+        <span class="text-secondary cursor-pointer" color="secondary" v-on:click="$root.$emit('sucheSchueler', { klasse: true, id: schueler.Klasse })">{{schueler.Klasse}}</span> > {{schueler.Vorname}} {{schueler.Name}} ({{schueler.Geschlecht === 3 ? "&#x2642;" : "&#x2640;"}} {{alter}})
       </div>
       <q-card inline v-if="tabelle.length > 0" style="margin: 5px">
         <q-card-title>Leistungsübersicht</q-card-title>
@@ -73,8 +73,6 @@
 </template>
 
 <script>
-const ipc = require('electron-better-ipc')
-
 export default {
   name: 'Schueler',
   data () {
@@ -86,15 +84,6 @@ export default {
         rowsPerPage: 100
       }
     }
-  },
-  created () {
-    // fetch the data when the view is created and the data is
-    // already being observed
-    this.updateSchueler()
-  },
-  watch: {
-    // call again the method if the route changes
-    '$route': 'updateSchueler'
   },
   computed: {
     tabelle () {
@@ -140,16 +129,6 @@ export default {
     }
   },
   methods: {
-    updateSchueler () {
-      if (this.schueler && this.$route.params.id === this.schueler.ID) return
-      this.getSchueler()
-      this.getSchuelerfoto()
-      this.$store.commit('data/updateSelected', [])
-      this.$store.commit('data/updateKlasseSortiert', null)
-      this.$root.$emit('setzeKlassenLinks', {
-        schuelerLink: this.$route.path
-      })
-    },
     faecher () {
       let faecher = {}
       this.schueler.abschnitte.forEach((abschnitt, i) => {
@@ -163,30 +142,6 @@ export default {
         })
       })
       return faecher
-    },
-    getSchueler () {
-      this.error = null
-      this.$q.loading.show()
-      ipc.callMain('schildGetSchueler', { arg: this.$route.params.id })
-        .then(response => {
-          this.$q.loading.hide()
-          this.$store.commit('data/updateKlasse', [response])
-          this.$store.commit('data/updateSchuelerGewaehlt', [response])
-        })
-        .catch(error => {
-          this.error = error.toString()
-          this.$q.loading.hide()
-        })
-    },
-    getSchuelerfoto () {
-      ipc.callMain('schildGetSchuelerfoto', { arg: this.$route.params.id })
-        .then(response => {
-          this.$store.commit('data/updateSchuelerfoto', response)
-        })
-        .catch((error) => {
-          this.$store.commit('data/updateSchuelerfoto', '')
-          this.error = error.toString()
-        })
     }
   }
 }

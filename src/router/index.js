@@ -39,9 +39,8 @@ if (isEmpty(db)) {
       },
       arg2: 'testing'
     })
-    .then(res => console.log(res)).catch(e => console.log(e))
-
-  store.commit('data/updateKnex', db)
+    .then(_ => store.commit('data/updateKnex', db))
+    .catch(e => console.log(e))
 }
 store.commit('data/updateAuth', configFile.get('passAuth'))
 store.commit('data/updateComponentsPath', configFile.get('plugins.destination'))

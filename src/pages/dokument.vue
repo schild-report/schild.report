@@ -61,7 +61,13 @@ let webview
 export default {
   name: 'Dokument',
   watch: {
-    $route (to, from) { this.updateComponent() }
+    $route (to, from) { this.updateComponent() },
+    schueler () {
+      webview.send('setData', {
+        ...this.$store.getters['data/reportData'],
+        knex: this.$store.state.data.knex
+      })
+    }
   },
   data () {
     return {
@@ -74,6 +80,11 @@ export default {
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
       dialogMessage: null
+    }
+  },
+  computed: {
+    schueler () {
+      return this.$store.state.data.klasse
     }
   },
   mounted () {

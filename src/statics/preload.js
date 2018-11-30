@@ -19,6 +19,9 @@ global.ipc = () => {
   ipcRenderer.on('setAbschnitt', (event, abschnitt) => {
     svelte.set({ jahr: abschnitt.jahr, abschnitt: abschnitt.abschnitt })
   })
+  ipcRenderer.on('setData', (event, data) => {
+    svelte.set(data)
+  })
 
   ipcRenderer.on('updateComponents', (event, args) => {
     delete require.cache[require.resolve(args.componentsPath)]
