@@ -141,6 +141,9 @@ export default {
   },
   methods: {
     openURL,
+    reportData () {
+      return this.$store.getters['data/reportData']
+    },
     search (terms, done) {
       ipc.callMain('schildSuche', { arg: terms })
         .then(response => {
