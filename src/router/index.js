@@ -28,13 +28,7 @@ if (isEmpty(db)) {
         testing: {
           client: 'mysql',
           useNullAsDefault: true,
-          connection: {
-            host: db.host,
-            database: db.name,
-            user: db.user,
-            password: db.password,
-            charset: 'utf8'
-          }
+          connection: db
         }
       },
       arg2: 'testing'

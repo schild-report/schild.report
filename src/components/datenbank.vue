@@ -16,7 +16,7 @@
       <q-input
         stack-label="Datenbank"
         placeholder="Name der Datenbank, z.B. schild_berufskolleg"
-        v-model="db.name"
+        v-model="db.database"
       />
     </q-card-main>
     <q-card-main>
@@ -45,7 +45,7 @@ export default {
   data () {
     return {
       checkConnection: 'Verbindung prüfen …',
-      db: this.$store.state.data.knex || { host: '', database: '', user: '', password: '' },
+      db: this.$store.state.data.knex || { host: '', database: '', user: '', password: '', charset: 'utf8' },
       testing: null
     }
   },
@@ -57,13 +57,7 @@ export default {
             testing: {
               client: 'mysql',
               useNullAsDefault: true,
-              connection: {
-                host: this.db.host,
-                database: this.db.name,
-                user: this.db.user,
-                password: this.db.password,
-                charset: 'utf8'
-              }
+              connection: this.db
             }
           },
           arg2: 'testing'
@@ -75,6 +69,7 @@ export default {
             if (!res) throw new Error('Die Verbindung konnte nicht hergestellt werden.')
             else this.testing = 'green'
             this.checkConnection = 'Verbindungsdaten speichern'
+            this.$store.commit('data/updateKnex', this.db)
             ipc.callMain('setDB', this.db)
               .then(res => this.$router.push('/'))
               .catch(err => console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err))
