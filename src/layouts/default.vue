@@ -47,7 +47,12 @@
           :key="repo"
         >
           <q-list-header style="line-height: 1.15em">{{repo}}</q-list-header>
-            <q-item @click.native="openDokument(`${repo}/${dokument}`)" v-for="(dokument) in dokumente" :key="dokument">
+            <q-item
+              :class="repo === $route.params.repo && dokument === $route.params.id ? 'bg-light':''"
+              @click.native="openDokument(`${repo}/${dokument}`)"
+              v-for="(dokument) in dokumente"
+              :key="dokument"
+            >
               {{ dokument.slice(0, -5) }}
             </q-item>
         </q-list>
@@ -236,6 +241,7 @@ export default {
     goto (dest) { this.$router.push(dest) },
     openDokument (key) { this.$router.push('/dokument/' + key) },
     openPdf (options = {}) {
+      console.log('öffne PDF')
       const webview = document.querySelector('webview')
       const s = this.schueler || this.klasse.schueler[0]
       const d = parse(this.$route.params.id).name
@@ -254,8 +260,8 @@ export default {
         writeFile(pdfPath, data, error => {
           if (error) throw error
         })
+        shell.openItem(pdfPath)
       })
-      shell.openItem(pdfPath)
     }
   }
 }
