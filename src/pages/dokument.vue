@@ -61,7 +61,10 @@ let webview
 export default {
   name: 'Dokument',
   watch: {
-    $route (to, from) { this.updateComponent() },
+    $route (to, from) {
+      ipc.callMain('compileDokumente', { file: `${this.$route.params.repo}/${this.$route.params.id}`, componentArgs: this.componentArgs })
+      this.updateComponent()
+    },
     schueler () {
       webview.send('setData', {
         ...this.$store.getters['data/reportData'],
@@ -79,7 +82,12 @@ export default {
       load: false,
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
-      dialogMessage: null
+      dialogMessage: null,
+      componentArgs: {
+        ...this.$store.getters['data/reportData'],
+        componentsPath: this.$store.state.data.componentsPath + '/bundle.js',
+        knexConfig: this.$store.state.data.knex
+      }
     }
   },
   computed: {
@@ -87,14 +95,12 @@ export default {
       return this.$store.state.data.klasse
     }
   },
+  created () {
+    ipc.callMain('compileDokumente', { file: `${this.$route.params.repo}/${this.$route.params.id}`, componentArgs: this.componentArgs })
+  },
   mounted () {
     webview = document.querySelector('webview')
-    ipc.answerMain('hmr', () => {
-      this.createSvelte()
-      this.$q.loading.hide()
-    })
     ipc.answerMain('messageRollup', async (message) => {
-      this.$q.loading.hide()
       console.log(message)
       if (message.plugin) {
         this.dialogModelSvelteError = true
@@ -126,23 +132,7 @@ export default {
       this.devToolsColor = !is ? 'green' : 'red'
       is ? webview.closeDevTools() : webview.openDevTools()
     },
-    createSvelte () {
-      const data = this.$store.getters['data/reportData']
-      webview.send('updateComponents', {
-        componentsPath: this.$store.state.data.componentsPath + '/bundle.js',
-        knex: this.$store.state.data.knex,
-        reportData: data
-      })
-      const abschnitt = { jahr: data.jahr, abschnitt: data.abschnitt }
-      this.$store.commit('data/updateAbschnitt', abschnitt)
-    },
     updateComponent () {
-      this.$q.loading.show()
-      const sendIPC = async () => {
-        await ipc.callMain('compileDokumente', `${this.$route.params.repo}/${this.$route.params.id}`)
-        webview.removeEventListener('dom-ready', sendIPC)
-      }
-      // diese dataurl entspricht der webview.html
       webview.loadURL(
         `data:text/html;charset=utf-8;base64,
         PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
@@ -150,7 +140,6 @@ export default {
         fX08L3N0eWxlPjwvaGVhZD48Ym9keT48c2NyaXB0PmlwYygpPC9zY3JpcHQ+PGRpdiBpZD0iY29u
         dGVudCIgY29udGVudGVkaXRhYmxlPSJmYWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2Jv
         ZHk+PC9odG1sPg==`, { baseURLForDataURL: `file://${this.$store.state.data.documentSource}/${this.$route.params.repo}/` })
-      webview.addEventListener('dom-ready', sendIPC)
     }
   }
 }

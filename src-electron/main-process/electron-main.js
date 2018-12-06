@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, webviewTag } from 'electron'
 import { VERSION } from './version'
 console.log(VERSION)
 if (process.argv.some(a => a === '-v')) app.exit()
@@ -83,7 +83,7 @@ ipc.answerRenderer('source', async () => {
   return configFile.get('plugins.source')
 })
 
-function scanSource () {
+const scanSource = async () => {
   const isDirectory = source => lstatSync(source).isDirectory()
   const getDirectories = source =>
     readdirSync(source).map(name => join(source, name)).filter(isDirectory)
@@ -106,13 +106,27 @@ ipc.answerRenderer('repos', async () => {
   fileWatcher.on('-', ({ path, stats }) => { scanSource() })
 })
 
+let webview
+let webviewReady = {}
+ipc.on('webviewReady', event => {
+  webview = event.sender
+  webviewReady.webview = true
+  updateWebView()
+})
+
+const updateWebView = async () => {
+  if (webviewReady.webview && webviewReady.dokument) {
+    webview.send('updateComponents', webviewReady.componentArgs)
+  }
+}
 const compileDokumente = async (file) => {
   try {
     const moduleIDs = await rollupBuild({
       source: join(configFile.get('plugins.source'), file),
       dest: configFile.get('plugins.destination')
     })
-    ipc.callRenderer(mainWindow, 'hmr')
+    webviewReady.dokument = true
+    updateWebView()
     return moduleIDs
   } catch (err) {
     ipc.callRenderer(mainWindow, 'messageRollup', {
@@ -121,12 +135,13 @@ const compileDokumente = async (file) => {
       stack: err.stack,
       message: err.message
     })
-    return [err.filename]
+    return [file, err.filename]
   }
 }
-ipc.answerRenderer('compileDokumente', async (file) => {
-  console.log('Rollup starten für …')
-  const moduleIDs = await compileDokumente(file)
+ipc.answerRenderer('compileDokumente', async (args) => {
+  console.log('Rollup starten für …', args.file)
+  webviewReady.componentArgs = args.componentArgs
+  const moduleIDs = await compileDokumente(args.file)
   console.log(moduleIDs)
   while (watcher.length) { watcher.pop().close() }
   moduleIDs.forEach(async (moduleID) => {
@@ -138,7 +153,13 @@ ipc.answerRenderer('compileDokumente', async (file) => {
       })
       console.log('Beobachte: ' + moduleID)
       await emitter.init()
-      emitter.on('+', ({ path, stats, isNew }) => { if (!isNew) { console.log('Änderungen bei: ' + path); compileDokumente(file) } })
+      emitter.on('+', ({ path, stats, isNew }) => {
+        if (!isNew) {
+          console.log('Änderungen bei: ' + path)
+          compileDokumente(args.file)
+          webviewTag.send('updateComponents', args.componentArgs)
+        }
+      })
       watcher.push(emitter)
     }
   })

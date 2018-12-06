@@ -10,6 +10,7 @@ global.R = {
 }
 
 global.ipc = () => {
+  ipcRenderer.send('webviewReady')
   const mark = new Mark(document.querySelector('body'))
   let svelte
 
@@ -23,19 +24,11 @@ global.ipc = () => {
     svelte.set(data)
   })
 
-  ipcRenderer.on('updateComponents', (event, args) => {
-    delete require.cache[require.resolve(args.componentsPath)]
-    const Component = require(args.componentsPath)
+  ipcRenderer.on('updateComponents', (event, data) => {
+    delete require.cache[require.resolve(data.componentsPath)]
+    const Component = require(data.componentsPath)
     if (svelte) svelte.destroy()
-    svelte = new Component(
-      {
-        target: document.querySelector('svelte'),
-        data: {
-          ...args.reportData,
-          knex: args.knex
-        }
-      }
-    )
+    svelte = new Component({ target: document.querySelector('svelte'), data })
     mark.mark(['undefined', '01.01.1970'])
   })
 }

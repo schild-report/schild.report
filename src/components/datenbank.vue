@@ -8,7 +8,7 @@
       <q-input
         stack-label="Server"
         placeholder="Serveradresse, z.B. localhost oder 192.168.178.99"
-        v-model="db.host"
+        v-model="db.connection.host"
         autofocus
       />
     </q-card-main>
@@ -16,18 +16,18 @@
       <q-input
         stack-label="Datenbank"
         placeholder="Name der Datenbank, z.B. schild_berufskolleg"
-        v-model="db.database"
+        v-model="db.connection.database"
       />
     </q-card-main>
     <q-card-main>
-      <q-input float-label="Benutzername" v-model="db.user"/>
+      <q-input float-label="Benutzername" v-model="db.connection.user"/>
     </q-card-main>
     <q-card-main>
       <q-input
         type="password"
         no-pass-toggle
         float-label="Passwort"
-        v-model="db.password"
+        v-model="db.connection.password"
         @keyup.enter="handleSubmit"
       />
     </q-card-main>
@@ -45,7 +45,11 @@ export default {
   data () {
     return {
       checkConnection: 'Verbindung prüfen …',
-      db: this.$store.state.data.knex || { host: '', database: '', user: '', password: '', charset: 'utf8' },
+      db: this.$store.state.data.knex || {
+        client: 'mysql',
+        useNullAsDefault: true,
+        connection: { host: '', database: '', user: '', password: '', charset: 'utf8' }
+      },
       testing: null
     }
   },
@@ -54,11 +58,7 @@ export default {
       ipc.callMain(
         'schildConnect', {
           arg: {
-            testing: {
-              client: 'mysql',
-              useNullAsDefault: true,
-              connection: this.db
-            }
+            testing: this.db
           },
           arg2: 'testing'
         })

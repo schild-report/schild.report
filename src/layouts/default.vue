@@ -180,16 +180,13 @@ export default {
     },
     getSchueler (id) {
       this.error = null
-      this.$q.loading.show()
       ipc.callMain('schildGetSchueler', { arg: id })
         .then(response => {
-          this.$q.loading.hide()
           this.$store.commit('data/updateKlasse', [response])
           this.$store.commit('data/updateSchuelerGewaehlt', [response])
         })
         .catch(error => {
           this.error = error.toString()
-          this.$q.loading.hide()
         })
     },
     getSchuelerfoto (id) {
@@ -204,7 +201,6 @@ export default {
     },
     updateKlasse (id) {
       if (this.klasse && id === this.klasse.Klasse) return
-      this.$q.loading.show()
       this.$store.commit('data/updateSelected', [])
       this.error = null
       ipc.callMain('schildGetKlasse', { arg: id })
@@ -232,11 +228,9 @@ export default {
           else if (neu.length > 0) selection = neu
           else selection = klasse.schueler
           this.$store.commit('data/updateSchuelerGewaehlt', selection)
-          this.$q.loading.hide()
         })
         .catch((error) => {
           this.error = error.toString()
-          this.$q.loading.hide()
         })
     },
     goto (dest) { this.$router.push(dest) },

@@ -24,13 +24,7 @@ if (isEmpty(db)) {
   console.log('Verbindungsdaten gefunden, Datenbank öffnen')
   ipc.callMain(
     'schildConnect', {
-      arg: {
-        testing: {
-          client: 'mysql',
-          useNullAsDefault: true,
-          connection: db
-        }
-      },
+      arg: { testing: db },
       arg2: 'testing'
     })
     .then(_ => store.commit('data/updateKnex', db))
