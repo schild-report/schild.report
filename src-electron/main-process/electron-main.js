@@ -152,14 +152,19 @@ ipc.answerRenderer('compileDokumente', async (args) => {
         filter: ({ path, stats }) => moduleID.endsWith(path)
       })
       console.log('Beobachte: ' + moduleID)
-      await emitter.init()
-      emitter.on('+', ({ path, stats, isNew }) => {
-        if (!isNew) {
-          console.log('Änderungen bei: ' + path)
-          compileDokumente(args.file)
-          webviewTag.send('updateComponents', args.componentArgs)
-        }
-      })
+      try {
+        await emitter.init()
+        emitter.on('+', async ({ path, stats, isNew }) => {
+          if (!isNew) {
+            console.log('Änderungen bei: ' + path)
+            await compileDokumente(args.file)
+            console.log('nach ' + path)
+            webviewTag.send('updateComponents', args.componentArgs)
+          }
+        })
+      } catch (e) {
+        console.log(e)
+      }
       watcher.push(emitter)
     }
   })

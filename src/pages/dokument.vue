@@ -82,17 +82,17 @@ export default {
       load: false,
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
-      dialogMessage: null,
-      componentArgs: {
+      dialogMessage: null
+    }
+  },
+  computed: {
+    schueler () { return this.$store.state.data.klasse },
+    componentArgs () {
+      return {
         ...this.$store.getters['data/reportData'],
         componentsPath: this.$store.state.data.componentsPath + '/bundle.js',
         knexConfig: this.$store.state.data.knex
       }
-    }
-  },
-  computed: {
-    schueler () {
-      return this.$store.state.data.klasse
     }
   },
   created () {
@@ -133,7 +133,6 @@ export default {
       is ? webview.closeDevTools() : webview.openDevTools()
     },
     updateComponent () {
-      console.log('updateWebview')
       webview.loadURL(
         `data:text/html;charset=utf-8;base64,
         PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
