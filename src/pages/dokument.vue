@@ -63,7 +63,7 @@ export default {
   watch: {
     $route (to, from) {
       ipc.callMain('compileDokumente', { file: `${this.$route.params.repo}/${this.$route.params.id}`, componentArgs: this.componentArgs })
-      this.updateComponent()
+      if (to.params.repo !== from.params.repo) this.updateComponent()
     },
     schueler () {
       webview.send('setData', {
@@ -133,6 +133,7 @@ export default {
       is ? webview.closeDevTools() : webview.openDevTools()
     },
     updateComponent () {
+      console.log('updateWebview')
       webview.loadURL(
         `data:text/html;charset=utf-8;base64,
         PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
