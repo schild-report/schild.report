@@ -37,7 +37,7 @@
     "electron": "^3.0.11",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "",
-    "electron-packager": "^12.2.0",
+    "electron-packager": "^13.0.0",
     "electron-rebuild": "^1.8.2",
     "electron-wix-msi": "^2.1.1",
     "eslint": "^5.10.0",
@@ -48,7 +48,7 @@
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^4.7.1",
+    "eslint-plugin-vue": "^5.0.0",
     "quasar-cli": "^0.17.22",
     "strip-ansi": "^3.0.1"
   },
