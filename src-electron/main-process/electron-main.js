@@ -158,7 +158,6 @@ ipc.answerRenderer('compileDokumente', async (args) => {
           if (!isNew) {
             console.log('Änderungen bei: ' + path)
             await compileDokumente(args.file)
-            console.log('nach ' + path)
             webviewTag.send('updateComponents', args.componentArgs)
           }
         })

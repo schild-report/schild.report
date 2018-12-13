@@ -86,9 +86,7 @@ export default {
     }
   },
   computed: {
-    tabelle () {
-      return Object.entries(this.faecher()).map(e => { return { name: e[0], ...e[1] } })
-    },
+    tabelle () { return Object.entries(this.faecher()).map(e => { return { name: e[0], ...e[1] } }) },
     columns () {
       if (this.tabelle.length === 0) return
       let a = [
@@ -104,16 +102,8 @@ export default {
       })
       return a
     },
-    schueler () {
-      return this.$store.state.data.klasse[0]
-    },
-    schuelerfoto () {
-      const foto = this.$store.state.data.schuelerfoto
-      return `data:image/jpg;base64,${foto}`
-    },
-    fehlstunden () {
-      return ['Fehlstunden', 'unentschuldigt']
-    },
+    schueler () { return this.$store.state.data.klasse[0] },
+    schuelerfoto () { return `data:image/jpg;base64,${this.$store.state.data.schuelerfoto}` },
     alter () {
       const geburtstag = +new Date(this.schueler.Geburtsdatum)
       return ~~((Date.now() - geburtstag) / (31557600000))

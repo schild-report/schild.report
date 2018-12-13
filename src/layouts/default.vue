@@ -49,9 +49,8 @@
           <q-list-header style="line-height: 1.15em">{{repo}}</q-list-header>
             <q-item
               :class="repo === $route.params.repo && dokument === $route.params.id ? 'bg-light':''"
-              @click.native="openDokument(`${repo}/${dokument}`)"
-              v-for="(dokument) in dokumente"
-              :key="dokument"
+              @click.native="goto(`/dokument/${repo}/${dokument}`)"
+              v-for="(dokument) in dokumente" :key="dokument"
             >
               {{ dokument.slice(0, -5) }}
             </q-item>
@@ -62,17 +61,16 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-      <q-page-sticky position="top-right" :offset="[18, 85]" v-if="dokumentenauswahlZeigen">
-        <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
-      </q-page-sticky>
-      <q-modal v-model="opened" content-css="padding: 30px">
-        <div v-json-content="reportData()" v-if="opened"></div>
-      </q-modal>
+    <q-page-sticky position="top-right" :offset="[18, 85]" v-if="dokumentenauswahlZeigen">
+      <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
+    </q-page-sticky>
+    <q-modal v-model="opened" content-css="padding: 30px">
+      <div v-json-content="reportData()" v-if="opened"></div>
+    </q-modal>
   </q-layout>
 </template>
 
 <script>
-import { openURL } from 'quasar'
 import _ from 'lodash'
 import { writeFile, existsSync, mkdirSync } from 'fs'
 import { parse, join, dirname } from 'path'
@@ -114,9 +112,7 @@ export default {
     this.$root.$on('sucheSchueler', states => {
       this.updateDaten(states)
     })
-    ipc.callMain('source').then(source => {
-      this.$store.commit('data/updateDocumentSource', source)
-    })
+    ipc.callMain('source').then(source => this.$store.commit('data/updateDocumentSource', source))
   },
   mounted () {
     ipc.callMain('repos')
@@ -145,10 +141,7 @@ export default {
     schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
   methods: {
-    openURL,
-    reportData () {
-      return this.$store.getters['data/reportData']
-    },
+    reportData () { return this.$store.getters['data/reportData'] },
     search (terms, done) {
       ipc.callMain('schildSuche', { arg: terms })
         .then(response => {
@@ -239,7 +232,6 @@ export default {
         })
     },
     goto (dest) { this.$router.push(dest) },
-    openDokument (key) { this.$router.push('/dokument/' + key) },
     openPdf (options = {}) {
       console.log('öffne PDF')
       const webview = document.querySelector('webview')

@@ -44,10 +44,8 @@
       <span slot="title">{{dialogMessage.pluginCode}}</span>
       <div slot="body">
         Fehler in <b>{{dialogMessage.filename}}</b>:
-        <br>
-        Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
-        <br>
-        <pre>{{dialogMessage.frame}}</pre>
+        <br> Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
+        <br> <pre>{{dialogMessage.frame}}</pre>
       </div>
     </q-dialog>
   </div>

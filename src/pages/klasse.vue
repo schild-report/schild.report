@@ -38,7 +38,8 @@
                   {{props.row.Strasse}}, {{props.row.PLZ}} {{props.row.OrtAbk}}
                 </div>
                 <div v-if="col.name === 'Geburtstag'">
-                  {{new Date(props.row.Geburtsdatum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'})}} <q-icon name="label" :class="props.row.volljaehrig ? 'text-positive' : 'text-negative'"/>
+                  {{new Date(props.row.Geburtsdatum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'})}}
+                  <q-icon name="label" :class="props.row.volljaehrig ? 'text-positive' : 'text-negative'"/>
                 </div>
                 <div v-if="col.name === 'Info'">
                   <div v-if="props.row.vermerke.length > 0">
@@ -66,7 +67,6 @@ export default {
   data () {
     return {
       error: null,
-      selected: this.$store.state.data.selected,
       pagination: {
         descending: false,
         page: 1,
@@ -85,6 +85,7 @@ export default {
   },
   computed: {
     klasse () { return this.$store.state.data.klasse },
+    selected () { return this.$store.state.data.selected },
     klasseSortiert () { return this.$store.state.data.klasseSortiert }
   },
   watch: {
