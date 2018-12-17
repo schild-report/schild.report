@@ -66,6 +66,7 @@ export default {
   name: 'Klasse',
   data () {
     return {
+      selected: this.$store.state.data.selected,
       error: null,
       pagination: {
         descending: false,
@@ -85,7 +86,6 @@ export default {
   },
   computed: {
     klasse () { return this.$store.state.data.klasse },
-    selected () { return this.$store.state.data.selected },
     klasseSortiert () { return this.$store.state.data.klasseSortiert }
   },
   watch: {
