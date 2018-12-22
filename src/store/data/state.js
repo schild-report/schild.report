@@ -10,5 +10,7 @@ export default {
   knex: null,
   auth: null,
   documentSource: null,
-  abschnitt: {}
+  abschnitt: {},
+  repos: null,
+  message: null
 }

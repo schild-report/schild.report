@@ -64,10 +64,16 @@ export default {
       if (to.params.repo !== from.params.repo) this.updateComponent()
     },
     schueler () {
-      webview.send('setData', {
-        ...this.$store.getters['data/reportData'],
-        knex: this.$store.state.data.knex
-      })
+      webview.send('setData', this.componentArgs)
+    },
+    message () {
+      console.log(this.message)
+      if (this.message.plugin) {
+        this.dialogModelSvelteError = true
+      } else {
+        this.dialogModelRollupError = true
+      }
+      this.dialogMessage = this.message
     }
   },
   data () {
@@ -85,6 +91,7 @@ export default {
   },
   computed: {
     schueler () { return this.$store.state.data.klasse },
+    message () { return this.$store.state.data.message },
     componentArgs () {
       return {
         ...this.$store.getters['data/reportData'],
@@ -98,15 +105,6 @@ export default {
   },
   mounted () {
     webview = document.querySelector('webview')
-    ipc.answerMain('messageRollup', async (message) => {
-      console.log(message)
-      if (message.plugin) {
-        this.dialogModelSvelteError = true
-      } else {
-        this.dialogModelRollupError = true
-      }
-      this.dialogMessage = message
-    })
     const loadPage = () => {
       this.updateComponent()
       webview.removeEventListener('dom-ready', loadPage)

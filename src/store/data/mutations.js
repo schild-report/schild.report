@@ -39,3 +39,9 @@ export const updateDocumentSource = (state, data) => {
 export const updateAbschnitt = (state, data) => {
   state.abschnitt = data
 }
+export const updateRepos = (state, data) => {
+  state.repos = data
+}
+export const updateMessage = (state, data) => {
+  state.message = data
+}

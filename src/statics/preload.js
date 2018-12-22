@@ -13,6 +13,7 @@ global.ipc = () => {
   ipcRenderer.send('webviewReady')
   const mark = new Mark(document.querySelector('body'))
   let svelte
+  let data
 
   ipcRenderer.on('editContent', (event, edit) => {
     document.querySelector('#content').setAttribute('contenteditable', edit)
@@ -20,11 +21,13 @@ global.ipc = () => {
   ipcRenderer.on('setAbschnitt', (event, abschnitt) => {
     svelte.set({ jahr: abschnitt.jahr, abschnitt: abschnitt.abschnitt })
   })
-  ipcRenderer.on('setData', (event, data) => {
-    svelte.set(data)
+  ipcRenderer.on('setData', (event, newData) => {
+    svelte.set(newData)
+    data = newData
   })
 
-  ipcRenderer.on('updateComponents', (event, data) => {
+  ipcRenderer.on('updateComponents', (event, newData) => {
+    data = data || newData
     delete require.cache[require.resolve(data.componentsPath)]
     const Component = require(data.componentsPath)
     if (svelte) svelte.destroy()

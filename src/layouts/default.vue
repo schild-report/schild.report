@@ -116,19 +116,18 @@ export default {
   },
   mounted () {
     ipc.callMain('repos')
-    ipc.answerMain('updateRepos', repos => { this.repos = repos })
   },
   data () {
     return {
       terms: '',
       pdfLink: null,
       opened: false,
-      repos: null,
       error: null
     }
   },
   computed: {
     klasse () { return this.$store.state.data.klasse },
+    repos () { return this.$store.state.data.repos },
     schueler () { return this.klasse[0] },
     schule () { return this.$store.state.data.schule || '' },
     pdfLinkZeigen () { return ['dokument'].includes(this.$route.name) },

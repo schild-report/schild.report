@@ -70,6 +70,8 @@ export default {
             else this.testing = 'green'
             this.checkConnection = 'Verbindungsdaten speichern'
             this.$store.commit('data/updateKnex', this.db)
+            ipc.callMain('schildGetSchule')
+              .then(schule => this.$store.commit('data/updateSchule', schule))
             ipc.callMain('setDB', this.db)
               .then(res => this.$router.push('/'))
               .catch(err => console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err))
