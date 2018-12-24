@@ -7,6 +7,7 @@ import ipc from 'electron-better-ipc'
 import routes from './routes'
 
 let db = configFile.get('db')
+store.commit('data/updatePrivateDaten', configFile.get('privateDaten'))
 
 Vue.use(VueRouter)
 

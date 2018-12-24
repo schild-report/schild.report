@@ -45,3 +45,6 @@ export const updateRepos = (state, data) => {
 export const updateMessage = (state, data) => {
   state.message = data
 }
+export const updatePrivateDaten = (state, data) => {
+  state.privateDaten = data
+}

@@ -12,5 +12,6 @@ export default {
   documentSource: null,
   abschnitt: {},
   repos: null,
-  message: null
+  message: null,
+  privateDaten: {}
 }

@@ -20,6 +20,7 @@ const configFile = new Store({
       remoteRepos: ''
     },
     db: {},
+    privateDaten: {},
     passAuth: false
   }
 })

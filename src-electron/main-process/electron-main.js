@@ -173,6 +173,10 @@ ipc.answerRenderer('setDB', async db => {
   console.log('Verbindungsdaten speichern …')
   configFile.set('db', db)
 })
+ipc.answerRenderer('setPrivateDaten', async data => {
+  console.log('Private Daten speichern …')
+  configFile.set('privateDaten', data)
+})
 ipc.answerRenderer('schildConnect', async data => {
   return schild.connect(data.arg, data.arg2)
 })
