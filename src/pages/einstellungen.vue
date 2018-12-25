@@ -7,8 +7,8 @@
       </q-card-title>
       <q-card-separator />
       <q-card-main>
-        Version: {{VERSION.buildVersion}}
-        <br>ID: {{VERSION.gitHash}}
+        Version: {{configData.version.buildVersion}}
+        <br>ID: {{configData.version.gitHash}}
       </q-card-main>
     </q-card>
     <q-card inline style="width: 500px; margin: 5px">
@@ -24,7 +24,7 @@
           <q-input class="col" v-model="value" stack-label="Value" @keyup.enter="add"/>
         </div>
         <q-list dense no-border>
-          <q-item v-for="(value, key, id) in privateDaten" :key="id">
+          <q-item v-for="(value, key, id) in configData.privateDaten" :key="id">
             <q-item-main :label="`${key}: ${value}`" />
             <q-item-side right>
               <q-item-tile icon="delete" color="red" class="cursor-pointer" @click.native="remove(key)"/>
@@ -37,28 +37,28 @@
 </template>
 
 <script>
-const ipc = require('electron-better-ipc')
+// const ipc = require('electron-better-ipc')
 import datenbank from './../components/datenbank.vue'
-import { VERSION } from '../../src-electron/main-process/version'
 
 export default {
   name: 'Einstellungen',
   components: { datenbank },
-  data () { return { VERSION, key: '', value: '' } },
-  computed: {
-    privateDaten () { return this.$store.state.data.privateDaten }
+  data () {
+    return {
+      key: '',
+      value: '',
+      configData: this.$store.state.data.configData
+    }
   },
   methods: {
     add () {
-      this.privateDaten[this.key] = this.value
+      this.configData.privateDaten[this.key] = this.value
       this.key = this.value = ''
-      this.$store.commit('data/updatePrivateDaten', this.privateDaten)
-      ipc.callMain('setPrivateDaten', this.privateDaten)
+      this.$store.commit('data/updateConfigData', this.configData)
     },
     remove (key) {
-      delete this.privateDaten[key]
-      this.$store.commit('data/updatePrivateDaten', this.privateDaten)
-      ipc.callMain('setPrivateDaten', this.privateDaten)
+      delete this.configData.privateDaten[key]
+      this.$store.commit('data/updateConfigData', this.configData)
       this.$forceUpdate()
     }
   }

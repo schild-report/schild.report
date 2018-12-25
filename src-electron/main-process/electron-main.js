@@ -10,36 +10,24 @@ import configFile from './configstore'
 import { rollupBuild } from './rollup'
 import { is } from 'electron-util'
 import schild from 'schild'
-import './store'
 import CheapWatch from 'cheap-watch'
+import { mkDirByPathSync } from './mkdir'
+
+let configData = configFile.store
+configData['passAuth'] = process.argv.some(a => a === '--no-login') || is.development
+configData['version'] = VERSION
+console.log('Verzeichnisse anlegen oder verwenden …')
+mkDirByPathSync(configData.reports)
+
+let mainWindow
+let watcher = []
+
 if (process.env.PROD) {
   global.__statics = join(__dirname, 'statics').replace(/\\/g, '\\\\')
 }
 
-configFile.set('passAuth', process.argv.some(a => a === '--no-login') || is.development)
-
-let mainWindow
-let pdfWindow = null
-let watcher = []
-
-function createPDFWindow () {
-  pdfWindow = new BrowserWindow({
-    show: false,
-    parent: mainWindow,
-    width: 800,
-    height: 600,
-    webPreferences: {
-      plugins: true
-    }
-  })
-
-  pdfWindow.on('closed', () => {
-    pdfWindow = null
-  })
-}
-
 function createWindow () {
-  let { width, height } = configFile.get('windowBounds.main')
+  let { width, height } = configData.windowBounds.main
   mainWindow = new BrowserWindow({
     width: width,
     height: height,
@@ -55,7 +43,7 @@ function createWindow () {
   })
   mainWindow.on('resize', () => {
     let { width, height } = mainWindow.getBounds()
-    configFile.set('windowBounds.main', { width, height })
+    configData.windowBounds.main = { width, height }
   })
 }
 
@@ -65,29 +53,24 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+app.on('before-quit', () => {
+  ipc.callRenderer(mainWindow, 'getConfigData')
+    .then(data => {
+      configFile.set(data)
+      console.log('Konfigurationsdaten gespeichert.')
+    })
+})
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
 })
 
-ipc.answerRenderer('view-pdf', async (pdfName) => {
-  if (pdfWindow === null) {
-    createPDFWindow()
-  }
-  await pdfWindow.loadURL(`file://${app.getPath('userData')}/${pdfName}`)
-  pdfWindow.show()
-})
-
-ipc.answerRenderer('source', async () => {
-  return configFile.get('plugins.source')
-})
-
 const scanSource = async () => {
   const isDirectory = source => lstatSync(source).isDirectory()
   const getDirectories = source =>
     readdirSync(source).map(name => join(source, name)).filter(isDirectory)
-  const source = configFile.get('plugins.source')
+  const source = configData.reports
   const obj = {}
   getDirectories(source).forEach(element => {
     obj[basename(element)] = readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
@@ -98,7 +81,7 @@ const scanSource = async () => {
 ipc.answerRenderer('repos', async () => {
   scanSource()
   const fileWatcher = new CheapWatch({
-    dir: configFile.get('plugins.source'),
+    dir: configData.reports,
     filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
   })
   await fileWatcher.init()
@@ -122,8 +105,8 @@ const updateWebView = async () => {
 const compileDokumente = async (file) => {
   try {
     const moduleIDs = await rollupBuild({
-      source: join(configFile.get('plugins.source'), file),
-      dest: configFile.get('plugins.destination')
+      source: join(configData.reports, file),
+      dest: join(configData.userData)
     })
     webviewReady.dokument = true
     updateWebView()
@@ -169,18 +152,13 @@ ipc.answerRenderer('compileDokumente', async (args) => {
   })
 })
 
-ipc.answerRenderer('setDB', async db => {
-  console.log('Verbindungsdaten speichern …')
-  configFile.set('db', db)
-})
-ipc.answerRenderer('setPrivateDaten', async data => {
-  console.log('Private Daten speichern …')
-  configFile.set('privateDaten', data)
+ipc.answerRenderer('getConfig', async () => {
+  return configData
 })
 ipc.answerRenderer('schildConnect', async data => {
   return schild.connect(data.arg, data.arg2)
 })
-ipc.answerRenderer('schildTestConnection', async data => {
+ipc.answerRenderer('schildTestConnection', async () => {
   return schild.testConnection()
 })
 ipc.answerRenderer('schildSuche', async data => {
@@ -190,7 +168,7 @@ ipc.answerRenderer('schildSuche', async data => {
 ipc.answerRenderer('schildGetKlasse', async data => {
   return (await schild.getKlasse(data.arg)).toJSON()
 })
-ipc.answerRenderer('schildGetSchule', async data => {
+ipc.answerRenderer('schildGetSchule', async () => {
   return (await schild.getSchule()).toJSON()
 })
 ipc.answerRenderer('schildGetSchueler', async data => {

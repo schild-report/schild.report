@@ -112,7 +112,6 @@ export default {
     this.$root.$on('sucheSchueler', states => {
       this.updateDaten(states)
     })
-    ipc.callMain('source').then(source => this.$store.commit('data/updateDocumentSource', source))
   },
   mounted () {
     ipc.callMain('repos')

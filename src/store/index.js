@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-const ipc = require('electron-better-ipc')
 
 // we first import the module
 import data from './data'
@@ -24,12 +23,5 @@ if (process.env.DEV && module.hot) {
     store.hotUpdate({ modules: { data: newData } })
   })
 }
-
-ipc.answerMain('updateRepos', repos => {
-  store.commit('data/updateRepos', repos)
-})
-ipc.answerMain('messageRollup', message => {
-  store.commit('data/updateMessage', message)
-})
 
 export default store

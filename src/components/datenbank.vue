@@ -45,7 +45,8 @@ export default {
   data () {
     return {
       checkConnection: 'Verbindung prüfen …',
-      db: this.$store.state.data.knex || {
+      configData: this.$store.state.data.configData,
+      db: this.$store.state.data.configData.db || {
         client: 'mysql',
         useNullAsDefault: true,
         connection: { host: '', database: '', user: '', password: '', charset: 'utf8' }
@@ -69,10 +70,10 @@ export default {
             if (!res) throw new Error('Die Verbindung konnte nicht hergestellt werden.')
             else this.testing = 'green'
             this.checkConnection = 'Verbindungsdaten speichern'
-            this.$store.commit('data/updateKnex', this.db)
+            this.configData.db = this.db
+            this.$store.commit('data/updateConfigData', this.configData)
             ipc.callMain('schildGetSchule')
               .then(schule => this.$store.commit('data/updateSchule', schule))
-            ipc.callMain('setDB', this.db)
               .then(res => this.$router.push('/'))
               .catch(err => console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err))
           })

@@ -6,12 +6,9 @@ export default {
   selected: null,
   schuelerfoto: null,
   components: null,
-  componentsPath: null,
-  knex: null,
   auth: null,
-  documentSource: null,
   abschnitt: {},
   repos: null,
   message: null,
-  privateDaten: {}
+  configData: {}
 }

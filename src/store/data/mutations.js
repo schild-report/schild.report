@@ -20,21 +20,8 @@ export const updateSelected = (state, data) => {
 export const updateSchuelerfoto = (state, data) => {
   state.schuelerfoto = data
 }
-export const updateComponents = (state, data) => {
-  console.log('Components aktualisiert …')
-  state.components = data
-}
-export const updateComponentsPath = (state, data) => {
-  state.componentsPath = data
-}
-export const updateKnex = (state, data) => {
-  state.knex = data
-}
 export const updateAuth = (state, data) => {
   state.auth = data
-}
-export const updateDocumentSource = (state, data) => {
-  state.documentSource = data
 }
 export const updateAbschnitt = (state, data) => {
   state.abschnitt = data
@@ -45,6 +32,6 @@ export const updateRepos = (state, data) => {
 export const updateMessage = (state, data) => {
   state.message = data
 }
-export const updatePrivateDaten = (state, data) => {
-  state.privateDaten = data
+export const updateConfigData = (state, data) => {
+  state.configData = data
 }

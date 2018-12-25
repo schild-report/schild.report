@@ -10,6 +10,6 @@ export const reportData = state => {
     schueler: state.schuelerGewaehlt,
     jahr: jahr,
     abschnitt: abschnitt,
-    privat: state.privateDaten
+    privat: state.configData['privateDaten']
   }
 }

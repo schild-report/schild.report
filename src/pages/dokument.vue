@@ -86,7 +86,8 @@ export default {
       load: false,
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
-      dialogMessage: null
+      dialogMessage: null,
+      configData: this.$store.state.data.configData
     }
   },
   computed: {
@@ -95,8 +96,8 @@ export default {
     componentArgs () {
       return {
         ...this.$store.getters['data/reportData'],
-        componentsPath: this.$store.state.data.componentsPath + '/bundle.js',
-        knexConfig: this.$store.state.data.knex
+        componentsPath: this.configData.userData + '/bundle.js',
+        knexConfig: this.configData.db
       }
     }
   },
@@ -135,7 +136,7 @@ export default {
         Ij48c3R5bGU+QG1lZGlhIHByaW50IHsubm9wcmludCAqIHtkaXNwbGF5Om5vbmU7aGVpZ2h0OjA7
         fX08L3N0eWxlPjwvaGVhZD48Ym9keT48c2NyaXB0PmlwYygpPC9zY3JpcHQ+PGRpdiBpZD0iY29u
         dGVudCIgY29udGVudGVkaXRhYmxlPSJmYWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2Jv
-        ZHk+PC9odG1sPg==`, { baseURLForDataURL: `file://${this.$store.state.data.documentSource}/${this.$route.params.repo}/` })
+        ZHk+PC9odG1sPg==`, { baseURLForDataURL: `file://${this.configData.reports}/${this.$route.params.repo}/` })
     }
   }
 }
