@@ -38,6 +38,18 @@ function createWindow () {
   mainWindow.loadURL(process.env.APP_URL)
   if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.openDevTools()
 
+  mainWindow.on('close', (e) => {
+    if (!configData.close) {
+      e.preventDefault()
+      ipc.callRenderer(mainWindow, 'getConfigData')
+        .then(data => {
+          configFile.set(data)
+          console.log('Konfigurationsdaten gespeichert.')
+          configData.close = true
+          mainWindow.close()
+        })
+    }
+  })
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -52,13 +64,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
-})
-app.on('before-quit', () => {
-  ipc.callRenderer(mainWindow, 'getConfigData')
-    .then(data => {
-      configFile.set(data)
-      console.log('Konfigurationsdaten gespeichert.')
-    })
 })
 app.on('activate', () => {
   if (mainWindow === null) {

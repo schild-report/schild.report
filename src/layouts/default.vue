@@ -65,7 +65,7 @@
       <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
     </q-page-sticky>
     <q-modal v-model="opened" content-css="padding: 30px">
-      <div v-json-content="reportData()" v-if="opened"></div>
+      <div v-json-content="reportData" v-if="opened"></div>
     </q-modal>
   </q-layout>
 </template>
@@ -121,7 +121,8 @@ export default {
       terms: '',
       pdfLink: null,
       opened: false,
-      error: null
+      error: null,
+      reportData: this.$store.getters['data/reportData']
     }
   },
   computed: {
@@ -139,7 +140,6 @@ export default {
     schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
   methods: {
-    reportData () { return this.$store.getters['data/reportData'] },
     search (terms, done) {
       ipc.callMain('schildSuche', { arg: terms })
         .then(response => {
