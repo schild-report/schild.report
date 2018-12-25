@@ -58,12 +58,10 @@ export default {
     handleSubmit () {
       ipc.callMain(
         'schildConnect', {
-          arg: {
-            testing: this.db
-          },
+          arg: { testing: this.db },
           arg2: 'testing'
         })
-        .then(res => console.log(res)).catch(e => console.log(e))
+        .catch(e => console.log(e))
       if (this.testing !== 'green') {
         ipc.callMain('schildTestConnection')
           .then(res => {

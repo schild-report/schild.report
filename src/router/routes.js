@@ -11,6 +11,7 @@ export default [
   {
     path: '/',
     component: Layout,
+    meta: { requiresAuth: true },
     children: [
       { path: '', component: Index },
       { path: 'klasse', name: 'klasse', component: Klasse },

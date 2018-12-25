@@ -37,7 +37,6 @@
 </template>
 
 <script>
-// const ipc = require('electron-better-ipc')
 import datenbank from './../components/datenbank.vue'
 
 export default {

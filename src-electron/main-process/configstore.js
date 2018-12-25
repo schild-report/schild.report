@@ -14,8 +14,7 @@ const configFile = new Store({
     },
     reports: join(api.app.getPath('documents'), api.app.getName(), 'reports'),
     userData: join(api.app.getPath('userData')),
-    privateDaten: {},
-    passAuth: false
+    privateDaten: {}
   }
 })
 
