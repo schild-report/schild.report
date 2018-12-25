@@ -78,7 +78,7 @@ export default {
   },
   data () {
     return {
-      preload: 'file://' + join(__statics, '/preload.js'),
+      preload: join('file:///', __statics, '/preload.js'),
       edit: false,
       editColor: 'red',
       devTools: false,
@@ -96,13 +96,13 @@ export default {
     componentArgs () {
       return {
         ...this.$store.getters['data/reportData'],
-        componentsPath: this.configData.userData + '/bundle.js',
+        componentsPath: join(this.configData.userData + '/bundle.js'),
         knexConfig: this.configData.db
       }
     }
   },
   created () {
-    ipc.callMain('compileDokumente', { file: `${this.$route.params.repo}/${this.$route.params.id}`, componentArgs: this.componentArgs })
+    ipc.callMain('compileDokumente', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs })
   },
   mounted () {
     webview = document.querySelector('webview')

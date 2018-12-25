@@ -28,7 +28,7 @@ global.ipc = () => {
 
   ipcRenderer.on('updateComponents', (event, newData) => {
     data = data || newData
-    delete require.cache[require.resolve(data.componentsPath)]
+    delete require.cache[data.componentsPath]
     const Component = require(data.componentsPath)
     if (svelte) svelte.destroy()
     svelte = new Component({ target: document.querySelector('svelte'), data })
