@@ -1,6 +1,6 @@
 <template>
   <div>
-    <webview src="about:blank" :preload="preload" autosize disablewebsecurity></webview>
+    <webview src="about:blank" :preload="preload" autosize></webview>
     <q-page-sticky position="top-right" :offset="[18, 137]">
       <q-btn
         round
@@ -61,7 +61,7 @@ export default {
   watch: {
     $route (to, from) {
       ipc.callMain('compileDokumente', { file: `${this.$route.params.repo}/${this.$route.params.id}`, componentArgs: this.componentArgs })
-      if (to.params.repo !== from.params.repo) this.updateComponent()
+      this.updateComponent()
     },
     schueler () {
       webview.send('setData', this.componentArgs)
@@ -136,10 +136,13 @@ export default {
         Ij48c3R5bGU+QG1lZGlhIHByaW50IHsubm9wcmludCAqIHtkaXNwbGF5Om5vbmU7aGVpZ2h0OjA7
         fX08L3N0eWxlPjwvaGVhZD48Ym9keT48c2NyaXB0PmlwYygpPC9zY3JpcHQ+PGRpdiBpZD0iY29u
         dGVudCIgY29udGVudGVkaXRhYmxlPSJmYWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2Jv
-        ZHk+PC9odG1sPg==`, { baseURLForDataURL: `file://${this.configData.reports}/${this.$route.params.repo}/` })
+        ZHk+PC9odG1sPg==
+        `
+        , { baseURLForDataURL: `file://${this.configData.reports}/${this.$route.params.repo}/` })
     }
   }
 }
+
 </script>
 
 <style>

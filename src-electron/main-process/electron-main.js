@@ -105,6 +105,7 @@ ipc.on('webviewReady', event => {
 const updateWebView = async () => {
   if (webviewReady.webview && webviewReady.dokument) {
     webview.send('updateComponents', webviewReady.componentArgs)
+    webviewReady.webview = false
   }
 }
 const compileDokumente = async (file) => {
