@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "cheap-watch": "^1.0.2",
-    "css-loader": "^2.0.2",
+    "css-loader": "^2.1.0",
     "electron-better-ipc": "^0.1.2",
     "electron-store": "^2",
     "electron-util": "^0.10.2",
@@ -40,7 +40,7 @@
     "electron-packager": "^13.0.1",
     "electron-rebuild": "^1.8.2",
     "electron-wix-msi": "^2.1.1",
-    "eslint": "^5.11.0",
+    "eslint": "^5.11.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-friendly-formatter": "",
     "eslint-loader": "^2.1.1",
