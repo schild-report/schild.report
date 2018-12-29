@@ -1,4 +1,4 @@
-import { app, BrowserWindow, webviewTag } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { VERSION } from './version'
 console.log(VERSION)
 if (process.argv.some(a => a === '-v')) app.exit()
@@ -7,7 +7,7 @@ import ipc from 'electron-better-ipc'
 import { join, basename, dirname } from 'path'
 import { lstatSync, readdirSync } from 'fs'
 import configFile from './configstore'
-import { rollupBuild } from './rollup'
+import RollupBuild from './rollup'
 import { is } from 'electron-util'
 import schild from 'schild'
 import CheapWatch from 'cheap-watch'
@@ -21,6 +21,41 @@ mkDirByPathSync(configData.reports)
 
 let mainWindow
 let watcher = []
+const rollup = new RollupBuild()
+rollup.on('message', message => {
+  ipc.callRenderer(mainWindow, 'messageRollup', {
+    ...message,
+    code: message.code,
+    stack: message.stack,
+    message: message.message
+  })
+})
+rollup.on('moduleIDs', moduleIDs => {
+  while (watcher.length) { watcher.pop().close() }
+  Array.from(moduleIDs).forEach(async (moduleID) => {
+    if (!moduleID.includes('node_modules')) {
+      const emitter = new CheapWatch({
+        dir: dirname(moduleID),
+        debounce: 50,
+        filter: ({ path, stats }) => moduleID.endsWith(path)
+      })
+      console.log('Beobachte: ' + moduleID)
+      try {
+        await emitter.init()
+        emitter.on('+', async ({ path, stats, isNew }) => {
+          if (!isNew) {
+            console.log('Änderungen bei: ' + path)
+            await runRollup()
+            updateWebView()
+          }
+        })
+      } catch (e) {
+        console.log(e)
+      }
+      watcher.push(emitter)
+    }
+  })
+})
 
 if (process.env.PROD) {
   global.__statics = join(__dirname, 'statics').replace(/\\/g, '\\\\')
@@ -29,6 +64,7 @@ if (process.env.PROD) {
 function createWindow () {
   let { width, height } = configData.windowBounds.main
   mainWindow = new BrowserWindow({
+    show: false,
     width: width,
     height: height,
     useContentSize: true,
@@ -57,6 +93,19 @@ function createWindow () {
     let { width, height } = mainWindow.getBounds()
     configData.windowBounds.main = { width, height }
   })
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+    scanSource()
+    const fileWatcher = new CheapWatch({
+      dir: configData.reports,
+      filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
+    })
+    fileWatcher.init()
+      .then(() => {
+        fileWatcher.on('+', ({ path, stats, isNew }) => { if (isNew) scanSource() })
+        fileWatcher.on('-', ({ path, stats }) => { scanSource() })
+      })
+  })
 }
 
 app.on('ready', createWindow)
@@ -72,34 +121,23 @@ app.on('activate', () => {
 })
 
 const scanSource = async () => {
-  const isDirectory = source => lstatSync(source).isDirectory()
-  const getDirectories = source =>
+  const isDirectory = (source) => lstatSync(source).isDirectory()
+  const getDirectories = (source) =>
     readdirSync(source).map(name => join(source, name)).filter(isDirectory)
-  const source = configData.reports
-  const obj = {}
-  getDirectories(source).forEach(element => {
-    obj[basename(element)] = readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
-  })
+  const obj = getDirectories(configData.reports)
+    .reduce((o, element) => ({ ...o,
+      [basename(element)]: readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
+    }), {})
   ipc.callRenderer(mainWindow, 'updateRepos', obj)
 }
 
-ipc.answerRenderer('repos', async () => {
-  scanSource()
-  const fileWatcher = new CheapWatch({
-    dir: configData.reports,
-    filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
-  })
-  await fileWatcher.init()
-  fileWatcher.on('+', ({ path, stats, isNew }) => { if (isNew) scanSource() })
-  fileWatcher.on('-', ({ path, stats }) => { scanSource() })
-})
-
 let webview
 let webviewReady = {}
-ipc.on('webviewReady', event => {
+ipc.on('webviewReady', async (event) => {
   webview = event.sender
   webviewReady.webview = true
-  updateWebView()
+  await updateWebView()
+  webviewReady.webview = false
 })
 
 const updateWebView = async () => {
@@ -108,54 +146,24 @@ const updateWebView = async () => {
     webviewReady.webview = false
   }
 }
-const compileDokumente = async (file) => {
+const runRollup = async (file) => {
+  const options = file ? {
+    source: join(configData.reports, file),
+    dest: join(configData.userData)
+  } : null
   try {
-    const moduleIDs = await rollupBuild({
-      source: join(configData.reports, file),
-      dest: join(configData.userData)
-    })
+    await rollup.build(options)
     webviewReady.dokument = true
+    webviewReady.webview = !options
     updateWebView()
-    return moduleIDs
   } catch (err) {
-    ipc.callRenderer(mainWindow, 'messageRollup', {
-      ...err,
-      code: err.code,
-      stack: err.stack,
-      message: err.message
-    })
-    return [file, err.filename]
+    console.log(err)
   }
 }
-ipc.answerRenderer('compileDokumente', async (args) => {
+ipc.answerRenderer('runRollup', async (args) => {
   console.log('Rollup starten für …', args.file)
   webviewReady.componentArgs = args.componentArgs
-  const moduleIDs = await compileDokumente(args.file)
-  console.log(moduleIDs)
-  while (watcher.length) { watcher.pop().close() }
-  moduleIDs.forEach(async (moduleID) => {
-    if (!moduleID.includes('node_modules')) {
-      const emitter = new CheapWatch({
-        dir: dirname(moduleID),
-        debounce: 50,
-        filter: ({ path, stats }) => moduleID.endsWith(path)
-      })
-      console.log('Beobachte: ' + moduleID)
-      try {
-        await emitter.init()
-        emitter.on('+', async ({ path, stats, isNew }) => {
-          if (!isNew) {
-            console.log('Änderungen bei: ' + path)
-            await compileDokumente(args.file)
-            webviewTag.send('updateComponents', args.componentArgs)
-          }
-        })
-      } catch (e) {
-        console.log(e)
-      }
-      watcher.push(emitter)
-    }
-  })
+  runRollup(args.file)
 })
 
 ipc.answerRenderer('getConfig', async () => {

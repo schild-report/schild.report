@@ -19,33 +19,41 @@
         @click="toggleDevTools"
       />
     </q-page-sticky>
+    <q-page-sticky position="top-right" :offset="[18, 241]">
+      <q-btn
+        round
+        color="orange"
+        :icon="mark ? 'report' : 'report_off'"
+        @click="toggleMark"
+      />
+    </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[18, 18]">
       <q-fab
         ref="abschnitte"
         round
         color="blue"
-        icon="date_range"
+        icon=""
         direction="left"
       >
         <q-fab-action v-for="(a, index) in $store.state.data.schuelerGewaehlt[0].abschnitte" :key="index"
-          color="primary"
+          :color="a.Jahr === componentArgs.jahr && a.Abschnitt === componentArgs.abschnitt ? 'green' : 'primary'"
           icon=""
           @click="setAbschnitt(a)"
         >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
       </q-fab>
     </q-page-sticky>
-    <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError">
+    <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError" color="red">
       <span slot="title">{{dialogMessage.code}}</span>
       <div slot="body">
         <b>{{dialogMessage.message}}</b>:
       </div>
     </q-dialog>
-    <q-dialog v-model="dialogModelSvelteError" v-if="dialogModelSvelteError">
+    <q-dialog v-model="dialogModelSvelteError" v-if="dialogModelSvelteError" color="orange">
       <span slot="title">{{dialogMessage.pluginCode}}</span>
       <div slot="body">
         Fehler in <b>{{dialogMessage.filename}}</b>:
-        <br> Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
-        <br> <pre>{{dialogMessage.frame}}</pre>
+        <br>Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
+        <br><pre>{{dialogMessage.frame}}</pre>
       </div>
     </q-dialog>
   </div>
@@ -60,7 +68,7 @@ export default {
   name: 'Dokument',
   watch: {
     $route (to, from) {
-      ipc.callMain('compileDokumente', { file: `${this.$route.params.repo}/${this.$route.params.id}`, componentArgs: this.componentArgs })
+      this.runRollup()
       this.updateComponent()
     },
     schueler () {
@@ -83,6 +91,7 @@ export default {
       editColor: 'red',
       devTools: false,
       devToolsColor: 'red',
+      mark: true,
       load: false,
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
@@ -93,16 +102,10 @@ export default {
   computed: {
     schueler () { return this.$store.state.data.klasse },
     message () { return this.$store.state.data.message },
-    componentArgs () {
-      return {
-        ...this.$store.getters['data/reportData'],
-        componentsPath: join(this.configData.userData + '/bundle.js'),
-        knexConfig: this.configData.db
-      }
-    }
+    componentArgs () { return this.$store.getters['data/reportData'] }
   },
   created () {
-    ipc.callMain('compileDokumente', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs })
+    this.runRollup()
   },
   mounted () {
     webview = document.querySelector('webview')
@@ -113,10 +116,11 @@ export default {
     webview.addEventListener('dom-ready', loadPage)
   },
   methods: {
+    runRollup () { ipc.callMain('runRollup', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs }) },
     setAbschnitt (a) {
-      const abschnitt = { jahr: a.Jahr, abschnitt: a.Abschnitt }
-      webview.send('setAbschnitt', abschnitt)
-      this.$store.commit('data/updateAbschnitt', abschnitt)
+      this.aktHalbjahr = { jahr: a.Jahr, abschnitt: a.Abschnitt }
+      webview.send('setAbschnitt', this.aktHalbjahr)
+      this.$store.commit('data/updateAbschnitt', this.aktHalbjahr)
     },
     editContent () {
       this.edit = !this.edit
@@ -128,6 +132,10 @@ export default {
       this.devTools = !is
       this.devToolsColor = !is ? 'green' : 'red'
       is ? webview.closeDevTools() : webview.openDevTools()
+    },
+    toggleMark () {
+      this.mark = !this.mark
+      webview.send('setMark', this.mark)
     },
     updateComponent () {
       webview.loadURL(

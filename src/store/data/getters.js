@@ -10,6 +10,8 @@ export const reportData = state => {
     schueler: state.schuelerGewaehlt,
     jahr: jahr,
     abschnitt: abschnitt,
-    privat: state.configData['privateDaten']
+    privat: state.configData.privateDaten,
+    componentsPath: state.configData.userData + '/bundle.js',
+    knexConfig: state.configData.db
   }
 }
