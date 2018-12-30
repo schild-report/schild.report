@@ -6,6 +6,10 @@ import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import * as EventEmitter from 'events'
 
+const __nodeModules = process.env.PROD
+  ? presolve(__dirname, 'node_modules/svelte')
+  : presolve(__dirname, '../../node_modules/svelte')
+
 function moduleIds (event) {
   return {
     name: 'rollup-plugin-module-ids',
@@ -36,10 +40,11 @@ export default class rollupBuild extends EventEmitter {
           onwarn: (warning, handler) => {
             if (warning.code === 'css-unused-selector') return
             this.emit('message', warning)
-          }
+          },
+          sveltePath: __nodeModules
         }),
         moduleIds(ids => this.emit('moduleIDs', ids)),
-        resolve({ customResolveOptions: { moduleDirectory: presolve(__dirname, '../../node_modules') } }),
+        resolve(),
         commonjs()
       ]
     }
