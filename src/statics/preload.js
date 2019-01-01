@@ -35,6 +35,7 @@ global.ipc = () => {
     props = props || newData
     delete require.cache[props.componentsPath]
     const Component = require(props.componentsPath)
+    if (svelte) svelte.$destroy()
     svelte = new Component({ target: document.querySelector('svelte'), props })
     console.log('created svelte')
     mark.mark(['undefined', '01.01.1970'])

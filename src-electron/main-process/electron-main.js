@@ -161,7 +161,7 @@ const runRollup = async (file) => {
   }
 }
 ipc.answerRenderer('runRollup', async (args) => {
-  console.log('Rollup starten für …', args.file)
+  console.log('Rollup starten für', args.file, '…')
   webviewReady.componentArgs = args.componentArgs
   runRollup(args.file)
 })

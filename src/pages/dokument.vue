@@ -1,6 +1,6 @@
 <template>
   <div>
-    <webview src="about:blank" :preload="preload" autosize></webview>
+    <webview src="about:blank" :preload="preload"></webview>
     <q-page-sticky position="top-right" :offset="[18, 137]">
       <q-btn
         round
@@ -32,11 +32,11 @@
         ref="abschnitte"
         round
         color="blue"
-        icon=""
+        icon="date_range"
         direction="left"
       >
         <q-fab-action v-for="(a, index) in $store.state.data.schuelerGewaehlt[0].abschnitte" :key="index"
-          :color="a.Jahr === componentArgs.jahr && a.Abschnitt === componentArgs.abschnitt ? 'green' : 'primary'"
+          color="primary"
           icon=""
           @click="setAbschnitt(a)"
         >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
@@ -155,7 +155,6 @@ export default {
 
 <style>
   webview {
-    border: none;
     height: -webkit-fill-available;
   }
 </style>

@@ -65,7 +65,7 @@
       <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
     </q-page-sticky>
     <q-modal v-model="opened" content-css="padding: 30px">
-      <div v-json-content="shorterReportData" v-if="opened"></div>
+      <div v-json-content="shorterReportData()" v-if="opened"></div>
     </q-modal>
   </q-layout>
 </template>
@@ -140,7 +140,7 @@ export default {
     schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
   methods: {
-    shorterReportData () { const { knexConfig, componentPath, ...rest } = this.reportData; return rest },
+    shorterReportData () { const { knexConfig, componentsPath, ...rest } = this.reportData; return rest },
     search (terms, done) {
       ipc.callMain('schildSuche', { arg: terms })
         .then(response => {
