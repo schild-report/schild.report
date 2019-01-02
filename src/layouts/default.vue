@@ -71,7 +71,7 @@ import { shell } from 'electron'
 
 const ipc = require('electron-better-ipc')
 const { api } = require('electron-util')
-const sortierfolge = [2, 6, 3, 8, 9, 0, 1]
+const sortierfolge = [1, 0, 9, 8, 3, 6, 2]
 
 function statusFeedback (status) {
   switch (status) {
@@ -143,7 +143,7 @@ export default {
                 status: d.status
               }
             })
-            .sort((a, b) => sortierfolge.indexOf(a.status) < sortierfolge.indexOf(b.status) ? -1 : 1)
+            .sort((a, b) => (sortierfolge.indexOf(a.status) || a.label) < (sortierfolge.indexOf(b.status) || b.label) ? 1 : -1)
           done(completions)
         },
         (error) => {
