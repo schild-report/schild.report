@@ -116,7 +116,7 @@ export default {
   },
   computed: {
     klasse () { return this.$store.state.data.klasse },
-    repos () { return this.$store.state.data.repos },
+    repos () { return this.$store.state.data.repos || {} },
     schueler () { return this.klasse[0] },
     schule () { return this.$store.state.data.schule || '' },
     dokumentenauswahlZeigen () { return ['dokument', 'klasse', 'schueler'].includes(this.$route.name) },

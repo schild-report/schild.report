@@ -103,7 +103,7 @@ export default {
       return a
     },
     schueler () { return this.$store.state.data.klasse[0] },
-    schuelerfoto () { return `data:image/jpg;base64,${this.$store.state.data.schuelerfoto}` },
+    schuelerfoto () { return this.$store.state.data.schuelerfoto ? `data:image/jpg;base64,${this.$store.state.data.schuelerfoto}` : null },
     alter () {
       const geburtstag = +new Date(this.schueler.Geburtsdatum)
       return ~~((Date.now() - geburtstag) / (31557600000))

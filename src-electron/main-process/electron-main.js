@@ -62,11 +62,9 @@ if (process.env.PROD) {
 }
 
 function createWindow () {
-  let { width, height } = configData.windowBounds.main
   mainWindow = new BrowserWindow({
+    ...configData.windowBounds.main,
     show: false,
-    width: width,
-    height: height,
     useContentSize: true,
     icon: join(__dirname, '../icons/linux-256x256.png')
   })
@@ -79,6 +77,7 @@ function createWindow () {
       e.preventDefault()
       ipc.callRenderer(mainWindow, 'getConfigData')
         .then(data => {
+          data.windowBounds.main = mainWindow.getBounds()
           configFile.set(data)
           console.log('Konfigurationsdaten gespeichert.')
           configData.close = true
@@ -88,10 +87,6 @@ function createWindow () {
   })
   mainWindow.on('closed', () => {
     mainWindow = null
-  })
-  mainWindow.on('resize', () => {
-    let { width, height } = mainWindow.getBounds()
-    configData.windowBounds.main = { width, height }
   })
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
