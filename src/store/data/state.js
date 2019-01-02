@@ -1,6 +1,6 @@
 export default {
   schule: null,
-  klasse: [],
+  klasse: {},
   klasseSortiert: null,
   schuelerGewaehlt: null,
   selected: null,

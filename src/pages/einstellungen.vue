@@ -8,7 +8,7 @@
       <q-card-separator />
       <q-card-main>
         Version: {{configData.version.buildVersion}}
-        <br>ID: {{configData.version.gitHash}}
+        <br>ID: {{configData.version.gitHash.substring(0, 8)}}
       </q-card-main>
     </q-card>
     <q-card inline style="width: 500px; margin: 5px">

@@ -25,10 +25,11 @@
           <q-autocomplete
             @search="search"
             @selected="selected"
-            :max-results="30"
+            :max-results="40"
           />
         </q-search>
-        <q-btn @click="goto(schuelerLink)" dark v-if="['dokument', 'einstellungen'].includes($route.name)">{{zurueckZu}}</q-btn>
+        <q-btn @click="goto(schuelerLink)" dark v-if="['dokument'].includes($route.name)">{{zurueckZu}}</q-btn>
+        <q-btn @click="$router.go(-1)" dark v-if="$route.name === 'einstellungen'">Zurück</q-btn>
         <q-btn @click="openPdf" inverted v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
         <q-toolbar-title></q-toolbar-title>
         <q-btn flat @click="goto('/app/einstellungen')" icon="settings"></q-btn>
