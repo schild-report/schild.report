@@ -24,7 +24,7 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
     "schild": "^0.3.6",
-    "svelte": "^3.0.0-alpha13",
+    "svelte": "^3.0.0-alpha15",
     "vue": "^2.5.21",
     "vue-json-content": "^1.0.5",
     "vue-style-loader": "^4.1.2",
