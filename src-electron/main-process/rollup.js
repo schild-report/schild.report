@@ -43,7 +43,8 @@ export default class rollupBuild extends EventEmitter {
             if (warning.code === 'css-unused-selector') return
             this.emit('message', warning)
           },
-          sveltePath: __nodeModules
+          sveltePath: __nodeModules,
+          dev: !!this.options.debug
         }),
         moduleIds(ids => this.emit('moduleIDs', ids)),
         resolve(),

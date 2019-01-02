@@ -15,6 +15,7 @@ import { mkDirByPathSync } from './mkdir'
 
 let configData = configFile.store
 configData['passAuth'] = process.argv.some(a => a === '--no-login') || is.development
+configData['alpha'] = process.argv.some(a => a === '--alpha') || is.development
 configData['version'] = VERSION
 console.log('Verzeichnisse anlegen oder verwenden …')
 mkDirByPathSync(configData.reports)
@@ -141,10 +142,11 @@ const updateWebView = async () => {
     webviewReady.webview = false
   }
 }
-const runRollup = async (file) => {
+const runRollup = async (file, debug) => {
   const options = file ? {
     source: join(configData.reports, file),
-    dest: join(configData.userData)
+    dest: join(configData.userData),
+    debug: debug
   } : null
   try {
     await rollup.build(options)
@@ -158,7 +160,7 @@ const runRollup = async (file) => {
 ipc.answerRenderer('runRollup', async (args) => {
   console.log('Rollup starten für', args.file, '…')
   webviewReady.componentArgs = args.componentArgs
-  runRollup(args.file)
+  runRollup(args.file, args.debug)
 })
 
 ipc.answerRenderer('getConfig', async () => {

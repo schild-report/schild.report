@@ -2,9 +2,7 @@
   <q-page padding class="row">
     <datenbank></datenbank>
     <q-card inline style="width: 300px; margin: 5px">
-      <q-card-title>
-        Versionsinformationen
-      </q-card-title>
+      <q-card-title>Versionsinformationen</q-card-title>
       <q-card-separator />
       <q-card-main>
         Version: {{configData.version.buildVersion}}
@@ -12,9 +10,7 @@
       </q-card-main>
     </q-card>
     <q-card inline style="width: 500px; margin: 5px">
-      <q-card-title>
-        Eigene Datenfelder
-      </q-card-title>
+      <q-card-title>Eigene Datenfelder</q-card-title>
       <q-card-separator />
       <q-card-main>
         Die Key/Value-Paare können anschließend in den Reports eingesetzt werden.
@@ -33,6 +29,27 @@
         </q-list>
       </q-card-main>
     </q-card>
+    <q-card inline style="width: 500px; margin: 5px" v-if="configData.alpha">
+      <q-card-title>Sonstige Einstellungen</q-card-title>
+      <q-card-separator />
+      <q-card-main>
+        <q-item tag="label">
+          <q-item-side>
+            <q-checkbox v-model="toggleDebug" />
+          </q-item-side>
+          <q-item-main>
+            <q-item-tile label>Svelte Debug</q-item-tile>
+            <q-item-tile sublabel>Den Debug-Modus in Svelte aktivieren. Diese
+            Einstellung velangsamt die Kompilierung der Dokumente, kann aber
+            dafür genutzt werden, um z.B. Informationen über die verwendenen
+            Komponentnen zu bekommen oder <code>{@debug}</code> Anweisungen
+            im Code zu verteilen. Z.b. kann man damit <code>{@debug
+            schueler}</code> setzen, das in der Konsole dann jede Veränderung
+            von <code>schueler</code> ausgibt.</q-item-tile>
+          </q-item-main>
+        </q-item>
+      </q-card-main>
+    </q-card>
   </q-page>
 </template>
 
@@ -47,6 +64,12 @@ export default {
       key: '',
       value: '',
       configData: this.$store.state.data.configData
+    }
+  },
+  computed: {
+    toggleDebug: {
+      get () { return this.$store.state.data.configData.debug || false },
+      set (state) { this.$store.commit('data/updateConfigData', { ...this.configData, debug: state }) }
     }
   },
   methods: {
