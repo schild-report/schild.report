@@ -15,6 +15,10 @@ global.ipc = () => {
   let svelte
   let props
 
+  ipcRenderer.on('showDataInConsole', (event, data) => {
+    global.daten = data
+    console.log('Die für Reports zur Verfügung stehenden Daten sind unter `daten` abegelegt:', global.daten)
+  })
   ipcRenderer.on('editContent', (event, edit) => {
     document.querySelector('#content').setAttribute('contenteditable', edit)
   })
@@ -37,7 +41,7 @@ global.ipc = () => {
     const Component = require(props.componentsPath)
     if (svelte) svelte.$destroy()
     svelte = new Component({ target: document.querySelector('svelte'), props })
-    console.log('created svelte')
+    console.log('Svelte-Dokument erfolgreich kompiliert.')
     mark.mark(['undefined', '01.01.1970'])
   })
 }

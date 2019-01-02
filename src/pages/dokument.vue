@@ -1,6 +1,24 @@
 <template>
   <div>
     <webview src="about:blank" :preload="preload"></webview>
+    <q-page-sticky position="top-right" :offset="[18, 18]">
+      <q-fab
+        ref="abschnitte"
+        round
+        color="blue"
+        icon="date_range"
+        direction="left"
+      >
+        <q-fab-action v-for="(a, index) in $store.state.data.schuelerGewaehlt[0].abschnitte" :key="index"
+          color="primary"
+          icon=""
+          @click="setAbschnitt(a)"
+        >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
+      </q-fab>
+    </q-page-sticky>
+    <q-page-sticky position="top-right" :offset="[18, 85]">
+      <q-btn round color="red" @click="showDataInConsole()"><q-tooltip>Schülerdaten in der Konsole ausgeben</q-tooltip><b>{ }</b></q-btn>
+    </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[18, 137]">
       <q-btn
         round
@@ -26,21 +44,6 @@
         :icon="mark ? 'report' : 'report_off'"
         @click="toggleMark"
       />
-    </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[18, 18]">
-      <q-fab
-        ref="abschnitte"
-        round
-        color="blue"
-        icon="date_range"
-        direction="left"
-      >
-        <q-fab-action v-for="(a, index) in $store.state.data.schuelerGewaehlt[0].abschnitte" :key="index"
-          color="primary"
-          icon=""
-          @click="setAbschnitt(a)"
-        >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
-      </q-fab>
     </q-page-sticky>
     <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError" color="red">
       <span slot="title">{{dialogMessage.code}}</span>
@@ -116,6 +119,8 @@ export default {
     webview.addEventListener('dom-ready', loadPage)
   },
   methods: {
+    showDataInConsole () { webview.send('showDataInConsole', this.shorterReportData()) },
+    shorterReportData () { const { knexConfig, componentsPath, ...rest } = this.componentArgs; return rest },
     runRollup () { ipc.callMain('runRollup', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs }) },
     setAbschnitt (a) {
       this.aktHalbjahr = { jahr: a.Jahr, abschnitt: a.Abschnitt }

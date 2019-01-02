@@ -61,24 +61,13 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-page-sticky position="top-right" :offset="[18, 85]" v-if="dokumentenauswahlZeigen">
-      <q-btn round color="red" @click="opened = true"><b>{ }</b></q-btn>
-    </q-page-sticky>
-    <q-modal v-model="opened" content-css="padding: 30px">
-      <div v-json-content="shorterReportData()" v-if="opened"></div>
-    </q-modal>
   </q-layout>
 </template>
 
 <script>
-import _ from 'lodash'
 import { writeFile, existsSync, mkdirSync } from 'fs'
 import { parse, join, dirname } from 'path'
-import VueJsonContent from 'vue-json-content'
-import Vue from 'vue'
 import { shell } from 'electron'
-
-Vue.use(VueJsonContent)
 
 const ipc = require('electron-better-ipc')
 const { api } = require('electron-util')
@@ -120,7 +109,6 @@ export default {
     return {
       terms: '',
       pdfLink: null,
-      opened: false,
       error: null,
       reportData: this.$store.getters['data/reportData']
     }
@@ -140,22 +128,22 @@ export default {
     schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
   methods: {
-    shorterReportData () { const { knexConfig, componentsPath, ...rest } = this.reportData; return rest },
     search (terms, done) {
       ipc.callMain('schildSuche', { arg: terms })
         .then(response => {
-          let completions = _
-            .sortBy(response, e => sortierfolge.indexOf(e.status))
+          const completions = response
             .map(d => {
-              var status = statusFeedback(d.status)
+              const status = statusFeedback(d.status)
               return {
                 label: d.value,
                 searchlink: { klasse: (!status.icon), id: d.id },
                 icon: status.icon || 'group',
                 stamp: String(d.jahr || ''),
-                leftColor: status.color
+                leftColor: status.color,
+                status: d.status
               }
             })
+            .sort((a, b) => sortierfolge.indexOf(a.status) < sortierfolge.indexOf(b.status) ? -1 : 1)
           done(completions)
         },
         (error) => {
