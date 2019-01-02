@@ -28,34 +28,35 @@
             :max-results="30"
           />
         </q-search>
-        <q-btn @click="goto(schuelerLink)" dark v-if="pdfLinkZeigen">{{zurueckZu}}</q-btn>
-        <q-btn @click="openPdf" inverted v-if="pdfLinkZeigen" color="red">PDF erstellen</q-btn>
+        <q-btn @click="goto(schuelerLink)" dark v-if="['dokument', 'einstellungen'].includes($route.name)">{{zurueckZu}}</q-btn>
+        <q-btn @click="openPdf" inverted v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
         <q-toolbar-title></q-toolbar-title>
         <q-btn flat @click="goto('/app/einstellungen')" icon="settings"></q-btn>
       </q-toolbar>
     </q-layout-header>
 
     <q-layout-drawer v-model="dokumentenauswahlZeigen" content-class="bg-grey-2">
-      <template v-if="dokumentenauswahlZeigen">
-        <div class="q-pa-md"><b>Dokumentenauswahl</b></div>
-        <q-list
-          no-border
-          link
-          dense
-          inset-delimiter
-          v-for="(dokumente, repo) in repos"
-          :key="repo"
-        >
-          <q-list-header style="line-height: 1.15em">{{repo}}</q-list-header>
-            <q-item
-              :class="repo === $route.params.repo && dokument === $route.params.id ? 'bg-light':''"
-              @click.native="goto(`/dokument/${repo}/${dokument}`)"
-              v-for="(dokument) in dokumente" :key="dokument"
-            >
-              {{ dokument.slice(0, -5) }}
-            </q-item>
-        </q-list>
-      </template>
+      <div class="q-pa-md" v-if="Object.keys(repos).length === 0">
+        <b>Fügen Sie Ihrem Reportordner Reports hinzu, um Dokumente erstellen zu können.</b>
+        <br>Dazu können Sie z.B. den Demo-Ordner verwenden, der sich hier: https://github.com/schild-report/demo befindet.
+      </div>
+      <q-list
+        no-border
+        link
+        dense
+        inset-delimiter
+        v-for="(dokumente, repo) in repos"
+        :key="repo"
+      >
+        <q-list-header>{{repo}}</q-list-header>
+          <q-item
+            :class="repo === $route.params.repo && dokument === $route.params.id ? 'bg-light':''"
+            @click.native="goto(`/dokument/${repo}/${dokument}`)"
+            v-for="(dokument) in dokumente" :key="dokument"
+          >
+            {{ dokument.slice(0, -5) }}
+          </q-item>
+      </q-list>
     </q-layout-drawer>
 
     <q-page-container>
@@ -118,7 +119,6 @@ export default {
     repos () { return this.$store.state.data.repos },
     schueler () { return this.klasse[0] },
     schule () { return this.$store.state.data.schule || '' },
-    pdfLinkZeigen () { return ['dokument'].includes(this.$route.name) },
     dokumentenauswahlZeigen () { return ['dokument', 'klasse', 'schueler'].includes(this.$route.name) },
     zurueckZu () {
       return this.schueler

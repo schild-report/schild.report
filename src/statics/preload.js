@@ -41,8 +41,12 @@ global.ipc = () => {
     delete require.cache[props.componentsPath]
     const Component = require(props.componentsPath)
     if (svelte) svelte.$destroy()
-    svelte = new Component({ target: document.querySelector('svelte'), props })
-    console.log('Svelte-Dokument erfolgreich kompiliert.')
+    try {
+      svelte = new Component({ target: document.querySelector('svelte'), props })
+      console.log('Svelte-Dokument erfolgreich kompiliert.')
+    } catch (e) {
+      console.log('Das Svelte-Dokument konnte nicht kompiliert werden:', e)
+    }
     mark.mark(['undefined', '01.01.1970'])
   })
 }
