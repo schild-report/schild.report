@@ -1,17 +1,18 @@
 const ipcRenderer = require('electron').ipcRenderer
 const Mark = require('mark.js')
 
-global.R = {
-  lodash: require('lodash'),
-  schild: require('schild'),
-  models: require('schild/models/Models'),
-  knex: require('knex'),
-  objection: require('objection')
+const libraries = {
+  lodash: 'lodash',
+  schild: 'schild',
+  models: 'schild/models/Models',
+  knex: 'knex',
+  objection: 'objection'
 }
 
 global.ipc = () => {
   ipcRenderer.send('webviewReady')
   const mark = new Mark(document.querySelector('body'))
+  global.R = (lib) => require(libraries[lib])
   let svelte
   let props
 
