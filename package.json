@@ -34,7 +34,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "devtron": "",
-    "electron": "^3.0.13",
+    "electron": "^3.1.0",
     "electron-debug": "^2.0.0",
     "electron-devtools-installer": "",
     "electron-packager": "^13.0.1",
@@ -49,7 +49,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^5.1.0",
-    "quasar-cli": "^0.17.22",
+    "quasar-cli": "^0.17.23",
     "strip-ansi": "^3.0.1"
   },
   "engines": {
