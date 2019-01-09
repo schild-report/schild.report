@@ -76,15 +76,12 @@ module.exports = function (ctx) {
         'QPageSticky',
         'QBreadcrumbs',
         'QBreadcrumbsEl',
-        'QModal',
         'QDialog'
       ],
       directives: [
-        'Ripple'
       ],
       // Quasar plugins
       plugins: [
-        'Loading'
       ]
     },
     // animations: 'all' --- includes all animations
@@ -137,7 +134,7 @@ module.exports = function (ctx) {
         // do something with cfg
       },
       packager: {
-        asar: true
+        asar: true,
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
@@ -145,7 +142,9 @@ module.exports = function (ctx) {
         // protocol: 'myapp://path',
 
         // Window only
-        // win32metadata: { ... }
+        appCopyright: 'MIT',
+        appVersion: process.env['APPVEYOR_BUILD_VERSION'],
+        win32metadata: { CompanyName: process.env['AUTHOR'] }
       }
     },
 
