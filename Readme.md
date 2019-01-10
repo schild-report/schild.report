@@ -69,7 +69,7 @@ und MacOS.
 
 Um Reports erstellen oder bearbeiten zu können, sollte ein einfacher Texteditor
 vorhanden sein, mit dem sich HTML-Dateien erstellen lassen. Empfehlenswert ist
-z.B. Atom oder VS-Code.
+z.B. VS-Code. Aber auch notepad.exe lässt sich problemlos einsetzen.
 
 #### Installation
 Für Windows stehen unter Github aktuelle Ausgaben im MSI-Format zur Verfügung,
@@ -131,10 +131,15 @@ jeder Speicherung wird die Anzeige in schild.report aktualisiert.
 Die Notenliste ist auf diesem Bild fast vollständig abgebildet und nur einige
 Zeilen lang.
 
+#### schild.report ist Open Source
+Da der Quellcode auf GitHub veröffentlicht wird und unter der freien MIT-Lizenz
+steht, kann _schild.report_ beliebig angepasst und verändert werden. Mitarbeit
+und neue Ideen sind ausdrücklich erwünscht.
+
 #### Quellen
 Hier nun eine Übersicht über die verwendeten Quellen:
 
-*schild.report* für Windows (jeweils aktuelle MSI-Datei): [https://ci.appveyor.com/project/hmt/schild-report/build/artifacts](https://ci.appveyor.com/project/hmt/schild-report/build/artifacts)
+*schild.report* für Windows (jeweils aktuelle MSI-Datei): [https://github.com/schild-report/schild.report/releases](https://github.com/schild-report/schild.report/releases)
 
 Quellcode für *schild.report*: [https://github.com/schild-report/schild.report](https://github.com/schild-report/schild.report)
 
