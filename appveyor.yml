@@ -31,5 +31,6 @@ deploy:
   artifact: dist/msi/schild.report.msi
   draft: false
   prerelease: false
+  skip_tags: true
   on:
     branch: master
