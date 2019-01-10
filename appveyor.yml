@@ -2,6 +2,8 @@ image: Visual Studio 2017
 
 install:
   - set path=c:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
+  - npm install -g vue-cli
+  - npm install quasar-cli
   - |-
       echo export const VERSION = { buildID: '%APPVEYOR_BUILD_ID%', buildVersion: '%APPVEYOR_BUILD_VERSION%', buildNo: '%APPVEYOR_BUILD_NUMBER%', gitHash: '%APPVEYOR_REPO_COMMIT%', gitMessage: '%APPVEYOR_REPO_COMMIT_MESSAGE%' }> src-electron/main-process/version.js
   - cat src-electron/main-process/version.js
