@@ -23,3 +23,15 @@ build_script:
 artifacts:
   - path: dist/msi/schild.report.msi
     name: schild.report
+
+deploy:
+  release: v$(appveyor_build_version)
+  description: 'Push build'
+  provider: GitHub
+  auth_token:
+    secure: xf39YWukS9Xjl8akZBdy3e/7xbl4pQn7qdpsguMuV2JcZkZ4zBj2nyh1D0ooi9pW
+  artifact: dist/msi/schild.report.msi
+  draft: false
+  prerelease: false
+  on:
+    branch: master
