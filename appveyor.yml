@@ -1,4 +1,5 @@
 image: Visual Studio 2017
+skip_tags: true
 
 install:
   - set path=c:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
@@ -33,6 +34,5 @@ deploy:
   artifact: dist/msi/schild.report.msi
   draft: false
   prerelease: false
-  skip_tags: true
   on:
     branch: master
