@@ -18,8 +18,7 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
-    "schild": "^0.3.6",
-    "svelte": "^3.0.0-alpha16"
+    "schild": "^0.3.6"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
@@ -45,9 +44,10 @@
     "eslint-plugin-vue": "^5.1.0",
     "quasar-cli": "^0.17.23",
     "strip-ansi": "^3.0.1",
-    "vue": "^2.5.21",
+    "svelte": "^3.0.0-alpha17",
+    "vue": "^2.5.22",
     "vue-style-loader": "^4.1.2",
-    "vue-template-compiler": "^2.5.21",
+    "vue-template-compiler": "^2.5.22",
     "vuex": "^3.0.1"
   },
   "engines": {
