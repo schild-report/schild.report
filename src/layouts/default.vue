@@ -69,7 +69,8 @@
 <script>
 import { writeFile, existsSync, mkdirSync } from 'fs'
 import { parse, join, dirname } from 'path'
-import { shell } from 'electron'
+import { shell, remote } from 'electron'
+import Mousetrap from 'mousetrap'
 
 const ipc = require('electron-better-ipc')
 const { api } = require('electron-util')
@@ -106,6 +107,12 @@ export default {
   },
   mounted () {
     ipc.callMain('repos')
+    Mousetrap.bind(['command+d', 'ctrl+d'], () => {
+      const { knexConfig, componentsPath, ...rest } = this.reportData
+      remote.clipboard.writeText(JSON.stringify({ ...rest }))
+      console.log('Daten in die Zwischenablage kopiert.')
+      return false
+    })
   },
   data () {
     return {
