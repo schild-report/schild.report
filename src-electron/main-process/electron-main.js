@@ -67,6 +67,7 @@ function createWindow () {
     ...configData.windowBounds.main,
     show: false,
     useContentSize: true,
+    title: `${app.getName()} ${VERSION['buildVersion']}`,
     icon: join(__dirname, '../icons/linux-256x256.png')
   })
 

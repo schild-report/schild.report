@@ -3,7 +3,7 @@
     <q-layout-header>
       <q-toolbar color="primary">
         <q-btn
-          flat round dense
+          flat dense
           icon="home"
           @click="goto('/')"
         />
@@ -29,10 +29,10 @@
           />
         </q-search>
         <q-btn @click="goto(schuelerLink)" dark v-if="['dokument'].includes($route.name)">{{zurueckZu}}</q-btn>
-        <q-btn @click="$router.go(-1)" dark v-if="$route.name === 'einstellungen'">Zurück</q-btn>
         <q-btn @click="openPdf" inverted v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
         <q-toolbar-title></q-toolbar-title>
-        <q-btn flat @click="goto('/app/einstellungen')" icon="settings"></q-btn>
+        <q-btn flat @click="$router.go(-1)" v-if="$route.name === 'einstellungen'" icon="arrow_back"></q-btn>
+        <q-btn flat @click="goto('/app/einstellungen')" v-if="$route.name !== 'einstellungen'" icon="settings"></q-btn>
       </q-toolbar>
     </q-layout-header>
 
