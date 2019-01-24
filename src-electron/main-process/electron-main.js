@@ -1,4 +1,4 @@
-import { app, BrowserWindow, clipboard } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { VERSION } from './version'
 console.log(VERSION)
 if (process.argv.some(a => a === '-v')) app.exit()

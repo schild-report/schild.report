@@ -109,7 +109,7 @@ export default {
     ipc.callMain('repos')
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
       const { knexConfig, componentsPath, ...rest } = this.reportData
-      remote.clipboard.writeText(JSON.stringify({ ...rest }))
+      remote.clipboard.writeText(JSON.stringify(rest))
       console.log('Daten in die Zwischenablage kopiert.')
       return false
     })
