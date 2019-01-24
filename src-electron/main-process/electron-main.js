@@ -15,7 +15,7 @@ import { mkDirByPathSync } from './mkdir'
 
 let configData = configFile.store
 configData['passAuth'] = process.argv.some(a => a === '--no-login') || is.development
-configData['alpha'] = process.argv.some(a => a === '--alpha') || is.development
+configData['debug'] = process.argv.some(a => a === '--debug') || is.development
 configData['version'] = VERSION
 console.log('Verzeichnisse anlegen oder verwenden …')
 mkDirByPathSync(configData.reports)

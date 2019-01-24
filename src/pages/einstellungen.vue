@@ -15,6 +15,8 @@
       <q-card-main>
         Die Key/Value-Paare können anschließend in den Reports eingesetzt werden.
         Legen Sie z.B. fest, wo der Report das Logo für ihre Schule findet.
+        Diese Werte können anschließend im Report unter <code>{privat.IhrKey}</code>
+        abgerufen werden.
         <div class="row no-wrap">
           <q-input class="col" v-model="key" stack-label="Key" />
           <q-input class="col" v-model="value" stack-label="Value" @keyup.enter="add"/>
@@ -29,7 +31,7 @@
         </q-list>
       </q-card-main>
     </q-card>
-    <q-card inline style="width: 500px; margin: 5px" v-if="configData.alpha">
+    <q-card inline style="width: 500px; margin: 5px" v-if="configData.debug">
       <q-card-title>Sonstige Einstellungen</q-card-title>
       <q-card-separator />
       <q-card-main>
@@ -48,6 +50,9 @@
             von <code>schueler</code> ausgibt.</q-item-tile>
           </q-item-main>
         </q-item>
+        <q-card-separator />
+        <q-input v-model="configData.reports" stack-label="Reportverzeichnis" @keyup.enter="updateConfigData"/>
+        <q-input v-model="configData.userData" stack-label="Datenverzeichnis" @keyup.enter="updateConfigData"/>
       </q-card-main>
     </q-card>
   </q-page>
@@ -73,14 +78,17 @@ export default {
     }
   },
   methods: {
+    updateConfigData () {
+      this.$store.commit('data/updateConfigData', this.configData)
+    },
     add () {
       this.configData.privateDaten[this.key] = this.value
       this.key = this.value = ''
-      this.$store.commit('data/updateConfigData', this.configData)
+      this.updateConfigData()
     },
     remove (key) {
       delete this.configData.privateDaten[key]
-      this.$store.commit('data/updateConfigData', this.configData)
+      this.updateConfigData()
       this.$forceUpdate()
     }
   }
