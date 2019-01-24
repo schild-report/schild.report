@@ -19,6 +19,7 @@ test_script:
 
 build_script:
   - ./node_modules/.bin/quasar build -m electron
+  - dist/electron-mat/schild.report-win32-ia32/schild.report.exe -v
   - node create-msi.js
 
 artifacts:
