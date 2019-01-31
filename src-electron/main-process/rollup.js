@@ -47,7 +47,7 @@ export default class rollupBuild extends EventEmitter {
           dev: !!this.options.debug
         }),
         moduleIds(ids => this.emit('moduleIDs', ids)),
-        resolve(),
+        resolve({ preferBuiltins: false, browser: true }),
         commonjs()
       ]
     }
