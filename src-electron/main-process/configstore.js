@@ -13,6 +13,7 @@ const configFile = new Store({
       main: { width: 1800, height: 800 }
     },
     reports: join(api.app.getPath('documents'), api.app.getName(), 'reports'),
+    pdf: join(api.app.getPath('documents'), api.app.getName(), 'pdf'),
     userData: join(api.app.getPath('userData')),
     privateDaten: {}
   }

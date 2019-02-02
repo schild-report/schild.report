@@ -73,7 +73,6 @@ import { shell, remote } from 'electron'
 import Mousetrap from 'mousetrap'
 
 const ipc = require('electron-better-ipc')
-const { api } = require('electron-util')
 const sortierfolge = [1, 0, 9, 8, 3, 6, 2]
 
 function statusFeedback (status) {
@@ -119,6 +118,7 @@ export default {
       terms: '',
       pdfLink: null,
       error: null,
+      configData: this.$store.state.data.configData,
       reportData: this.$store.getters['data/reportData']
     }
   },
@@ -231,12 +231,12 @@ export default {
       console.log('öffne PDF')
       const webview = document.querySelector('webview')
       const s = this.schueler || this.klasse.schueler[0]
+      const schuelerName = this.schueler ? `${this.schueler.Name}_` : ''
       const d = parse(this.$route.params.id).name
       const jahr = this.$store.state.data.abschnitt.jahr || s.AktSchuljahr
       const abschnitt = this.$store.state.data.abschnitt.abschnitt || s.AktAbschnitt
-      const dir = join(api.app.getPath('documents'), api.app.getName(), 'pdf', jahr.toString())
-      const pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${d}.pdf`
-      const pdfPath = join(dir, pdfName)
+      const pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`
+      const pdfPath = join(this.configData.pdf, jahr.toString(), pdfName)
       options = {
         marginsType: options.marginsType || 1,
         printBackground: options.printBackground || true

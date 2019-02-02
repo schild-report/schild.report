@@ -52,6 +52,7 @@
         </q-item>
         <q-card-separator />
         <q-input v-model="configData.reports" stack-label="Reportverzeichnis" @keyup.enter="updateConfigData"/>
+        <q-input v-model="configData.pdf" stack-label="PDF-Verzeichnis" @keyup.enter="updateConfigData"/>
         <q-input v-model="configData.userData" stack-label="Datenverzeichnis" @keyup.enter="updateConfigData"/>
       </q-card-main>
     </q-card>
