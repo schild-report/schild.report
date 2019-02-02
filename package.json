@@ -19,7 +19,7 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
     "schild": "^0.3.6",
-    "svelte": "^3.0.0-alpha26"
+    "svelte": "^3.0.0-alpha27"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
@@ -34,7 +34,7 @@
     "electron-store": "^2.0.0",
     "electron-util": "^0.11.0",
     "electron-wix-msi": "^2.1.1",
-    "eslint": "^5.12.1",
+    "eslint": "^5.13.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-friendly-formatter": "",
     "eslint-loader": "^2.1.1",
