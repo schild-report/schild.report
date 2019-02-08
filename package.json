@@ -19,7 +19,7 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
     "schild": "^0.3.6",
-    "svelte": "^3.0.0-alpha27"
+    "svelte": "^3.0.0-beta.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
@@ -30,14 +30,14 @@
     "electron-debug": "^2.1.0",
     "electron-devtools-installer": "",
     "electron-packager": "^13.0.1",
-    "electron-rebuild": "^1.8.2",
+    "electron-rebuild": "^1.8.4",
     "electron-store": "^2.0.0",
     "electron-util": "^0.11.0",
     "electron-wix-msi": "^2.1.1",
     "eslint": "^5.13.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-friendly-formatter": "",
-    "eslint-loader": "^2.1.1",
+    "eslint-loader": "^2.1.2",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.0.1",
@@ -46,9 +46,9 @@
     "mousetrap": "^1.6.2",
     "quasar-cli": "^0.17.23",
     "strip-ansi": "^3.0.1",
-    "vue": "^2.5.22",
+    "vue": "^2.6.3",
     "vue-style-loader": "^4.1.2",
-    "vue-template-compiler": "^2.5.22",
+    "vue-template-compiler": "^2.6.3",
     "vuex": "^3.1.0"
   },
   "engines": {
