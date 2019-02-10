@@ -1,6 +1,12 @@
+// // import something here
+
+// // leave the export, even if you don't use it
+// export default async ({ app, router, Vue }) => {
+//   // something to do
+// }
 import ipc from 'electron-better-ipc'
 
-export default ({ router, store }) => {
+export default async ({ router, store }) => {
   ipc.callMain('getConfig')
     .then(configData => {
       store.commit('data/updateConfigData', configData)
@@ -24,6 +30,15 @@ export default ({ router, store }) => {
         router.push({ name: 'datenbank' })
       }
     })
+
+  ipc.callMain('repos')
+  ipc.answerMain('getConfigData', () => store.state.data.configData)
+  ipc.answerMain('updateRepos', repos => {
+    store.commit('data/updateRepos', repos)
+  })
+  ipc.answerMain('messageRollup', message => {
+    store.commit('data/updateMessage', message)
+  })
   router.beforeEach(async (to, from, next) => {
     // state wird oben gesetzt, ist aber async, deswegen wird passAuth nicht beim
     // ersten Start gefunden. Deshalb ebenfalls getConfig hier.
@@ -36,13 +51,5 @@ export default ({ router, store }) => {
       db &&
       !passAuth) next({ name: 'login' })
     next()
-  })
-
-  ipc.answerMain('getConfigData', () => store.state.data.configData)
-  ipc.answerMain('updateRepos', repos => {
-    store.commit('data/updateRepos', repos)
-  })
-  ipc.answerMain('messageRollup', message => {
-    store.commit('data/updateMessage', message)
   })
 }

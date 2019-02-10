@@ -1,7 +1,7 @@
 <template>
   <div>
     <webview src="about:blank" :preload="preload"></webview>
-    <q-page-sticky position="top-right" :offset="[18, 18]">
+    <q-page-sticky position="top-right" :offset="[18, 18]" v-if="$store.state.data.schuelerGewaehlt.length > 0">
       <q-fab
         ref="abschnitte"
         round
@@ -46,25 +46,28 @@
       />
     </q-page-sticky>
     <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError" color="red">
-      <span slot="title">{{dialogMessage.code}}</span>
-      <div slot="body">
-        <b>{{dialogMessage.message}}</b>:
-      </div>
+      <q-card>
+        <q-card-section class="text-h6">Rollup: {{dialogMessage.code}}</q-card-section>
+        <q-card-section>
+          <b>{{dialogMessage.message}}</b>:
+        </q-card-section>
+      </q-card>
     </q-dialog>
     <q-dialog v-model="dialogModelSvelteError" v-if="dialogModelSvelteError" color="orange">
-      <span slot="title">{{dialogMessage.pluginCode}}</span>
-      <div slot="body">
-        Fehler in <b>{{dialogMessage.filename}}</b>:
-        <br>Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
-        <br><pre>{{dialogMessage.frame}}</pre>
-      </div>
+      <q-card>
+        <q-card-section class="text-h6">Svelte: {{dialogMessage.code}}</q-card-section>
+        <q-card-section>
+          Fehler in <b>{{dialogMessage.filename}}</b>:
+          <br>Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
+          <br><pre>{{dialogMessage.frame}}</pre>
+        </q-card-section>
+      </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script>
 import { join } from 'path'
-const ipc = require('electron-better-ipc')
 let webview
 
 export default {
@@ -79,7 +82,7 @@ export default {
     },
     message () {
       console.log(this.message)
-      if (this.message.plugin) {
+      if (this.message.frame) {
         this.dialogModelSvelteError = true
       } else {
         this.dialogModelRollupError = true
@@ -95,7 +98,6 @@ export default {
       devTools: false,
       devToolsColor: 'red',
       mark: true,
-      load: false,
       dialogModelRollupError: false,
       dialogModelSvelteError: false,
       dialogMessage: null,
@@ -107,21 +109,24 @@ export default {
     message () { return this.$store.state.data.message },
     componentArgs () { return this.$store.getters['data/reportData'] }
   },
-  created () {
-    this.runRollup()
-  },
   mounted () {
     webview = document.querySelector('webview')
+    webview.addEventListener('console-message', (e) => {
+      console.log('Guest page logged a message:', e.message)
+    })
     const loadPage = () => {
       this.updateComponent()
       webview.removeEventListener('dom-ready', loadPage)
     }
     webview.addEventListener('dom-ready', loadPage)
+    webview.addEventListener('ipc-message', (event) => {
+      this.runRollup()
+    })
   },
   methods: {
     showDataInConsole () { webview.send('showDataInConsole', this.shorterReportData()) },
     shorterReportData () { const { knexConfig, componentsPath, ...rest } = this.componentArgs; return rest },
-    runRollup () { ipc.callMain('runRollup', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs, debug: this.configData.debug }) },
+    runRollup () { webview.send('runRollup', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs, debug: this.configData.debug }) },
     setAbschnitt (a) {
       this.aktHalbjahr = { jahr: a.Jahr, abschnitt: a.Abschnitt }
       webview.send('setAbschnitt', this.aktHalbjahr)

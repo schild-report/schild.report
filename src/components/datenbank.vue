@@ -1,40 +1,45 @@
 <template>
   <q-card inline style="width: 300px; margin: 5px">
-    <q-card-title>
-      Verbindungsdaten zur Datenbank
-    </q-card-title>
-    <q-card-separator />
-    <q-card-main>
+    <q-card-section>
+      <div class="text-h6">Datenbank</div>
+    </q-card-section>
+    <q-separator />
+    <q-card-section>
       <q-input
-        stack-label="Server"
-        placeholder="Serveradresse, z.B. localhost oder 192.168.178.99"
+        label="Server"
+        placeholder="z.B. localhost oder 192.168.178.99"
         v-model="db.connection.host"
-        autofocus
+        :autofocus="autofocus"
+        @keyup.enter="handleSubmit"
       />
-    </q-card-main>
-    <q-card-main>
+    </q-card-section>
+    <q-card-section>
       <q-input
-        stack-label="Datenbank"
+        label="Datenbank"
         placeholder="Name der Datenbank, z.B. schild_berufskolleg"
         v-model="db.connection.database"
+        @keyup.enter="handleSubmit"
       />
-    </q-card-main>
-    <q-card-main>
-      <q-input float-label="Benutzername" v-model="db.connection.user"/>
-    </q-card-main>
-    <q-card-main>
+    </q-card-section>
+    <q-card-section>
+      <q-input label="Benutzername"
+        v-model="db.connection.user"
+        @keyup.enter="handleSubmit"
+      />
+    </q-card-section>
+    <q-card-section>
       <q-input
         type="password"
         no-pass-toggle
-        float-label="Passwort"
+        label="Passwort"
         v-model="db.connection.password"
         @keyup.enter="handleSubmit"
       />
-    </q-card-main>
-    <q-card-main>
+    </q-card-section>
+    <q-card-section>
       <q-btn color="primary" @click="handleSubmit">{{checkConnection}}</q-btn>
       <q-icon class="q-display-1" v-if="testing" :color="testing" name="lens" />
-    </q-card-main>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -44,6 +49,7 @@ const ipc = require('electron-better-ipc')
 export default {
   data () {
     return {
+      autofocus: this.$route.name === 'datenbank',
       checkConnection: 'Verbindung prüfen …',
       configData: this.$store.state.data.configData,
       db: this.$store.state.data.configData.db || {

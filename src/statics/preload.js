@@ -10,12 +10,14 @@ const libraries = {
 }
 
 global.ipc = () => {
-  ipcRenderer.send('webviewReady')
   const mark = new Mark(document.querySelector('body'))
   global.R = (lib) => require(libraries[lib])
   let svelte
   let props
 
+  ipcRenderer.on('runRollup', async (event, data) => {
+    ipcRenderer.send('runRollup', data)
+  })
   ipcRenderer.on('showDataInConsole', (event, data) => {
     global.daten = data
     console.log('Die für Reports zur Verfügung stehenden Daten sind unter `daten` abegelegt:', global.daten)
@@ -49,4 +51,6 @@ global.ipc = () => {
     }
     mark.mark(['undefined', '01.01.1970'])
   })
+  // Host mitteilen, dass wir die Daten für den rollup-start haben wollen
+  ipcRenderer.sendToHost('pong')
 }

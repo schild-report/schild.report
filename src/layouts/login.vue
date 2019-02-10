@@ -1,27 +1,27 @@
 <template>
   <q-card inline class="fixed-center" style="width: 500px">
-    <q-card-title>
+    <q-card-section>
       Melden Sie sich mit Ihrem Schild-Benutzer an
-    </q-card-title>
-    <q-card-separator />
-    <q-card-main>
+    </q-card-section>
+    <q-separator />
+    <q-card-section>
       <q-input
         stack-label="Benutzername"
         v-model="user"
         autofocus
       />
-    </q-card-main>
-    <q-card-main>
+    </q-card-section>
+    <q-card-section>
       <q-input
         type="password"
         stack-label="Passwort"
         v-model="password"
         @keyup.enter="login"
       />
-    </q-card-main>
-    <q-card-main>
+    </q-card-section>
+    <q-card-section>
       <q-btn :color="color" @click="login">{{text}}</q-btn>
-    </q-card-main>
+    </q-card-section>
   </q-card>
 </template>
 

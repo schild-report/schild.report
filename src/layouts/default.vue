@@ -1,42 +1,52 @@
 <template>
   <q-layout view="hHh LpR lFf">
-    <q-layout-header>
+    <q-header>
       <q-toolbar color="primary">
-        <q-btn
-          flat dense
-          icon="home"
-          @click="goto('/')"
-        />
-        <q-toolbar-title shrink>
-          {{schule.Bezeichnung1}}
-          <span slot="subtitle">
-            {{schule.Bezeichnung2}}
-          </span>
-        </q-toolbar-title>
-        <q-search
+          <q-item dark><q-item-section>
+            <q-item-label caption>{{schule.Bezeichnung1}}</q-item-label>
+            <q-item-label caption>{{schule.Bezeichnung2}}</q-item-label>
+          </q-item-section></q-item>
+        <q-select
+          use-input
+          color="white"
+          dark
+          dense
           v-model="terms"
-          placeholder="Name oder Klasse eingeben"
-          align="left"
-          color="none"
-          autofocus
-          inverted
-          class="col-3"
-          >
-          <q-autocomplete
-            @search="search"
-            @selected="selected"
-            :max-results="40"
-          />
-        </q-search>
-        <q-btn @click="goto(schuelerLink)" dark v-if="['dokument'].includes($route.name)">{{zurueckZu}}</q-btn>
-        <q-btn @click="openPdf" inverted v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
-        <q-toolbar-title></q-toolbar-title>
+          dropdown-icon=""
+          input-debounce="0"
+          label="Name oder Klasse eingeben"
+          :options="options"
+          @filter="search"
+          @input="selected"
+          style="width: 450px"
+        >
+        <template v-slot:prepend>
+          <q-icon name="search" />
+        </template>
+          <template v-slot:option="scope">
+            <q-item
+              v-bind="scope.itemProps"
+              v-on="scope.itemEvents"
+            >
+              <q-item-section avatar>
+                <q-icon :name="scope.opt.icon" :color="scope.opt.color"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label v-html="scope.opt.label" />
+                <q-item-label caption v-if="scope.opt.caption">{{scope.opt.caption}}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-btn class="q-mx-sm" @click="goto(schuelerLink)" color="white" text-color="black" unelevated v-if="['dokument'].includes($route.name)">{{zurueckZu}}</q-btn>
+        <q-btn @click="openPdf" unelevated vert v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
+        <q-space/>
         <q-btn flat @click="$router.go(-1)" v-if="$route.name === 'einstellungen'" icon="arrow_back"></q-btn>
         <q-btn flat @click="goto('/app/einstellungen')" v-if="$route.name !== 'einstellungen'" icon="settings"></q-btn>
       </q-toolbar>
-    </q-layout-header>
+    </q-header>
 
-    <q-layout-drawer v-model="dokumentenauswahlZeigen" content-class="bg-grey-2">
+    <q-drawer :value="dokumentenauswahlZeigen" content-class="bg-grey-2">
       <div class="q-pa-md" v-if="Object.keys(repos).length === 0">
         <b>Fügen Sie Ihrem Reportordner Reports hinzu, um Dokumente erstellen zu können.</b>
         <br>Dazu können Sie z.B. den Demo-Ordner verwenden, der sich hier: https://github.com/schild-report/demo befindet.
@@ -49,16 +59,16 @@
         v-for="(dokumente, repo) in repos"
         :key="repo"
       >
-        <q-list-header>{{repo}}</q-list-header>
+         <q-item-label header>{{repo}}</q-item-label>
           <q-item
-            :class="repo === $route.params.repo && dokument === $route.params.id ? 'bg-light':''"
-            @click.native="goto(`/dokument/${repo}/${dokument}`)"
+            :active="repo === $route.params.repo && dokument === $route.params.id"
+            :to="`/dokument/${repo}/${dokument}`"
             v-for="(dokument) in dokumente" :key="dokument"
           >
-            {{ dokument.slice(0, -5) }}
+            <q-item-section>{{dokument.slice(0, -5)}}</q-item-section>
           </q-item>
       </q-list>
-    </q-layout-drawer>
+    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -105,7 +115,6 @@ export default {
     })
   },
   mounted () {
-    ipc.callMain('repos')
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
       const { knexConfig, componentsPath, ...rest } = this.reportData
       remote.clipboard.writeText(JSON.stringify(rest))
@@ -115,11 +124,12 @@ export default {
   },
   data () {
     return {
-      terms: '',
+      terms: null,
       pdfLink: null,
       error: null,
       configData: this.$store.state.data.configData,
-      reportData: this.$store.getters['data/reportData']
+      reportData: this.$store.getters['data/reportData'],
+      options: []
     }
   },
   computed: {
@@ -136,31 +146,41 @@ export default {
     schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
   methods: {
-    search (terms, done) {
-      ipc.callMain('schildSuche', { arg: terms })
-        .then(response => {
-          const completions = response
-            .map(d => {
-              const status = statusFeedback(d.status)
-              return {
-                label: d.value,
-                searchlink: { klasse: (!status.icon), id: d.id },
-                icon: status.icon || 'group',
-                stamp: String(d.jahr || ''),
-                leftColor: status.color,
-                status: d.status
-              }
-            })
-            .sort((a, b) => (sortierfolge.indexOf(a.status) || a.label) < (sortierfolge.indexOf(b.status) || b.label) ? 1 : -1)
-          done(completions)
-        },
-        (error) => {
-          console.log(error)
-          done([])
+    search (terms, update, abort) {
+      if (terms.length < 2) {
+        abort()
+        return
+      }
+      if (terms === '') {
+        update(() => {
+          this.options = []
         })
+        return
+      }
+      update(() => {
+        ipc.callMain('schildSuche', { arg: terms })
+          .then(response => {
+            const completions = response
+              .map(d => {
+                const status = statusFeedback(d.status)
+                return {
+                  label: d.value,
+                  searchlink: { klasse: (!status.icon), id: d.id },
+                  icon: status.icon || 'group',
+                  caption: d.jahr ? String(d.jahr) : null,
+                  color: status.color,
+                  status: d.status
+                }
+              })
+              .sort((a, b) => (sortierfolge.indexOf(a.status) || a.label) < (sortierfolge.indexOf(b.status) || b.label) ? 1 : -1)
+            this.options = completions
+          })
+      })
     },
-    selected (item, keyboard) { if (!keyboard) this.updateDaten(item.searchlink) },
+    selected (item) { this.updateDaten(item.searchlink) },
     updateDaten (o) {
+      this.terms = null
+      this.options = []
       o.klasse ? this.updateKlasse(o.id) : this.updateSchueler(o.id)
       if (!['dokument'].includes(this.$route.name)) this.$router.push(o.klasse ? '/klasse' : '/schueler')
     },

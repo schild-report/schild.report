@@ -3,16 +3,15 @@
     <div v-if="klasse" class="content">
       <div class="row">
         <div class="col">
-          <div class="q-display-1">{{klasse.Klasse}}, <span v-if="klasse.fachklasse">{{klasse.fachklasse.Bezeichnung || ''}}</span></div>
+          <div class="text-h6 text-weight-medium">{{klasse.Klasse}}, <span v-if="klasse.fachklasse">{{klasse.fachklasse.Bezeichnung || ''}}</span></div>
         </div>
         <div class="col" v-if="klasse.jahrgang">
-          <div class="q-title">{{klasse.jahrgang.ASDBezeichnung}}</div>
-          <div class="q-subheading">{{klasse.KlassenlehrerKrz}}</div>
+          <div class="text-h6">{{klasse.jahrgang.ASDBezeichnung}}</div><div class="text-subtitle">{{klasse.KlassenlehrerKrz}}</div>
         </div>
       </div>
-      <div v-for="(tabelle, index) in klasseSortiert" :key="index">
+      <q-separator spaced/>
+      <div v-for="(tabelle, index) in klasseSortiert" :key="index" class="q-pb-md">
         <div v-if="tabelle.schueler.length > 0">
-          <h5 :class="'text-'+tabelle.status"></h5>
           <q-table
             :title="tabelle.titel"
             :data="tabelle.schueler"
@@ -21,13 +20,15 @@
             row-key="ID"
             hide-bottom
             dense
-            table-style="overflow-y:hidden"
             selection="multiple"
             :selected.sync="selected"
             >
-            <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props.row)" class="cursor-pointer">
+            <template v-slot:top>
+              <div :class="'text-'+tabelle.status +' text-h6'">{{tabelle.titel}}</div>
+            </template>
+            <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props)" class="cursor-pointer">
               <q-td auto-width>
-                <q-checkbox color="primary" v-model="props.selected" />
+                <q-checkbox color="primary" v-model="props.selected"/>
               </q-td>
               <q-td v-for="col in props.cols" :key="col.name" :props="props">
                 <div v-if="['Name', 'Vorname', 'Telefon'].some(c => c === col.name)">{{col.value}}</div>
@@ -96,8 +97,10 @@ export default {
       this.$store.commit('data/updateSelected', this.selected)
       this.$store.commit('data/updateSchuelerGewaehlt', this.selected)
     },
-    rowClick (row) {
-      this.$root.$emit('sucheSchueler', { klasse: false, id: row.ID })
+    rowClick (props) {
+      // wenn ein Schüler ausgewählt wird, spring _rowClick()_ ebenfalls an
+      if (props.__trClass === 'selected') return
+      this.$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })
     }
   }
 }

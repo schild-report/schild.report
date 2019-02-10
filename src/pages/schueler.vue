@@ -1,13 +1,16 @@
 <template>
-  <q-page padding class="row">
-    <div v-if="schueler" class="content">
-      <div class="q-display-1">
-        <span class="text-secondary cursor-pointer" color="secondary" v-on:click="$root.$emit('sucheSchueler', { klasse: true, id: schueler.Klasse })">{{schueler.Klasse}}</span> > {{schueler.Vorname}} {{schueler.Name}} ({{schueler.Geschlecht === 3 ? "&#x2642;" : "&#x2640;"}} {{alter}})
-      </div>
-      <q-card inline v-if="tabelle.length > 0" style="margin: 5px">
-        <q-card-title>Leistungsübersicht</q-card-title>
-        <q-card-separator />
-        <q-card-main>
+  <q-page padding v-if="schueler">
+    <div class="text-h6 text-weight-medium">
+      <span class="text-secondary cursor-pointer" color="secondary" v-on:click="$root.$emit('sucheSchueler', { klasse: true, id: schueler.Klasse })">{{schueler.Klasse}}</span> > {{schueler.Vorname}} {{schueler.Name}} ({{schueler.Geschlecht === 3 ? "&#x2642;" : "&#x2640;"}} {{alter}})
+    </div>
+    <q-separator/>
+    <div class="q-pa-md row items-start q-gutter-md">
+      <q-card v-if="tabelle.length > 0" style="margin: 5px">
+        <q-card-section><div class="text-h6">
+          Leistungsübersicht
+        </div></q-card-section>
+        <q-separator />
+        <q-card-section>
           <q-table
               :data="tabelle"
               :columns="columns"
@@ -29,16 +32,23 @@
               </q-td>
             </q-tr>
           </q-table>
-        </q-card-main>
+        </q-card-section>
       </q-card>
-      <q-card inline style="width: 300px; margin: 5px">
-        <q-card-title>{{schueler.AktSchuljahr}}/{{schueler.AktAbschnitt}}</q-card-title>
-        <q-card-separator />
-        <q-card-main>
-          <img v-if="schuelerfoto" :src="schuelerfoto">
-          <div v-else><i>Kein Foto vorhanden</i></div>
-        </q-card-main>
-        <q-card-main>
+      <q-card style="width: 300px; margin: 5px">
+        <q-card-section><div class="text-h6">
+          {{schueler.AktSchuljahr}}/{{schueler.AktAbschnitt}}
+        </div></q-card-section>
+        <q-separator />
+        <q-card-section>
+          <q-img :src="schuelerfoto" style="max-width: 250px">
+            <template v-slot:error>
+              <div class="absolute-full flex flex-center bg-negative text-white">
+                Kein Foto vorhanden
+              </div>
+            </template>
+          </q-img>
+        </q-card-section>
+        <q-card-section>
           <b>{{schueler.Vorname}} {{schueler.Name}}</b>
           <br>{{schueler.Strasse}}
           <br>{{schueler.PLZ}} {{schueler.OrtAbk}}
@@ -46,27 +56,32 @@
           <br>{{schueler.Telefon}}
           <br>{{schueler.EMail}}
           <br>{{(new Date(schueler.Geburtsdatum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'}))}}
-        </q-card-main>
+        </q-card-section>
       </q-card>
-      <q-card inline v-if="schueler.vermerke.length > 0" style="width: 300px; margin: 5px">
-        <q-card-title>Vermerke</q-card-title>
-        <q-card-separator />
-        <q-card-main>
+      <q-card v-if="schueler.vermerke.length > 0" style="width: 300px; margin: 5px">
+        <q-card-section><div class="text-h6">
+          Vermerke
+        </div></q-card-section>
+        <q-separator />
+        <q-card-section>
           <q-list v-for="(v, index) in schueler.vermerke" :key="index">
             <q-item>
-              <q-item-main
-                :label="v.Bemerkung"
-                :sublabel="`${(new Date(v.Datum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'}))} | ${v.GeaendertVon||v.AngelegtVon}`" />
+              <q-item-section>
+                <q-item-label>{{v.Bemerkung}}</q-item-label>
+                <q-item-label caption>{{`${(new Date(v.Datum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'}))} | ${v.GeaendertVon||v.AngelegtVon}`}}</q-item-label>
+              </q-item-section>
             </q-item>
           </q-list>
-        </q-card-main>
+        </q-card-section>
       </q-card>
-      <q-card inline v-if="abschlussInfo.some(a => a)" style="width: 300px; margin: 5px">
-        <q-card-title>Abschluss</q-card-title>
-        <q-card-separator />
-        <q-card-main v-for="abschluss in abschlussInfo" :key="abschluss">
+      <q-card v-if="abschlussInfo.some(a => a)" style="width: 300px; margin: 5px">
+        <q-card-section><div class="text-h6">
+          Abschluss
+        </div></q-card-section>
+        <q-separator />
+        <q-card-section v-for="abschluss in abschlussInfo" :key="abschluss">
           <div v-if="abschluss">{{abschluss}}</div>
-        </q-card-main>
+        </q-card-section>
       </q-card>
     </div>
   </q-page>

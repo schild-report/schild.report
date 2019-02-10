@@ -128,40 +128,22 @@ const scanSource = async () => {
   ipc.callRenderer(mainWindow, 'updateRepos', obj)
 }
 
-let webview
-let webviewReady = {}
-ipc.on('webviewReady', async (event) => {
-  webview = event.sender
-  webviewReady.webview = true
-  await updateWebView()
-  webviewReady.webview = false
-})
+ipc.answerRenderer('repos', async () => scanSource())
 
-const updateWebView = async () => {
-  if (webviewReady.webview && webviewReady.dokument) {
-    webview.send('updateComponents', webviewReady.componentArgs)
-    webviewReady.webview = false
-  }
-}
-const runRollup = async (file, debug) => {
-  const options = file ? {
-    source: join(configData.reports, file),
+ipc.on('runRollup', async (event, args) => {
+  const webview = event.sender
+  console.log('Rollup starten für', args.file, '…')
+  const options = args.file ? {
+    source: join(configData.reports, args.file),
     dest: join(configData.userData),
-    debug: debug
+    debug: args.debug
   } : null
   try {
     await rollup.build(options)
-    webviewReady.dokument = true
-    webviewReady.webview = !options
-    updateWebView()
+    webview.send('updateComponents', args.componentArgs)
   } catch (err) {
     console.log(err)
   }
-}
-ipc.answerRenderer('runRollup', async (args) => {
-  console.log('Rollup starten für', args.file, '…')
-  webviewReady.componentArgs = args.componentArgs
-  runRollup(args.file, args.debug)
 })
 
 ipc.answerRenderer('getConfig', async () => {

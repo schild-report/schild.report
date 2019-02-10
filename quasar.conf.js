@@ -1,35 +1,71 @@
-// Configuration for your app
 module.exports = function (ctx) {
   return {
-    // app plugins (/src/plugins)
-    plugins: [
-      'config'
-    ],
-    css: [
-      'app.styl'
-    ],
+    boot: [ 'config.js' ],
+    css: [ 'app.styl' ],
     extras: [
-      ctx.theme.mat ? 'roboto-font' : null,
-      'material-icons'
-      // 'ionicons',
-      // 'mdi',
-      // 'fontawesome'
+      'roboto-font',
+      'material-icons' // optional, you are not bound to it
+      // 'ionicons-v4',
+      // 'mdi-v3',
+      // 'fontawesome-v5',
+      // 'eva-icons'
     ],
+    framework: {
+      components: [
+        'QAvatar',
+        'QBreadcrumbs',
+        'QBreadcrumbsEl',
+        'QBtn',
+        'QCard',
+        'QCardSection',
+        'QCheckbox',
+        'QDialog',
+        'QDrawer',
+        'QFab',
+        'QFabAction',
+        'QHeader',
+        'QIcon',
+        'QImg',
+        'QInput',
+        'QItem',
+        'QItemLabel',
+        'QItemSection',
+        'QLayout',
+        'QList',
+        'QPage',
+        'QPageContainer',
+        'QPageSticky',
+        'QSelect',
+        'QSeparator',
+        'QSpace',
+        'QTable',
+        'QTd',
+        'QTh',
+        'QToolbar',
+        'QToolbarTitle',
+        'QTooltip',
+        'QTr'
+      ],
+      directives: [ ],
+      plugins: [ ]
+    },
     supportIE: false,
     build: {
       scopeHoisting: true,
-      vueRouterMode: 'history',
+      // vueRouterMode: 'history',
+      // vueCompiler: true,
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      // useNotifier: false,
       extendWebpack (cfg) {
-        cfg.devtool = 'eval'
         cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
-          exclude: /(node_modules|quasar|dist|plugins)/
+          exclude: /node_modules/,
+          options: {
+            cache: true
+          }
         })
       }
     },
@@ -38,103 +74,14 @@ module.exports = function (ctx) {
       // port: 8080,
       open: false // opens browser window automatically
     },
-    // framework: 'all' --- includes everything; for dev only!
-    framework: {
-      components: [
-        'QAutocomplete',
-        'QLayout',
-        'QLayoutHeader',
-        'QLayoutDrawer',
-        'QPageContainer',
-        'QPage',
-        'QProgress',
-        'QSearch',
-        'QTable',
-        'QTh',
-        'QTr',
-        'QTd',
-        'QTableColumns',
-        'QToolbar',
-        'QToolbarTitle',
-        'QTooltip',
-        'QBtn',
-        'QIcon',
-        'QInput',
-        'QCheckbox',
-        'QList',
-        'QListHeader',
-        'QItem',
-        'QItemMain',
-        'QItemSide',
-        'QItemTile',
-        'QCard',
-        'QCardTitle',
-        'QCardMain',
-        'QCardSeparator',
-        'QFab',
-        'QFabAction',
-        'QPageSticky',
-        'QBreadcrumbs',
-        'QBreadcrumbsEl',
-        'QDialog'
-      ],
-      directives: [
-      ],
-      // Quasar plugins
-      plugins: [
-      ]
-    },
-    // animations: 'all' --- includes all animations
-    animations: [
-    ],
-    pwa: {
-      cacheExt: 'js,html,css,ttf,eot,otf,woff,woff2,json,svg,gif,jpg,jpeg,png,wav,ogg,webm,flac,aac,mp4,mp3',
-      manifest: {
-        // name: 'Quasar App',
-        // short_name: 'Quasar-PWA',
-        // description: 'Best PWA App in town!',
-        display: 'standalone',
-        orientation: 'portrait',
-        background_color: '#ffffff',
-        theme_color: '#027be3',
-        icons: [
-          {
-            'src': 'statics/icons/icon-128x128.png',
-            'sizes': '128x128',
-            'type': 'image/png'
-          },
-          {
-            'src': 'statics/icons/icon-192x192.png',
-            'sizes': '192x192',
-            'type': 'image/png'
-          },
-          {
-            'src': 'statics/icons/icon-256x256.png',
-            'sizes': '256x256',
-            'type': 'image/png'
-          },
-          {
-            'src': 'statics/icons/icon-384x384.png',
-            'sizes': '384x384',
-            'type': 'image/png'
-          },
-          {
-            'src': 'statics/icons/icon-512x512.png',
-            'sizes': '512x512',
-            'type': 'image/png'
-          }
-        ]
-      }
-    },
-    cordova: {
-      // id: 'org.cordova.quasar.app'
-    },
     electron: {
+      // bundler: 'builder', // or 'packager'
       extendWebpack (cfg) {
-        // do something with cfg
+        // do something with Electron process Webpack cfg
       },
       packager: {
-        asar: true,
+        // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
+
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
@@ -142,13 +89,12 @@ module.exports = function (ctx) {
         // protocol: 'myapp://path',
 
         // Window only
-        appCopyright: 'MIT',
-        appVersion: process.env['APPVEYOR_BUILD_VERSION'],
-        win32metadata: { CompanyName: process.env['AUTHOR'] }
+        // win32metadata: { ... }
+      },
+      builder: {
+        // https://www.electron.build/configuration/configuration
+        // appId: 'quasar-app'
       }
-    },
-
-    // leave this here for Quasar CLI
-    starterKit: '1.0.0'
+    }
   }
 }
