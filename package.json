@@ -20,12 +20,13 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
     "schild": "^0.3.7",
-    "svelte": "^3.0.0-beta.3",
-    "@quasar/extras": "^1.0.0",
-    "quasar": "^1.0.0-beta.0"
+    "dot-prop": "^4.2.0",
+    "svelte": "^3.0.0-beta.3"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0-beta.2",
+    "quasar": "^1.0.0-beta.1",
+    "@quasar/app": "^1.0.0-beta.3",
+    "@quasar/extras": "^1.0.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "devtron": "^1.4.0",
@@ -33,6 +34,7 @@
     "electron-better-ipc": "^0.1.2",
     "electron-debug": "^2.1.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-packager": "^13.0.1",
     "electron-store": "^2.0.0",
     "electron-util": "^0.11.0",
     "electron-wix-msi": "^2.1.1",

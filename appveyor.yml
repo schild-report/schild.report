@@ -3,23 +3,24 @@ skip_tags: true
 
 install:
   - set path=c:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
-  - npm install -g vue-cli
-  - npm install quasar-cli
+  - npm install -g @quasar/cli
   - |-
       echo export const VERSION = { buildID: '%APPVEYOR_BUILD_ID%', buildVersion: '%APPVEYOR_BUILD_VERSION%', buildNo: '%APPVEYOR_BUILD_NUMBER%', gitHash: '%APPVEYOR_REPO_COMMIT%', gitMessage: '%APPVEYOR_REPO_COMMIT_MESSAGE%' }> src-electron/main-process/version.js
   - cat src-electron/main-process/version.js
+  - npm install
 
 cache:
   - node_modules -> package.json
   - '%AppData%\npm\node_modules'
 
 test_script:
-  - node --version
-  - npm --version
 
 build_script:
-  - ./node_modules/.bin/quasar build -m electron
-  - C:\projects\schild-report\dist\electron-mat\schild.report-win32-ia32\schild.report.exe -v
+  - node --version
+  - npm --version
+  - quasar info
+  - quasar build -m electron
+  - C:\projects\schild-report\dist\electron\schild.report-win32-ia32\schild.report.exe -v
   - node create-msi.js
 
 artifacts:
