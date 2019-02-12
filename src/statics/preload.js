@@ -45,9 +45,9 @@ global.ipc = () => {
     if (svelte) svelte.$destroy()
     try {
       svelte = new Component({ target: document.querySelector('svelte'), props })
-      console.log('Svelte-Dokument erfolgreich kompiliert.')
+      console.log('Svelte-Dokument erfolgreich geladen.')
     } catch (e) {
-      console.log('Das Svelte-Dokument konnte nicht kompiliert werden:', e)
+      console.log('Das Svelte-Dokument konnte nicht geladen werden:', e)
     }
     mark.mark(['undefined', '01.01.1970'])
   })
