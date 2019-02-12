@@ -1,6 +1,9 @@
 const ipcRenderer = require('electron').ipcRenderer
 const Mark = require('mark.js')
 
+// informiere den Main-Thread, wer der webview ist
+ipcRenderer.send('webview')
+
 const libraries = {
   lodash: 'lodash',
   schild: 'schild',
@@ -16,7 +19,8 @@ global.ipc = () => {
   let props
 
   ipcRenderer.on('runRollup', async (event, data) => {
-    ipcRenderer.send('runRollup', data)
+    props = data.componentArgs
+    ipcRenderer.send('runRollup', { file: data.file, debug: data.debug })
   })
   ipcRenderer.on('showDataInConsole', (event, data) => {
     global.daten = data
@@ -38,8 +42,7 @@ global.ipc = () => {
     mark.mark(['undefined', '01.01.1970'])
   })
 
-  ipcRenderer.on('updateComponents', (event, newData) => {
-    props = props || newData
+  ipcRenderer.on('updateComponents', () => {
     delete require.cache[props.componentsPath]
     const Component = require(props.componentsPath)
     if (svelte) svelte.$destroy()

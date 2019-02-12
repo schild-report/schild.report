@@ -47,7 +47,6 @@ rollup.on('moduleIDs', moduleIDs => {
           if (!isNew) {
             console.log('Änderungen bei: ' + path)
             await runRollup()
-            updateWebView()
           }
         })
       } catch (e) {
@@ -67,8 +66,8 @@ function createWindow () {
     ...configData.windowBounds.main,
     show: false,
     useContentSize: true,
-    title: `${app.getName()} ${VERSION['buildVersion']}`
-    // icon: join(__dirname, '../icons/linux-256x256.png')
+    title: `${app.getName()} ${VERSION['buildVersion']}`,
+    icon: join(__dirname, '../icons/linux-256x256.png')
   })
 
   mainWindow.loadURL(process.env.APP_URL)
@@ -129,23 +128,27 @@ const scanSource = async () => {
 }
 
 ipc.answerRenderer('repos', async () => scanSource())
+let webview
 
-ipc.on('runRollup', async (event, args) => {
-  const webview = event.sender
-  console.log('Rollup starten für', args.file, '…')
-  const options = args.file ? {
+ipc.on('webview', async (event) => { webview = event.sender })
+
+const runRollup = async (args) => {
+  const options = args && args.file ? {
     source: join(configData.reports, args.file),
     dest: join(configData.userData),
     debug: args.debug
   } : null
   try {
     await rollup.build(options)
-    webview.send('updateComponents', args.componentArgs)
+    webview.send('updateComponents')
   } catch (err) {
     console.log(err)
   }
+}
+ipc.on('runRollup', async (event, args) => {
+  console.log('Rollup starten für', args.file, '…')
+  runRollup(args)
 })
-
 ipc.answerRenderer('getConfig', async () => {
   return configData
 })

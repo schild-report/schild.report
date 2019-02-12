@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "cheap-watch": "^1.0.2",
+    "electron-store": "^2.0.0",
     "lodash": "^4.17.11",
     "mark.js": "^8.11.1",
     "rollup": "^1.1.2",
@@ -20,11 +21,9 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
     "schild": "^0.3.7",
-    "electron-store": "^2.0.0",
     "svelte": "^3.0.0-beta.3"
   },
   "devDependencies": {
-    "quasar": "^1.0.0-beta.1",
     "@quasar/app": "^1.0.0-beta.3",
     "@quasar/extras": "^1.0.0",
     "@vue/eslint-config-standard": "^4.0.0",
@@ -41,6 +40,7 @@
     "eslint-loader": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0",
     "mousetrap": "^1.6.2",
+    "quasar": "^1.0.0-beta.1",
     "strip-ansi": "=3.0.1"
   },
   "engines": {

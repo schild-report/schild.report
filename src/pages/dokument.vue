@@ -126,7 +126,13 @@ export default {
   methods: {
     showDataInConsole () { webview.send('showDataInConsole', this.shorterReportData()) },
     shorterReportData () { const { knexConfig, componentsPath, ...rest } = this.componentArgs; return rest },
-    runRollup () { webview.send('runRollup', { file: join(this.$route.params.repo, this.$route.params.id), componentArgs: this.componentArgs, debug: this.configData.debug }) },
+    runRollup () {
+      webview.send('runRollup', {
+        file: join(this.$route.params.repo, this.$route.params.id),
+        componentArgs: this.componentArgs,
+        debug: this.configData.debug
+      })
+    },
     setAbschnitt (a) {
       this.aktHalbjahr = { jahr: a.Jahr, abschnitt: a.Abschnitt }
       webview.send('setAbschnitt', this.aktHalbjahr)
