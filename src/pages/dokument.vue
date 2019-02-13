@@ -1,7 +1,7 @@
 <template>
   <div>
     <webview src="about:blank" :preload="preload"></webview>
-    <q-page-sticky position="top-right" :offset="[18, 18]" v-if="$store.state.data.schuelerGewaehlt.length > 0">
+    <q-page-sticky position="top-right" :offset="[18, 18]" v-if="schuelerGewaehlt.length > 0">
       <q-fab
         ref="abschnitte"
         round
@@ -9,7 +9,7 @@
         icon="date_range"
         direction="left"
       >
-        <q-fab-action v-for="(a, index) in $store.state.data.schuelerGewaehlt[0].abschnitte" :key="index"
+        <q-fab-action v-for="(a, index) in schuelerGewaehlt[0].abschnitte" :key="index"
           color="primary"
           icon=""
           @click="setAbschnitt(a)"
@@ -77,7 +77,7 @@ export default {
       this.runRollup()
       this.updateComponent()
     },
-    schueler () {
+    schuelerGewaehlt () {
       webview.send('setData', this.componentArgs)
     },
     message () {
@@ -105,14 +105,14 @@ export default {
     }
   },
   computed: {
-    schueler () { return this.$store.state.data.klasse },
+    schuelerGewaehlt () { return this.$store.getters['data/schuelerGewaehlt'] },
     message () { return this.$store.state.data.message },
     componentArgs () { return this.$store.getters['data/reportData'] }
   },
   mounted () {
     webview = document.querySelector('webview')
     webview.addEventListener('console-message', (e) => {
-      console.log('Guest page logged a message:', e.message)
+      console.log('%cSvelte:', 'color: blue', e.message)
     })
     const loadPage = () => {
       this.updateComponent()

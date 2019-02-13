@@ -38,7 +38,7 @@
             </q-item>
           </template>
         </q-select>
-        <q-btn class="q-mx-sm" @click="goto(schuelerLink)" color="white" text-color="black" unelevated v-if="['dokument'].includes($route.name)">{{zurueckZu}}</q-btn>
+        <q-btn class="q-mx-sm" @click="goto(schuelerLink)" color="white" text-color="black" unelevated v-if="kannZurueck">{{zurueckZu}}</q-btn>
         <q-btn @click="openPdf" unelevated vert v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
         <q-space/>
         <q-btn flat @click="$router.go(-1)" v-if="$route.name === 'einstellungen'" icon="arrow_back"></q-btn>
@@ -138,10 +138,14 @@ export default {
     schueler () { return this.klasse[0] },
     schule () { return this.$store.state.data.schule || '' },
     dokumentenauswahlZeigen () { return ['dokument', 'klasse', 'schueler'].includes(this.$route.name) },
+    kannZurueck () {
+      console.log(this.$route.name, this.klasse.schueler)
+      return this.$route.name === 'dokument' || (this.$route.name === 'schueler' && this.klasse.schueler)
+    },
     zurueckZu () {
-      return this.schueler
-        ? `Zurück zu ${this.schueler.Vorname} ${this.schueler.Name}, ${this.schueler.Klasse}`
-        : `Zurück zur ${this.klasse.Klasse}`
+      return this.klasse.schueler
+        ? `Zurück zur ${this.klasse.Klasse}`
+        : `Zurück zu ${this.schueler.Vorname} ${this.schueler.Name}, ${this.schueler.Klasse}`
     },
     schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
   },
@@ -181,6 +185,7 @@ export default {
     updateDaten (o) {
       this.terms = null
       this.options = []
+      this.$store.commit('data/updateSelected', [])
       o.klasse ? this.updateKlasse(o.id) : this.updateSchueler(o.id)
       if (!['dokument'].includes(this.$route.name)) this.$router.push(o.klasse ? '/klasse' : '/schueler')
     },
@@ -188,7 +193,6 @@ export default {
       if (this.schueler && id === this.schueler.ID) return
       this.getSchueler(id)
       this.getSchuelerfoto(id)
-      this.$store.commit('data/updateSelected', [])
       this.$store.commit('data/updateKlasseSortiert', null)
     },
     getSchueler (id) {
@@ -196,25 +200,25 @@ export default {
       ipc.callMain('schildGetSchueler', { arg: id })
         .then(response => {
           this.$store.commit('data/updateKlasse', [response])
-          this.$store.commit('data/updateSchuelerGewaehlt', [response])
+          this.$store.commit('data/updateSelected', [response])
+          ipc.callMain('schildGetSchuelerfoto', id)
+            .then(response => {
+              console.log('hole foto', response)
+              this.$store.commit('data/updateSchuelerfoto', response)
+            })
+            .catch((error) => {
+              this.$store.commit('data/updateSchuelerfoto', '')
+              this.error = error.toString()
+            })
         })
         .catch(error => {
           this.error = error.toString()
         })
     },
     getSchuelerfoto (id) {
-      ipc.callMain('schildGetSchuelerfoto', { arg: id })
-        .then(response => {
-          this.$store.commit('data/updateSchuelerfoto', response)
-        })
-        .catch((error) => {
-          this.$store.commit('data/updateSchuelerfoto', '')
-          this.error = error.toString()
-        })
     },
     updateKlasse (id) {
       if (this.klasse && id === this.klasse.Klasse) return
-      this.$store.commit('data/updateSelected', [])
       this.error = null
       ipc.callMain('schildGetKlasse', { arg: id })
         .then((response) => {
@@ -235,12 +239,6 @@ export default {
             'x': { titel: 'Inaktive Schüler', schueler: inaktiv, status: 'negative' }
           })
           this.$store.commit('data/updateKlasse', klasse)
-          let selection
-          if (aktiv.length > 0) selection = aktiv
-          else if (fertig.length > 0) selection = fertig
-          else if (neu.length > 0) selection = neu
-          else selection = klasse.schueler
-          this.$store.commit('data/updateSchuelerGewaehlt', selection)
         })
         .catch((error) => {
           this.error = error.toString()

@@ -145,6 +145,7 @@ const runRollup = async (args) => {
     console.log(err)
   }
 }
+let schueler
 ipc.on('runRollup', async (event, args) => {
   console.log('Rollup starten für', args.file, '…')
   runRollup(args)
@@ -163,17 +164,23 @@ ipc.answerRenderer('schildSuche', async data => {
   return schild.suche(data.arg)
 })
 ipc.answerRenderer('schildGetKlasse', async data => {
-  return (await schild.getKlasse(data.arg)).toJSON()
+  const klasse = await schild.getKlasse(data.arg)
+  schueler = klasse.schueler
+  return klasse.toJSON()
 })
 ipc.answerRenderer('schildGetSchule', async () => {
   return (await schild.getSchule()).toJSON()
 })
 ipc.answerRenderer('schildGetSchueler', async data => {
-  const schueler = await schild.getSchueler(data.arg)
-  return schueler.toJSON()
+  const s = await schild.getSchueler(data.arg)
+  schueler = [s]
+  return s.toJSON()
 })
-ipc.answerRenderer('schildGetSchuelerfoto', async data => {
-  return schild.getSchuelerfoto(data.arg)
+ipc.answerRenderer('schildGetSchuelerfoto', async id => {
+  console.log(schueler)
+  console.log(id)
+  return schueler.find(s => s.ID === id).schuelerfoto
+  // return schild.getSchuelerfoto(data.arg)
 })
 ipc.answerRenderer('schildGetNutzer', async data => {
   return (await schild.getNutzer(data.arg)).toJSON()

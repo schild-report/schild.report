@@ -55,7 +55,7 @@
           <p></p>
           <br>{{schueler.Telefon}}
           <br>{{schueler.EMail}}
-          <br>{{(new Date(schueler.Geburtsdatum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'}))}}
+          <br>{{(new Date(schueler.Geburtsdatum).toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric', timezone: 'Europe/Berlin'}))}}
         </q-card-section>
       </q-card>
       <q-card v-if="schueler.vermerke.length > 0" style="width: 300px; margin: 5px">
@@ -117,7 +117,7 @@ export default {
       })
       return a
     },
-    schueler () { return this.$store.state.data.klasse[0] },
+    schueler () { return this.$store.state.data.selected[0] },
     schuelerfoto () { return this.$store.state.data.schuelerfoto ? `data:image/jpg;base64,${this.$store.state.data.schuelerfoto}` : null },
     alter () {
       const geburtstag = +new Date(this.schueler.Geburtsdatum)

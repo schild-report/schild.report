@@ -9,7 +9,6 @@
           <div class="text-h6">{{klasse.jahrgang.ASDBezeichnung}}</div><div class="text-subtitle">{{klasse.KlassenlehrerKrz}}</div>
         </div>
       </div>
-      <q-separator spaced/>
       <div v-for="(tabelle, index) in klasseSortiert" :key="index" class="q-pb-md">
         <div v-if="tabelle.schueler.length > 0">
           <q-table
@@ -95,12 +94,14 @@ export default {
   methods: {
     updateSelected () {
       this.$store.commit('data/updateSelected', this.selected)
-      this.$store.commit('data/updateSchuelerGewaehlt', this.selected)
+      // this.$store.commit('data/updateSchuelerGewaehlt', this.selected)
     },
     rowClick (props) {
       // wenn ein Schüler ausgewählt wird, spring _rowClick()_ ebenfalls an
       if (props.__trClass === 'selected') return
-      this.$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })
+      this.$store.commit('data/updateSelected', [this.klasse.schueler.find(s => s.ID === props.row.ID)])
+      this.$router.push('/schueler')
+      // this.$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })
     }
   }
 }
