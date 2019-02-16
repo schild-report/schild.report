@@ -10,16 +10,16 @@
         direction="left"
       >
         <q-fab-action v-for="(a, index) in schuelerGewaehlt[0].abschnitte" :key="index"
-          color="primary"
+          :color="svelteProps.jahr === a.Jahr && svelteProps.abschnitt === a.Abschnitt ? 'green' : 'primary'"
           icon=""
           @click="setAbschnitt(a)"
         >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
       </q-fab>
     </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[18, 85]">
+    <q-page-sticky position="top-right" :offset="[24, 85]">
       <q-btn round color="red" @click="showDataInConsole()"><q-tooltip>Schülerdaten in der Konsole ausgeben</q-tooltip><b>{ }</b></q-btn>
     </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[18, 137]">
+    <q-page-sticky position="top-right" :offset="[24, 137]">
       <q-btn
         round
         contenteditable="false"
@@ -28,16 +28,15 @@
         @click="editContent"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[18, 189]">
+    <q-page-sticky position="top-right" :offset="[24, 189]">
       <q-btn
         round
-        devTools="false"
         :color="devToolsColor"
         icon="build"
         @click="toggleDevTools"
       />
     </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[18, 241]">
+    <q-page-sticky position="top-right" :offset="[24, 241]">
       <q-btn
         round
         color="orange"
@@ -45,21 +44,16 @@
         @click="toggleMark"
       />
     </q-page-sticky>
-    <q-dialog v-model="dialogModelRollupError" v-if="dialogModelRollupError" color="red">
-      <q-card>
-        <q-card-section class="text-h6">Rollup: {{dialogMessage.code}}</q-card-section>
-        <q-card-section>
-          <b>{{dialogMessage.message}}</b>:
+    <q-dialog v-model="dialogError" bottom>
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section class="text-h6">{{message.message}}</q-card-section>
+        <q-card-section v-if="message.filename">
+          Fehler in <b>{{message.filename}}</b>
+          <br>Von Zeile {{message.start.line}} bis {{message.end.line}}
+          <br><pre>{{message.frame}}</pre>
         </q-card-section>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="dialogModelSvelteError" v-if="dialogModelSvelteError" color="orange">
-      <q-card>
-        <q-card-section class="text-h6">Svelte: {{dialogMessage.code}}</q-card-section>
         <q-card-section>
-          Fehler in <b>{{dialogMessage.filename}}</b>:
-          <br>Von Zeile {{dialogMessage.start.line}} bis {{dialogMessage.end.line}}
-          <br><pre>{{dialogMessage.frame}}</pre>
+          <pre>{{message.stack}}</pre>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -73,69 +67,65 @@ let webview
 export default {
   name: 'Dokument',
   watch: {
-    $route (to, from) {
-      this.runRollup()
-      this.updateComponent()
-    },
-    schuelerGewaehlt () {
-      webview.send('setData', this.componentArgs)
-    },
-    message () {
-      console.log(this.message)
-      if (this.message.frame) {
-        this.dialogModelSvelteError = true
-      } else {
-        this.dialogModelRollupError = true
-      }
-      this.dialogMessage = this.message
-    }
+    $route (to, from) { this.createSvelteEnv() },
+    klasseSortiert () { webview.send('setSvelteProps', this.svelteProps) },
+    message () { this.dialogError = true }
   },
   data () {
     return {
       preload: join('file:///', __statics, '/preload.js'),
       edit: false,
       editColor: 'red',
-      devTools: false,
       devToolsColor: 'red',
       mark: true,
-      dialogModelRollupError: false,
-      dialogModelSvelteError: false,
-      dialogMessage: null,
+      dialogError: false,
       configData: this.$store.state.data.configData
     }
   },
   computed: {
+    klasseSortiert () { return this.$store.getters['data/klasseSortiert'] },
     schuelerGewaehlt () { return this.$store.getters['data/schuelerGewaehlt'] },
     message () { return this.$store.state.data.message },
-    componentArgs () { return this.$store.getters['data/reportData'] }
+    svelteProps () { return this.$store.getters['data/reportData'] }
   },
   mounted () {
     webview = document.querySelector('webview')
-    webview.addEventListener('console-message', (e) => {
-      console.log('%cSvelte:', 'color: blue', e.message)
-    })
     const loadPage = () => {
-      this.updateComponent()
+      this.createSvelteEnv()
       webview.removeEventListener('dom-ready', loadPage)
     }
     webview.addEventListener('dom-ready', loadPage)
+    webview.addEventListener('console-message', (e) => {
+      console.log('%cSvelte:', 'color: blue', e.message)
+    })
+    webview.addEventListener('devtools-opened', () => { this.devToolsColor = 'green' })
+    webview.addEventListener('devtools-closed', () => { this.devToolsColor = 'red' })
     webview.addEventListener('ipc-message', (event) => {
-      this.runRollup()
+      switch (event.channel) {
+        case 'buildSvelte': this.buildSvelte(); break
+        case 'clearDialog': this.dialogError = false; break
+        case 'errorMessage': this.$store.commit('data/updateMessage', event.args[0])
+      }
     })
   },
   methods: {
-    showDataInConsole () { webview.send('showDataInConsole', this.shorterReportData()) },
-    shorterReportData () { const { knexConfig, componentsPath, ...rest } = this.componentArgs; return rest },
-    runRollup () {
-      webview.send('runRollup', {
+    showDataInConsole () {
+      webview.openDevTools()
+      webview.send('showDataInConsole', this.shorterReportData())
+    },
+    shorterReportData () { const { knexConfig, ...rest } = this.svelteProps; return rest },
+    buildSvelte () {
+      this.dialogError = false
+      webview.send('buildSvelte', {
         file: join(this.$route.params.repo, this.$route.params.id),
-        componentArgs: this.componentArgs,
+        componentPath: this.configData.userData + '/bundle.js',
+        svelteProps: this.svelteProps,
         debug: this.configData.debug
       })
     },
     setAbschnitt (a) {
       this.aktHalbjahr = { jahr: a.Jahr, abschnitt: a.Abschnitt }
-      webview.send('setAbschnitt', this.aktHalbjahr)
+      webview.send('setSveltePropsAbschnitt', this.aktHalbjahr)
       this.$store.commit('data/updateAbschnitt', this.aktHalbjahr)
     },
     editContent () {
@@ -145,15 +135,13 @@ export default {
     },
     toggleDevTools () {
       const is = webview.isDevToolsOpened()
-      this.devTools = !is
-      this.devToolsColor = !is ? 'green' : 'red'
       is ? webview.closeDevTools() : webview.openDevTools()
     },
     toggleMark () {
       this.mark = !this.mark
       webview.send('setMark', this.mark)
     },
-    updateComponent () {
+    createSvelteEnv () {
       webview.loadURL(
         `data:text/html;charset=utf-8;base64,
         PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
@@ -166,11 +154,7 @@ export default {
     }
   }
 }
-
 </script>
-
 <style>
-  webview {
-    height: -webkit-fill-available;
-  }
+  webview { height: -webkit-fill-available; }
 </style>

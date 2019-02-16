@@ -65,6 +65,7 @@ export default class rollupBuild extends EventEmitter {
       console.log(bundle.getTimings())
     } catch (error) {
       this.emit('message', error)
+      throw error
     }
   }
 }

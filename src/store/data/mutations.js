@@ -8,8 +8,8 @@ export const updateSchule = (state, data) => {
 export const updateKlasse = (state, data) => {
   state.klasse = data
 }
-export const updateKlasseSortiert = (state, data) => {
-  state.klasseSortiert = data
+export const updateSchueler = (state, data) => {
+  state.schueler = data
 }
 export const updateSelected = (state, data) => {
   state.selected = data

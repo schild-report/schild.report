@@ -40,7 +40,7 @@
         </div></q-card-section>
         <q-separator />
         <q-card-section>
-          <q-img :src="schuelerfoto" style="max-width: 250px">
+          <q-img :src="`data:image/jpg;base64,${this.$store.state.data.schuelerfoto}`" basic size="100">
             <template v-slot:error>
               <div class="absolute-full flex flex-center bg-negative text-white">
                 Kein Foto vorhanden
@@ -90,23 +90,12 @@
 <script>
 export default {
   name: 'Schueler',
-  data () {
-    return {
-      error: null,
-      pagination: {
-        descending: false,
-        page: 1,
-        rowsPerPage: 100
-      }
-    }
-  },
+  data () { return { pagination: { rowsPerPage: 100 } } },
   computed: {
     tabelle () { return Object.entries(this.faecher()).map(e => { return { name: e[0], ...e[1] } }) },
     columns () {
       if (this.tabelle.length === 0) return
-      let a = [
-        { name: 'Fach', field: 'name', label: 'Abschnitt', align: 'left' }
-      ]
+      let a = [{ name: 'Fach', field: 'name', label: 'Abschnitt', align: 'left' }]
       this.tabelle.find(e => e).data.noten.forEach((hj, i) => {
         a.push({
           name: this.schueler.abschnitte[i].ID,
@@ -117,8 +106,7 @@ export default {
       })
       return a
     },
-    schueler () { return this.$store.state.data.selected[0] },
-    schuelerfoto () { return this.$store.state.data.schuelerfoto ? `data:image/jpg;base64,${this.$store.state.data.schuelerfoto}` : null },
+    schueler () { return this.$store.state.data.schueler[0] },
     alter () {
       const geburtstag = +new Date(this.schueler.Geburtsdatum)
       return ~~((Date.now() - geburtstag) / (31557600000))

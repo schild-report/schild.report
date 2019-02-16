@@ -12,11 +12,7 @@ export default async ({ router, store }) => {
       store.commit('data/updateConfigData', configData)
       if (configData.db) {
         console.log('Verbindungsdaten gefunden, Datenbank öffnen')
-        ipc.callMain(
-          'schildConnect', {
-            arg: { testing: configData.db },
-            arg2: 'testing'
-          })
+        ipc.callMain('schildConnect', configData.db)
           .catch(e => console.log(e))
         ipc.callMain('schildGetSchule')
           .then(response => {
@@ -37,6 +33,7 @@ export default async ({ router, store }) => {
     store.commit('data/updateRepos', repos)
   })
   ipc.answerMain('messageRollup', message => {
+    console.log(message)
     store.commit('data/updateMessage', message)
   })
   router.beforeEach(async (to, from, next) => {

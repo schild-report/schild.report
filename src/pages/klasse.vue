@@ -25,9 +25,9 @@
             <template v-slot:top>
               <div :class="'text-'+tabelle.status +' text-h6'">{{tabelle.titel}}</div>
             </template>
-            <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props)" class="cursor-pointer">
+            <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props, $event)" class="cursor-pointer">
               <q-td auto-width>
-                <q-checkbox color="primary" v-model="props.selected"/>
+                <q-checkbox color="primary" v-model="props.selected" @click.native="checkbox($event)"/>
               </q-td>
               <q-td v-for="col in props.cols" :key="col.name" :props="props">
                 <div v-if="['Name', 'Vorname', 'Telefon'].some(c => c === col.name)">{{col.value}}</div>
@@ -67,10 +67,7 @@ export default {
   data () {
     return {
       selected: this.$store.state.data.selected,
-      error: null,
       pagination: {
-        descending: false,
-        page: 1,
         rowsPerPage: 100
       },
       columns: [
@@ -86,7 +83,7 @@ export default {
   },
   computed: {
     klasse () { return this.$store.state.data.klasse },
-    klasseSortiert () { return this.$store.state.data.klasseSortiert }
+    klasseSortiert () { return this.$store.getters['data/klasseSortiert'] }
   },
   watch: {
     selected: 'updateSelected'
@@ -94,14 +91,12 @@ export default {
   methods: {
     updateSelected () {
       this.$store.commit('data/updateSelected', this.selected)
-      // this.$store.commit('data/updateSchuelerGewaehlt', this.selected)
+    },
+    checkbox (event) {
+      event.stopImmediatePropagation()
     },
     rowClick (props) {
-      // wenn ein Schüler ausgewählt wird, spring _rowClick()_ ebenfalls an
-      if (props.__trClass === 'selected') return
-      this.$store.commit('data/updateSelected', [this.klasse.schueler.find(s => s.ID === props.row.ID)])
-      this.$router.push('/schueler')
-      // this.$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })
+      this.$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })
     }
   }
 }

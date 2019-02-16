@@ -52,21 +52,18 @@ export default {
       autofocus: this.$route.name === 'datenbank',
       checkConnection: 'Verbindung prüfen …',
       configData: this.$store.state.data.configData,
+      testing: null,
       db: this.$store.state.data.configData.db || {
         client: 'mysql',
         useNullAsDefault: true,
         connection: { host: '', database: '', user: '', password: '', charset: 'utf8' }
-      },
-      testing: null
+      }
     }
   },
   methods: {
     handleSubmit () {
       ipc.callMain(
-        'schildConnect', {
-          arg: { testing: this.db },
-          arg2: 'testing'
-        })
+        'schildConnect', this.db)
         .catch(e => console.log(e))
       if (this.testing !== 'green') {
         ipc.callMain('schildTestConnection')

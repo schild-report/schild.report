@@ -1,12 +1,12 @@
 export default {
-  schule: null,
+  schule: {},
   klasse: {},
-  klasseSortiert: null,
-  selected: null,
+  schueler: [],
+  selected: [],
   schuelerfoto: null,
   auth: null,
   abschnitt: {},
-  repos: null,
-  message: null,
+  repos: {},
+  message: {},
   configData: {}
 }

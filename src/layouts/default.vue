@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar color="primary">
           <q-item dark><q-item-section>
-            <q-item-label caption>{{schule.Bezeichnung1}}</q-item-label>
+            <q-item-label caption><b>{{schule.Bezeichnung1}}</b></q-item-label>
             <q-item-label caption>{{schule.Bezeichnung2}}</q-item-label>
           </q-item-section></q-item>
         <q-select
@@ -13,7 +13,6 @@
           dense
           v-model="terms"
           dropdown-icon=""
-          input-debounce="0"
           label="Name oder Klasse eingeben"
           :options="options"
           @filter="search"
@@ -38,15 +37,16 @@
             </q-item>
           </template>
         </q-select>
-        <q-btn class="q-mx-sm" @click="goto(schuelerLink)" color="white" text-color="black" unelevated v-if="kannZurueck">{{zurueckZu}}</q-btn>
-        <q-btn @click="openPdf" unelevated vert v-if="'dokument' === $route.name" color="red">PDF erstellen</q-btn>
+        <template v-if="schueler.length > 0 && $route.name === 'dokument'">
+          <q-btn class="q-mx-sm" @click="$router.push(klasse.Klasse ? '/klasse' : '/schueler')" color="white" text-color="black" unelevated>{{zurueckZu}}</q-btn>
+          <q-btn @click="openPdf" unelevated vert color="red">PDF erstellen</q-btn>
+        </template>
         <q-space/>
-        <q-btn flat @click="$router.go(-1)" v-if="$route.name === 'einstellungen'" icon="arrow_back"></q-btn>
-        <q-btn flat @click="goto('/app/einstellungen')" v-if="$route.name !== 'einstellungen'" icon="settings"></q-btn>
+        <q-btn flat @click="$route.name === 'einstellungen' ? $router.go(-1) : $router.push('/app/einstellungen')" :icon="$route.name === 'einstellungen' ? 'arrow_back' : 'settings'"></q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer :value="dokumentenauswahlZeigen" content-class="bg-grey-2">
+    <q-drawer :value="['dokument', 'klasse', 'schueler'].includes($route.name)" content-class="bg-grey-2">
       <div class="q-pa-md" v-if="Object.keys(repos).length === 0">
         <b>Fügen Sie Ihrem Reportordner Reports hinzu, um Dokumente erstellen zu können.</b>
         <br>Dazu können Sie z.B. den Demo-Ordner verwenden, der sich hier: https://github.com/schild-report/demo befindet.
@@ -116,8 +116,7 @@ export default {
   },
   mounted () {
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
-      const { knexConfig, componentsPath, ...rest } = this.reportData
-      remote.clipboard.writeText(JSON.stringify(rest))
+      remote.clipboard.writeText(JSON.stringify(this.schueler))
       console.log('Daten in die Zwischenablage kopiert.')
       return false
     })
@@ -125,36 +124,25 @@ export default {
   data () {
     return {
       terms: null,
-      pdfLink: null,
-      error: null,
-      configData: this.$store.state.data.configData,
-      reportData: this.$store.getters['data/reportData'],
-      options: []
+      options: [],
+      // pdfpath
+      configData: this.$store.state.data.configData
     }
   },
   computed: {
     klasse () { return this.$store.state.data.klasse },
-    repos () { return this.$store.state.data.repos || {} },
-    schueler () { return this.klasse[0] },
-    schule () { return this.$store.state.data.schule || '' },
-    dokumentenauswahlZeigen () { return ['dokument', 'klasse', 'schueler'].includes(this.$route.name) },
-    kannZurueck () {
-      console.log(this.$route.name, this.klasse.schueler)
-      return this.$route.name === 'dokument' || (this.$route.name === 'schueler' && this.klasse.schueler)
-    },
+    schueler () { return this.$store.state.data.schueler },
+    repos () { return this.$store.state.data.repos },
+    schule () { return this.$store.state.data.schule },
+    svelteProps () { return this.$store.getters['data/reportData'] },
     zurueckZu () {
-      return this.klasse.schueler
+      return this.klasse.Klasse
         ? `Zurück zur ${this.klasse.Klasse}`
-        : `Zurück zu ${this.schueler.Vorname} ${this.schueler.Name}, ${this.schueler.Klasse}`
-    },
-    schuelerLink () { return this.schueler ? '/schueler' : '/klasse' }
+        : `Zurück zu ${this.schueler[0].Vorname} ${this.schueler[0].Name} ${this.schueler[0].Klasse || ''}`
+    }
   },
   methods: {
     search (terms, update, abort) {
-      if (terms.length < 2) {
-        abort()
-        return
-      }
       if (terms === '') {
         update(() => {
           this.options = []
@@ -164,7 +152,7 @@ export default {
       update(() => {
         ipc.callMain('schildSuche', { arg: terms })
           .then(response => {
-            const completions = response
+            this.options = response
               .map(d => {
                 const status = statusFeedback(d.status)
                 return {
@@ -177,7 +165,6 @@ export default {
                 }
               })
               .sort((a, b) => (sortierfolge.indexOf(a.status) || a.label) < (sortierfolge.indexOf(b.status) || b.label) ? 1 : -1)
-            this.options = completions
           })
       })
     },
@@ -186,73 +173,49 @@ export default {
       this.terms = null
       this.options = []
       this.$store.commit('data/updateSelected', [])
+      this.$store.commit('data/updateAbschnitt', {})
       o.klasse ? this.updateKlasse(o.id) : this.updateSchueler(o.id)
-      if (!['dokument'].includes(this.$route.name)) this.$router.push(o.klasse ? '/klasse' : '/schueler')
+      if (this.$route.name !== 'dokument') this.$router.push(o.klasse ? '/klasse' : '/schueler')
     },
     updateSchueler (id) {
-      if (this.schueler && id === this.schueler.ID) return
-      this.getSchueler(id)
-      this.getSchuelerfoto(id)
-      this.$store.commit('data/updateKlasseSortiert', null)
-    },
-    getSchueler (id) {
-      this.error = null
-      ipc.callMain('schildGetSchueler', { arg: id })
-        .then(response => {
-          this.$store.commit('data/updateKlasse', [response])
-          this.$store.commit('data/updateSelected', [response])
-          ipc.callMain('schildGetSchuelerfoto', id)
-            .then(response => {
-              console.log('hole foto', response)
-              this.$store.commit('data/updateSchuelerfoto', response)
-            })
-            .catch((error) => {
-              this.$store.commit('data/updateSchuelerfoto', '')
-              this.error = error.toString()
-            })
+      this.$store.commit('data/updateKlasse', {})
+      ipc.callMain('schildGetSchueler', id)
+        .then(schueler => {
+          this.$store.commit('data/updateSchueler', [schueler])
         })
         .catch(error => {
-          this.error = error.toString()
+          console.log(error)
         })
+      if (this.$route.name !== 'dokument') this.updateSchuelerfoto(id)
     },
-    getSchuelerfoto (id) {
-    },
-    updateKlasse (id) {
-      if (this.klasse && id === this.klasse.Klasse) return
-      this.error = null
-      ipc.callMain('schildGetKlasse', { arg: id })
-        .then((response) => {
-          const klasse = response
-          const inaktiv = [], aktiv = [], fertig = [], neu = []
-          klasse.schueler.forEach((s) => {
-            if (s.Status === 2 && s.Geloescht === '-' && s.Gesperrt === '-') aktiv.push(s)
-            else if (s.Status === 8 && s.Geloescht === '-' && s.Gesperrt === '-') fertig.push(s)
-            else if (s.Status === 0 && s.Geloescht === '-' && s.Gesperrt === '-') neu.push(s)
-            else inaktiv.push(s)
-          })
-          // const gruppen = [inaktiv, aktiv, fertig, neu]
-          // gruppen.forEach(e => _(e).sortBy(s => s.Vorname).sortBy(s => s.Name))
-          this.$store.commit('data/updateKlasseSortiert', {
-            '2': { titel: 'Aktive Schüler', schueler: aktiv, status: 'positive' },
-            '8': { titel: 'Ausbildung beendet', schueler: fertig, status: 'positive' },
-            '0': { titel: 'Neue Schüler', schueler: neu, status: 'blue' },
-            'x': { titel: 'Inaktive Schüler', schueler: inaktiv, status: 'negative' }
-          })
-          this.$store.commit('data/updateKlasse', klasse)
+    updateSchuelerfoto (id) {
+      ipc.callMain('schildGetSchuelerfoto', id)
+        .then(schuelerfoto => {
+          this.$store.commit('data/updateSchuelerfoto', schuelerfoto)
         })
         .catch((error) => {
-          this.error = error.toString()
+          console.log('kein Schülerfoto vorhanden', error)
+          this.$store.commit('data/updateSchuelerfoto', null)
         })
     },
-    goto (dest) { this.$router.push(dest) },
+    updateKlasse (id) {
+      ipc.callMain('schildGetKlasse', id)
+        .then((klasse) => {
+          this.$store.commit('data/updateKlasse', klasse)
+          this.$store.commit('data/updateSchueler', klasse.schueler)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
     openPdf (options = {}) {
       console.log('öffne PDF')
       const webview = document.querySelector('webview')
-      const s = this.schueler || this.klasse.schueler[0]
-      const schuelerName = this.schueler ? `${this.schueler.Name}_` : ''
+      const s = this.schueler[0]
+      const schuelerName = this.schueler.length === 1 ? `${s.Name}_` : ''
       const d = parse(this.$route.params.id).name
-      const jahr = this.$store.state.data.abschnitt.jahr || s.AktSchuljahr
-      const abschnitt = this.$store.state.data.abschnitt.abschnitt || s.AktAbschnitt
+      const jahr = this.svelteProps.jahr
+      const abschnitt = this.svelteProps.abschnitt
       const pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`
       const pdfPath = join(this.configData.pdf, jahr.toString(), pdfName)
       options = {

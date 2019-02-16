@@ -9,9 +9,10 @@ import { lstatSync, readdirSync } from 'fs'
 import configFile from './configstore'
 import RollupBuild from './rollup'
 import { is } from 'electron-util'
-import schild from 'schild'
+import Schild from 'schild'
 import CheapWatch from 'cheap-watch'
 import { mkDirByPathSync } from './mkdir'
+import serializeError from 'serialize-error'
 
 let configData = configFile.store
 configData['passAuth'] = process.argv.some(a => a === '--no-login') || is.development
@@ -23,13 +24,8 @@ mkDirByPathSync(configData.reports)
 let mainWindow
 let watcher = []
 const rollup = new RollupBuild()
-rollup.on('message', message => {
-  ipc.callRenderer(mainWindow, 'messageRollup', {
-    ...message,
-    code: message.code,
-    stack: message.stack,
-    message: message.message
-  })
+rollup.on('message', error => {
+  ipc.callRenderer(mainWindow, 'messageRollup', serializeError(error))
 })
 rollup.on('moduleIDs', moduleIDs => {
   while (watcher.length) { watcher.pop().close() }
@@ -66,6 +62,7 @@ function createWindow () {
     ...configData.windowBounds.main,
     show: false,
     useContentSize: true,
+    nodeIntegration: true,
     title: `${app.getName()} ${VERSION['buildVersion']}`,
     icon: join(__dirname, '../icons/linux-256x256.png')
   })
@@ -140,12 +137,11 @@ const runRollup = async (args) => {
   } : null
   try {
     await rollup.build(options)
-    webview.send('updateComponents')
+    webview.send('loadSvelte')
   } catch (err) {
     console.log(err)
   }
 }
-let schueler
 ipc.on('runRollup', async (event, args) => {
   console.log('Rollup starten für', args.file, '…')
   runRollup(args)
@@ -153,8 +149,9 @@ ipc.on('runRollup', async (event, args) => {
 ipc.answerRenderer('getConfig', async () => {
   return configData
 })
-ipc.answerRenderer('schildConnect', async data => {
-  return schild.connect(data.arg, data.arg2)
+const schild = new Schild()
+ipc.answerRenderer('schildConnect', async options => {
+  return schild.connect(options)
 })
 ipc.answerRenderer('schildTestConnection', async () => {
   return schild.testConnection()
@@ -163,24 +160,19 @@ ipc.answerRenderer('schildSuche', async data => {
   // suche returns array
   return schild.suche(data.arg)
 })
-ipc.answerRenderer('schildGetKlasse', async data => {
-  const klasse = await schild.getKlasse(data.arg)
-  schueler = klasse.schueler
+ipc.answerRenderer('schildGetKlasse', async id => {
+  const klasse = await schild.getKlasse(id)
   return klasse.toJSON()
 })
 ipc.answerRenderer('schildGetSchule', async () => {
   return (await schild.getSchule()).toJSON()
 })
-ipc.answerRenderer('schildGetSchueler', async data => {
-  const s = await schild.getSchueler(data.arg)
-  schueler = [s]
+ipc.answerRenderer('schildGetSchueler', async id => {
+  const s = await schild.getSchueler(id)
   return s.toJSON()
 })
 ipc.answerRenderer('schildGetSchuelerfoto', async id => {
-  console.log(schueler)
-  console.log(id)
-  return schueler.find(s => s.ID === id).schuelerfoto
-  // return schild.getSchuelerfoto(data.arg)
+  return schild.getSchuelerfoto(id)
 })
 ipc.answerRenderer('schildGetNutzer', async data => {
   return (await schild.getNutzer(data.arg)).toJSON()
