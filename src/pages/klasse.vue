@@ -25,9 +25,9 @@
             <template v-slot:top>
               <div :class="'text-'+tabelle.status +' text-h6'">{{tabelle.titel}}</div>
             </template>
-            <q-tr slot="body" slot-scope="props" :props="props" @click.native="rowClick(props, $event)" class="cursor-pointer">
+            <q-tr slot="body" slot-scope="props" :props="props" @click.native="$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })" class="cursor-pointer">
               <q-td auto-width>
-                <q-checkbox color="primary" v-model="props.selected" @click.native="checkbox($event)"/>
+                <q-checkbox color="primary" v-model="props.selected" @click.native="$event.stopImmediatePropagation()"/>
               </q-td>
               <q-td v-for="col in props.cols" :key="col.name" :props="props">
                 <div v-if="['Name', 'Vorname', 'Telefon'].some(c => c === col.name)">{{col.value}}</div>
@@ -86,17 +86,8 @@ export default {
     klasseSortiert () { return this.$store.getters['data/klasseSortiert'] }
   },
   watch: {
-    selected: 'updateSelected'
-  },
-  methods: {
-    updateSelected () {
+    selected: function updateSelected () {
       this.$store.commit('data/updateSelected', this.selected)
-    },
-    checkbox (event) {
-      event.stopImmediatePropagation()
-    },
-    rowClick (props) {
-      this.$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })
     }
   }
 }

@@ -12,7 +12,8 @@
           dark
           dense
           v-model="terms"
-          dropdown-icon=""
+          hide-dropdown-icon
+          autofocus
           label="Name oder Klasse eingeben"
           :options="options"
           @filter="search"
@@ -149,23 +150,21 @@ export default {
         })
         return
       }
-      update(() => {
-        ipc.callMain('schildSuche', { arg: terms })
-          .then(response => {
-            this.options = response
-              .map(d => {
-                const status = statusFeedback(d.status)
-                return {
-                  label: d.value,
-                  searchlink: { klasse: (!status.icon), id: d.id },
-                  icon: status.icon || 'group',
-                  caption: d.jahr ? String(d.jahr) : null,
-                  color: status.color,
-                  status: d.status
-                }
-              })
-              .sort((a, b) => (sortierfolge.indexOf(a.status) || a.label) < (sortierfolge.indexOf(b.status) || b.label) ? 1 : -1)
+      update(async () => {
+        const response = await ipc.callMain('schildSuche', { arg: terms })
+        this.options = response
+          .map(d => {
+            const status = statusFeedback(d.status)
+            return {
+              label: d.value,
+              searchlink: { klasse: (!status.icon), id: d.id },
+              icon: status.icon || 'group',
+              caption: d.jahr ? String(d.jahr) : null,
+              color: status.color,
+              status: d.status
+            }
           })
+          .sort((a, b) => (sortierfolge.indexOf(a.status) || a.label) < (sortierfolge.indexOf(b.status) || b.label) ? 1 : -1)
       })
     },
     selected (item) { this.updateDaten(item.searchlink) },
@@ -177,36 +176,20 @@ export default {
       o.klasse ? this.updateKlasse(o.id) : this.updateSchueler(o.id)
       if (this.$route.name !== 'dokument') this.$router.push(o.klasse ? '/klasse' : '/schueler')
     },
-    updateSchueler (id) {
+    async updateSchueler (id) {
       this.$store.commit('data/updateKlasse', {})
-      ipc.callMain('schildGetSchueler', id)
-        .then(schueler => {
-          this.$store.commit('data/updateSchueler', [schueler])
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      const schueler = await ipc.callMain('schildGetSchueler', id)
+      this.$store.commit('data/updateSchueler', [schueler])
       if (this.$route.name !== 'dokument') this.updateSchuelerfoto(id)
     },
-    updateSchuelerfoto (id) {
-      ipc.callMain('schildGetSchuelerfoto', id)
-        .then(schuelerfoto => {
-          this.$store.commit('data/updateSchuelerfoto', schuelerfoto)
-        })
-        .catch((error) => {
-          console.log('kein Schülerfoto vorhanden', error)
-          this.$store.commit('data/updateSchuelerfoto', null)
-        })
+    async updateSchuelerfoto (id) {
+      const schuelerfoto = await ipc.callMain('schildGetSchuelerfoto', id)
+      this.$store.commit('data/updateSchuelerfoto', schuelerfoto)
     },
-    updateKlasse (id) {
-      ipc.callMain('schildGetKlasse', id)
-        .then((klasse) => {
-          this.$store.commit('data/updateKlasse', klasse)
-          this.$store.commit('data/updateSchueler', klasse.schueler)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+    async updateKlasse (id) {
+      const klasse = await ipc.callMain('schildGetKlasse', id)
+      this.$store.commit('data/updateKlasse', klasse)
+      this.$store.commit('data/updateSchueler', klasse.schueler)
     },
     openPdf (options = {}) {
       console.log('öffne PDF')

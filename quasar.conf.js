@@ -4,17 +4,11 @@ module.exports = function (ctx) {
     css: [ 'app.styl' ],
     extras: [
       'roboto-font',
-      'material-icons' // optional, you are not bound to it
-      // 'ionicons-v4',
-      // 'mdi-v3',
-      // 'fontawesome-v5',
-      // 'eva-icons'
+      'material-icons'
     ],
     framework: {
       components: [
         'QAvatar',
-        'QBreadcrumbs',
-        'QBreadcrumbsEl',
         'QBtn',
         'QCard',
         'QCardSection',
@@ -52,11 +46,6 @@ module.exports = function (ctx) {
     supportIE: false,
     build: {
       scopeHoisting: true,
-      // vueRouterMode: 'history',
-      // vueCompiler: true,
-      // gzip: true,
-      // analyze: true,
-      // extractCSS: false,
       extendWebpack (cfg) {
         cfg.module.rules.push({
           enforce: 'pre',
@@ -70,9 +59,7 @@ module.exports = function (ctx) {
       }
     },
     devServer: {
-      // https: true,
-      // port: 8080,
-      open: false // opens browser window automatically
+      open: false
     },
     electron: {
       // bundler: 'builder', // or 'packager'

@@ -7,35 +7,26 @@
 import ipc from 'electron-better-ipc'
 
 export default async ({ router, store }) => {
-  ipc.callMain('getConfig')
-    .then(configData => {
-      store.commit('data/updateConfigData', configData)
-      if (configData.db) {
-        console.log('Verbindungsdaten gefunden, Datenbank öffnen')
-        ipc.callMain('schildConnect', configData.db)
-          .catch(e => console.log(e))
-        ipc.callMain('schildGetSchule')
-          .then(response => {
-            store.commit('data/updateSchule', response)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      } else {
-        console.log('Verbindungsdaten zur Schilddatenbank fehlen')
-        router.push({ name: 'datenbank' })
-      }
-    })
-
+  const configData = await ipc.callMain('getConfig')
+  store.commit('data/updateConfigData', configData)
+  if (configData.db) {
+    console.log('Verbindungsdaten gefunden, Datenbank öffnen')
+    try {
+      await ipc.callMain('schildConnect', configData.db)
+    } catch (e) {
+      console.log(e)
+      router.push({ name: 'datenbank' })
+    }
+    const response = await ipc.callMain('schildGetSchule')
+    store.commit('data/updateSchule', response)
+  } else {
+    console.log('Verbindungsdaten zur Schilddatenbank fehlen')
+    router.push({ name: 'datenbank' })
+  }
   ipc.callMain('repos')
   ipc.answerMain('getConfigData', () => store.state.data.configData)
-  ipc.answerMain('updateRepos', repos => {
-    store.commit('data/updateRepos', repos)
-  })
-  ipc.answerMain('messageRollup', message => {
-    console.log(message)
-    store.commit('data/updateMessage', message)
-  })
+  ipc.answerMain('updateRepos', repos => store.commit('data/updateRepos', repos))
+  ipc.answerMain('messageRollup', message => store.commit('data/updateMessage', message))
   router.beforeEach(async (to, from, next) => {
     // state wird oben gesetzt, ist aber async, deswegen wird passAuth nicht beim
     // ersten Start gefunden. Deshalb ebenfalls getConfig hier.
