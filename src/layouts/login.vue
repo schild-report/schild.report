@@ -6,7 +6,7 @@
     <q-separator />
     <q-card-section>
       <q-input
-        stack-label="Benutzername"
+        label="Benutzername"
         v-model="user"
         autofocus
       />
@@ -14,7 +14,7 @@
     <q-card-section>
       <q-input
         type="password"
-        stack-label="Passwort"
+        label="Passwort"
         v-model="password"
         @keyup.enter="login"
       />
@@ -45,17 +45,15 @@ export default {
     }
   },
   methods: {
-    login () {
-      ipc.callMain('schildGetNutzer', { arg: this.user })
-        .then(user => {
-          if (user.US_Password === crypt(this.password)) {
-            this.$store.commit('data/updateAuth', user)
-            this.$router.push('/')
-          } else {
-            this.color = 'red'
-            this.text = 'Anmeldung erfolglos'
-          }
-        })
+    async login () {
+      const user = await ipc.callMain('schildGetNutzer', this.user)
+      if (user.US_Password === crypt(this.password)) {
+        this.$store.commit('data/updateAuth', user)
+        this.$router.push('/')
+      } else {
+        this.color = 'red'
+        this.text = 'Anmeldung erfolglos'
+      }
     }
   }
 }
