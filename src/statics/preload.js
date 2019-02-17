@@ -31,23 +31,23 @@ function runMark () {
   mark.mark(['undefined', '01.01.1970'])
 }
 
-ipcRenderer.on('buildSvelte', async (event, data) => {
+ipcRenderer.on('buildSvelte', (event, data) => {
   props = data.svelteProps
   componentPath = data.componentPath
   ipcRenderer.send('runRollup', { file: data.file, debug: data.debug })
 })
 ipcRenderer.on('loadSvelte', () => {
-  delete require.cache[componentPath]
+  // delete require.cache[componentPath]
   Component = require(componentPath)
   createSvelte()
 })
-ipcRenderer.on('setSveltePropsAbschnitt', async (event, abschnitt) => {
+ipcRenderer.on('setSveltePropsAbschnitt', (event, abschnitt) => {
   props.jahr = abschnitt.jahr
   props.abschnitt = abschnitt.abschnitt
   createSvelte()
   console.log(`Neuen Abschnitt gewählt: ${abschnitt.jahr}/${abschnitt.abschnitt}`)
 })
-ipcRenderer.on('setSvelteProps', async (event, newData) => {
+ipcRenderer.on('setSvelteProps', (event, newData) => {
   props = newData
   createSvelte()
   console.log('Datensatz geändert')
@@ -59,11 +59,11 @@ ipcRenderer.on('showDataInConsole', (event, data) => {
 ipcRenderer.on('editContent', (event, edit) => {
   document.querySelector('#content').setAttribute('contenteditable', edit)
 })
-ipcRenderer.on('setMark', async (event, state) => {
+ipcRenderer.on('setMark', (event, state) => {
   state ? runMark() : mark.unmark()
 })
 
-ipcRenderer.sendToHost('buildSvelte')
 global.ipc = () => {
   // Host mitteilen, dass wir die Daten für den rollup-start haben wollen
+  ipcRenderer.sendToHost('buildSvelte')
 }

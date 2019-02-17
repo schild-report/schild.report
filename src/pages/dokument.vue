@@ -104,7 +104,7 @@ export default {
       switch (event.channel) {
         case 'buildSvelte': this.buildSvelte(); break
         case 'clearDialog': this.dialogError = false; break
-        case 'errorMessage': this.$store.commit('data/updateMessage', event.args[0])
+        case 'errorMessage': this.$store.commit('data/updateMessage', event.args[0]); console.log(event.args[0])
       }
     })
   },
