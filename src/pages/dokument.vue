@@ -118,7 +118,7 @@ export default {
       this.dialogError = false
       webview.send('buildSvelte', {
         file: join(this.$route.params.repo, this.$route.params.id),
-        componentPath: this.configData.userData + '/bundle.js',
+        componentPath: join(this.configData.userData, 'bundle.js'),
         svelteProps: this.svelteProps,
         debug: this.configData.debug
       })
