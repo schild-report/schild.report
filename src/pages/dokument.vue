@@ -44,7 +44,7 @@
         @click="toggleMark"
       />
     </q-page-sticky>
-    <q-dialog v-model="dialogError" bottom>
+    <q-dialog v-model="dialogError" position="bottom" seamless>
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="text-h6">{{message.message}}</q-card-section>
         <q-card-section v-if="message.filename">
@@ -52,9 +52,14 @@
           <br>Von Zeile {{message.start.line}} bis {{message.end.line}}
           <br><pre>{{message.frame}}</pre>
         </q-card-section>
-        <q-card-section>
-          <pre>{{message.stack}}</pre>
-        </q-card-section>
+        <q-expansion-item
+          expand-separator
+          label="Stack anzeigen"
+        >
+          <q-card-section>
+            <pre>{{message.stack}}</pre>
+          </q-card-section>
+        </q-expansion-item>
       </q-card>
     </q-dialog>
   </div>

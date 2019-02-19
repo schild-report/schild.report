@@ -65,8 +65,17 @@
             :active="repo === $route.params.repo && dokument === $route.params.id"
             :to="`/dokument/${repo}/${dokument}`"
             v-for="(dokument) in dokumente" :key="dokument"
+            @mouseover="showIcon = true"
+            @mouseleave="showIcon = false"
           >
             <q-item-section>{{dokument.slice(0, -5)}}</q-item-section>
+            <q-item-section
+              avatar
+              v-if="repo === $route.params.repo && dokument === $route.params.id"
+              @click.native="openEditor"
+            >
+              <q-icon color="grey" name="edit"></q-icon>
+            </q-item-section>
           </q-item>
       </q-list>
     </q-drawer>
@@ -117,7 +126,7 @@ export default {
   },
   mounted () {
     Mousetrap.bind(['e'], () => {
-      ipc.callMain('openEditor')
+      this.openEditor()
       return false
     })
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
@@ -147,6 +156,7 @@ export default {
     }
   },
   methods: {
+    openEditor () { ipc.callMain('openEditor') },
     search (terms, update, abort) {
       if (terms === '') {
         update(() => {

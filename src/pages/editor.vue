@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="modules">
     <q-tabs
       v-model="moduleIndex"
       dense
@@ -21,12 +21,13 @@
       :language="language"
       @change="changed"
       ref="editor"
-      ></monaco-editor>
-</div>
+    ></monaco-editor>
+  </div>
 </template>
 
 <script>
 import MonacoEditor from 'vue-monaco'
+import ipc from 'electron-better-ipc'
 import { basename, extname } from 'path'
 import { writeFile } from 'fs'
 import { debounce } from 'quasar'
@@ -48,6 +49,11 @@ export default {
   },
   mounted () {
     window.addEventListener('resize', this.resize)
+    ipc.callMain('getBundle').then(bundle => { this.bundle = bundle })
+    ipc.answerMain('bundleRollup', bundle => {
+      this.bundle = bundle
+      console.log('Bundle übertragen')
+    })
   },
   beforeDestroy () {
     window.removeEventListener('resize', this.resize)
@@ -56,11 +62,12 @@ export default {
     return {
       moduleIndex: 0,
       code: this.modules ? this.modules[0].originalCode : 'Kein Dokument geladen',
-      language: 'html'
+      language: 'html',
+      bundle: {}
     }
   },
   computed: {
-    modules () { return this.$store.state.data.code.cache && this.$store.state.data.code.cache.modules.filter(m => !m.id.includes('node_modules')) }
+    modules () { return this.bundle.cache && this.bundle.cache.modules.filter(m => !m.id.includes('node_modules') && !m.id.includes('commonjsHelpers')) }
   },
   methods: {
     name (id) { return basename(id) },

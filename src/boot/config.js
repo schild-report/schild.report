@@ -27,7 +27,6 @@ export default async ({ router, store }) => {
   ipc.answerMain('getConfigData', () => store.state.data.configData)
   ipc.answerMain('updateRepos', repos => store.commit('data/updateRepos', repos))
   ipc.answerMain('messageRollup', message => store.commit('data/updateMessage', message))
-  ipc.answerMain('bundleRollup', bundle => store.commit('data/updateCode', bundle))
   router.beforeEach(async (to, from, next) => {
     // state wird oben gesetzt, ist aber async, deswegen wird passAuth nicht beim
     // ersten Start gefunden. Deshalb ebenfalls getConfig hier.
