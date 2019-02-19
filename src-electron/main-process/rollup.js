@@ -30,7 +30,7 @@ export default class rollupBuild extends EventEmitter {
   }
 
   async build (options) {
-    this.options = options || this.options
+    this.options = options ? { ...options, dirty: true } : this.options
     const inputOptions = {
       input: this.options.source,
       cache: this.cache,
@@ -42,6 +42,7 @@ export default class rollupBuild extends EventEmitter {
           onwarn: (warning, handler) => {
             if (warning.code === 'css-unused-selector') return
             this.emit('message', warning)
+            handler(warning)
           },
           sveltePath: __nodeModules,
           dev: !!this.options.debug
@@ -63,6 +64,10 @@ export default class rollupBuild extends EventEmitter {
       await bundle.write(outputOptions)
       console.log('Komponenten erfolgreich kompiliert')
       console.log(bundle.getTimings())
+      if (this.options.dirty) {
+        this.emit('bundle', bundle)
+        delete this.options.dirty
+      }
     } catch (error) {
       this.emit('message', error)
       throw error
