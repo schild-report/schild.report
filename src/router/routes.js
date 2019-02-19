@@ -6,6 +6,7 @@ import Klasse from 'pages/klasse'
 import Schueler from 'pages/schueler'
 import Dokument from 'pages/dokument'
 import Einstellungen from 'pages/einstellungen'
+import Editor from 'pages/editor'
 
 export default [
   {
@@ -22,6 +23,7 @@ export default [
   },
   { path: '/app/datenbank', name: 'datenbank', component: Datenbank },
   { path: '/app/login', name: 'login', component: Login },
+  { path: '/app/editor', name: 'editor', component: Editor },
 
   { // Always leave this as last one
     path: '*',

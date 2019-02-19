@@ -20,9 +20,10 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-svelte": "^5.0.1",
-    "schild": "^0.4.6",
+    "schild": "^0.4.7",
     "serialize-error": "^3.0.0",
-    "svelte": "^3.0.0-beta.3"
+    "svelte": "^3.0.0-beta.3",
+    "vue-monaco": "^0.3.1"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0-beta.4",
@@ -39,7 +40,8 @@
     "electron-wix-msi": "^2.1.1",
     "eslint": "^5.14.0",
     "eslint-loader": "^2.1.1",
-    "eslint-plugin-vue": "^5.2.1",
+    "eslint-plugin-vue": "^5.2.2",
+    "monaco-editor-webpack-plugin": "^1.7.0",
     "mousetrap": "^1.6.2",
     "quasar": "^1.0.0-beta.2",
     "strip-ansi": "=3.0.1"

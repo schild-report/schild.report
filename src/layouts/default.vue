@@ -116,6 +116,10 @@ export default {
     })
   },
   mounted () {
+    Mousetrap.bind(['e'], () => {
+      ipc.callMain('openEditor')
+      return false
+    })
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
       remote.clipboard.writeText(JSON.stringify(this.schueler))
       console.log('Daten in die Zwischenablage kopiert.')
@@ -183,7 +187,13 @@ export default {
       if (this.$route.name !== 'dokument') this.updateSchuelerfoto(id)
     },
     async updateSchuelerfoto (id) {
-      const schuelerfoto = await ipc.callMain('schildGetSchuelerfoto', id)
+      let schuelerfoto
+      try {
+        schuelerfoto = await ipc.callMain('schildGetSchuelerfoto', id)
+      } catch (error) {
+        console.log(error)
+        schuelerfoto = ''
+      }
       this.$store.commit('data/updateSchuelerfoto', schuelerfoto)
     },
     async updateKlasse (id) {

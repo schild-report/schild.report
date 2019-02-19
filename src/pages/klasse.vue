@@ -27,7 +27,7 @@
             </template>
             <q-tr slot="body" slot-scope="props" :props="props" @click.native="$root.$emit('sucheSchueler', { klasse: false, id: props.row.ID })" class="cursor-pointer">
               <q-td auto-width>
-                <q-checkbox color="primary" v-model="props.selected" @click.native="$event.stopImmediatePropagation()"/>
+                <q-checkbox color="primary" v-model="props.selected" />
               </q-td>
               <q-td v-for="col in props.cols" :key="col.name" :props="props">
                 <div v-if="['Name', 'Vorname', 'Telefon'].some(c => c === col.name)">{{col.value}}</div>

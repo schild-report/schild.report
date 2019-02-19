@@ -37,7 +37,7 @@ ipcRenderer.on('buildSvelte', (event, data) => {
   ipcRenderer.send('runRollup', { file: data.file, debug: data.debug })
 })
 ipcRenderer.on('loadSvelte', () => {
-  // delete require.cache[componentPath]
+  delete require.cache[componentPath]
   Component = require(componentPath)
   createSvelte()
 })

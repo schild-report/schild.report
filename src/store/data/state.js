@@ -8,5 +8,6 @@ export default {
   abschnitt: {},
   repos: {},
   message: {},
-  configData: {}
+  configData: {},
+  code: {}
 }

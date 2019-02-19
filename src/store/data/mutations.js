@@ -32,3 +32,6 @@ export const updateMessage = (state, data) => {
 export const updateConfigData = (state, data) => {
   state.configData = data
 }
+export const updateCode = (state, data) => {
+  state.code = data
+}
