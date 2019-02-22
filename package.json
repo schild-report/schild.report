@@ -18,7 +18,7 @@
     "rollup": "^1.2.2",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-svelte": "^5.0.3",
     "schild": "^0.4.7",
     "serialize-error": "^3.0.0",
@@ -43,7 +43,7 @@
     "eslint-plugin-vue": "^5.2.2",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "mousetrap": "^1.6.2",
-    "quasar": "^1.0.0-beta.3",
+    "quasar": "^1.0.0-beta.4",
     "strip-ansi": "=3.0.1"
   },
   "engines": {
