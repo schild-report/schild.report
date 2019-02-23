@@ -137,7 +137,7 @@ export default {
   },
   data () {
     return {
-      terms: null,
+      terms: '',
       options: [],
       // pdfpath
       configData: this.$store.state.data.configData
@@ -157,15 +157,15 @@ export default {
   },
   methods: {
     openEditor () { ipc.callMain('openEditor') },
-    search (terms, update, abort) {
-      if (terms === '') {
+    async search (val, update, abort) {
+      if (val === '') {
         update(() => {
           this.options = []
         })
         return
       }
       update(async () => {
-        const response = await ipc.callMain('schildSuche', { arg: terms })
+        const response = await ipc.callMain('schildSuche', val)
         this.options = response
           .map(d => {
             const status = statusFeedback(d.status)
@@ -201,7 +201,7 @@ export default {
       try {
         schuelerfoto = await ipc.callMain('schildGetSchuelerfoto', id)
       } catch (error) {
-        console.log(error)
+        console.log('Fehler Foto:', error)
         schuelerfoto = ''
       }
       this.$store.commit('data/updateSchuelerfoto', schuelerfoto)
