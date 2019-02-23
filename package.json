@@ -20,14 +20,14 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.1",
     "rollup-plugin-svelte": "^5.0.3",
-    "schild": "^0.4.7",
+    "schild": "^0.4.8",
     "serialize-error": "^3.0.0",
-    "svelte": "^3.0.0-beta.7",
+    "svelte": "^3.0.0-beta.8",
     "vue-monaco": "^0.3.1"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0-beta.7",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/app": "^1.0.0-beta.8",
+    "@quasar/extras": "^1.1.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "devtron": "^1.4.0",
