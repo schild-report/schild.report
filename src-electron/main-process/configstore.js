@@ -15,7 +15,10 @@ const configFile = new Store({
     reports: join(api.app.getPath('documents'), api.app.getName(), 'reports'),
     pdf: join(api.app.getPath('documents'), api.app.getName(), 'pdf'),
     userData: join(api.app.getPath('userData')),
-    privateDaten: {}
+    privateDaten: {},
+    folderStates: {},
+    debug: false,
+    db: {}
   }
 })
 

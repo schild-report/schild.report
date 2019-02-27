@@ -60,13 +60,21 @@
         v-for="(dokumente, repo) in repos"
         :key="repo"
       >
-         <q-item-label header>{{repo}}</q-item-label>
+        <q-expansion-item
+          expand-separator
+          dense
+          icon="folder_open"
+          header-class="text-black"
+          :label="repo"
+          v-model="folderStates[repo]"
+        >
           <q-item
             :active="repo === $route.params.repo && dokument === $route.params.id"
             :to="`/dokument/${repo}/${dokument}`"
             v-for="(dokument) in dokumente" :key="dokument"
             @mouseover="showIcon = true"
             @mouseleave="showIcon = false"
+            dense
           >
             <q-item-section>{{dokument.slice(0, -5)}}</q-item-section>
             <q-item-section
@@ -77,6 +85,7 @@
               <q-icon color="grey" name="edit"></q-icon>
             </q-item-section>
           </q-item>
+        </q-expansion-item>
       </q-list>
     </q-drawer>
 
@@ -149,6 +158,7 @@ export default {
     repos () { return this.$store.state.data.repos },
     schule () { return this.$store.state.data.schule },
     svelteProps () { return this.$store.getters['data/reportData'] },
+    folderStates () { return this.configData.folderStates },
     zurueckZu () {
       return this.klasse.Klasse
         ? `Zurück zur ${this.klasse.Klasse}`
