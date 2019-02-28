@@ -36,6 +36,35 @@
         @keyup.enter="handleSubmit"
       />
     </q-card-section>
+    <q-expansion-item
+        expand-separator
+        dense
+        icon="warning"
+        label="Erweiterte Einstellungen"
+    >
+      <q-card-section>
+        <q-input
+          type="text"
+          label="Zeitzone"
+          hint="['local', 'Z' oder als Offset +HH:MM / -HH:MM]"
+          v-model="db.connection.timezone"
+        />
+      </q-card-section>
+      <q-card-section>
+        <q-checkbox
+          label="Daten als String"
+          v-model="db.connection.dateStrings"
+        />
+      </q-card-section>
+      <q-card-section>
+        <q-input
+          type="text"
+          label="Zeichensatz"
+          hint="['utf8']"
+          v-model="db.connection.charset"
+        />
+      </q-card-section>
+    </q-expansion-item>
     <q-card-section>
       <q-btn color="primary" @click="handleSubmit">{{checkConnection}}</q-btn>
       <q-icon class="q-display-1" v-if="testing" :color="testing" name="lens" />
