@@ -61,10 +61,9 @@
         :key="repo"
       >
         <q-expansion-item
-          expand-separator
           dense
           icon="folder_open"
-          header-class="text-black"
+          dense-toggle
           :label="repo"
           v-model="folderStates[repo]"
         >

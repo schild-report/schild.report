@@ -15,18 +15,22 @@
           @click="setAbschnitt(a)"
         >{{a.Jahr-2000}}/{{a.Abschnitt}}</q-fab-action>
       </q-fab>
+        <q-tooltip>Abschnitt auswählen</q-tooltip>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[24, 85]">
-      <q-btn round color="red" @click="showDataInConsole()"><q-tooltip>Schülerdaten in der Konsole ausgeben</q-tooltip><b>{ }</b></q-btn>
+      <q-btn round
+        color="red"
+        @click="showDataInConsole()"
+      ><q-tooltip>Schülerdaten in der Konsole ausgeben</q-tooltip><b>{ }</b></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[24, 137]">
       <q-btn
         round
         contenteditable="false"
-        :color="editColor"
+        :color="edit ? 'green' : 'red'"
         icon="create"
         @click="editContent"
-      />
+      ><q-tooltip>Bearbeitungsmodus {{edit ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[24, 189]">
       <q-btn
@@ -34,16 +38,31 @@
         :color="devToolsColor"
         icon="build"
         @click="toggleDevTools"
-      />
+      ><q-tooltip>Devtools {{devToolsColor === 'red' ? 'öffnen' : 'schließen'}}</q-tooltip></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[24, 241]">
       <q-btn
         round
-        color="orange"
+        :color="mark ? 'green' : 'red'"
         :icon="mark ? 'report' : 'report_off'"
         @click="toggleMark"
-      />
+      ><q-tooltip>Fehlermarkierungen {{mark ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
     </q-page-sticky>
+    <q-page-sticky position="top-right" :offset="[24, 293]">
+      <q-btn
+        round
+        :color="comment ? 'green' : 'red'"
+        icon="comment"
+        @click="toggleComment"
+      ><q-tooltip>Report-Kommentare {{comment ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
+    </q-page-sticky>
+    <q-dialog :value="!!comment" position="bottom" seamless>
+      <q-card style="width: 700px; max-width: 80vw;" class="bg-blue-2">
+        <q-card-section>
+          <span v-html="markdownComment()"></span>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="dialogError" position="bottom" seamless>
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="text-h6">{{message.message}}</q-card-section>
@@ -67,6 +86,7 @@
 
 <script>
 import { join } from 'path'
+import snarkdown from 'snarkdown'
 let webview
 
 export default {
@@ -80,10 +100,10 @@ export default {
     return {
       preload: join('file:///', __statics, '/preload.js'),
       edit: false,
-      editColor: 'red',
       devToolsColor: 'red',
       mark: true,
       dialogError: false,
+      comment: false,
       configData: this.$store.state.data.configData
     }
   },
@@ -109,11 +129,13 @@ export default {
       switch (event.channel) {
         case 'buildSvelte': this.buildSvelte(); break
         case 'clearDialog': this.dialogError = false; break
-        case 'errorMessage': this.$store.commit('data/updateMessage', event.args[0]); console.log(event.args[0])
+        case 'errorMessage': this.$store.commit('data/updateMessage', event.args[0]); console.log(event.args[0]); break
+        case 'svelteComment': this.comment = event.args[0]; break
       }
     })
   },
   methods: {
+    markdownComment () { return snarkdown(this.comment || '') },
     showDataInConsole () {
       webview.openDevTools()
       webview.send('showDataInConsole', this.shorterReportData())
@@ -135,7 +157,6 @@ export default {
     },
     editContent () {
       this.edit = !this.edit
-      this.editColor = this.edit ? 'green' : 'red'
       webview.send('editContent', this.edit)
     },
     toggleDevTools () {
@@ -145,6 +166,10 @@ export default {
     toggleMark () {
       this.mark = !this.mark
       webview.send('setMark', this.mark)
+    },
+    toggleComment () {
+      if (this.comment) this.comment = false
+      else webview.send('toggleComment')
     },
     createSvelteEnv () {
       webview.loadURL(

@@ -11,9 +11,12 @@ const libraries = {
 }
 
 global.R = (lib) => require(libraries[lib])
-const mark = new Mark(document.querySelector('body'))
-let svelte, props, Component, componentPath
+let svelte, props, Component, componentPath, mark
 
+function runMark () {
+  mark = new Mark(document.querySelector('body'))
+  mark.mark(['undefined', '01.01.1970', 'null'])
+}
 function createSvelte () {
   svelte && svelte.$destroy()
   try {
@@ -26,9 +29,6 @@ function createSvelte () {
     ipcRenderer.sendToHost('errorMessage', serializeError(error))
   }
   runMark()
-}
-function runMark () {
-  mark.mark(['undefined', '01.01.1970'])
 }
 
 ipcRenderer.on('buildSvelte', (event, data) => {
@@ -54,13 +54,20 @@ ipcRenderer.on('setSvelteProps', (event, newData) => {
 })
 ipcRenderer.on('showDataInConsole', (event, data) => {
   global.daten = data
-  console.log('Die für Reports zur Verfügung stehenden Daten sind unter `daten` abegelegt:', global.daten)
+  console.group('Report-Daten')
+  console.log('Die für Reports zur Verfügung stehenden Daten sind unter `daten` abegelegt:')
+  console.log(global.daten)
+  console.groupEnd()
 })
 ipcRenderer.on('editContent', (event, edit) => {
   document.querySelector('#content').setAttribute('contenteditable', edit)
 })
 ipcRenderer.on('setMark', (event, state) => {
   state ? runMark() : mark.unmark()
+})
+ipcRenderer.on('toggleComment', (event, state) => {
+  console.log('sende Kommentar:', svelte.kommentar)
+  ipcRenderer.sendToHost('svelteComment', svelte.kommentar)
 })
 
 global.ipc = () => {
