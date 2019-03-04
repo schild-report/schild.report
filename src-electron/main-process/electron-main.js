@@ -61,6 +61,7 @@ function createWindow () {
     mainWindow.show()
     scanSource()
     const fileWatcher = new CheapWatch({
+      debounce: 50,
       dir: configData.reports,
       filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
     })
@@ -111,7 +112,7 @@ rollup.on('moduleIDs', moduleIDs => {
     if (!moduleID.includes('node_modules')) {
       const emitter = new CheapWatch({
         dir: dirname(moduleID),
-        debounce: 50,
+        debounce: 30,
         filter: ({ path, stats }) => moduleID.endsWith(path)
       })
       console.log('Beobachte: ' + moduleID)
