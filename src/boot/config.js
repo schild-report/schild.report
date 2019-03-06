@@ -7,7 +7,7 @@
 import ipc from 'electron-better-ipc'
 
 export default async ({ router, store }) => {
-  const configData = await ipc.callMain('getConfig')
+  const configData = await ipc.callMain('getConfigData')
   store.commit('data/updateConfigData', configData)
   if (configData.db) {
     console.log('Verbindungsdaten gefunden, Datenbank öffnen')
@@ -23,8 +23,13 @@ export default async ({ router, store }) => {
     console.log('Verbindungsdaten zur Schilddatenbank fehlen')
     router.push({ name: 'datenbank' })
   }
+  store.subscribe((mutation, state) => {
+    if (mutation.type === 'updateConfigData') {
+      const data = state.configData
+      ipc.callMain('setConfigData', data)
+    }
+  })
   ipc.callMain('repos')
-  ipc.answerMain('getConfigData', () => store.state.data.configData)
   ipc.answerMain('updateRepos', repos => store.commit('data/updateRepos', repos))
   ipc.answerMain('messageRollup', message => store.commit('data/updateMessage', message))
   router.beforeEach(async (to, from, next) => {

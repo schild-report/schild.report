@@ -143,6 +143,7 @@ export default {
     shorterReportData () { const { knexConfig, ...rest } = this.svelteProps; return rest },
     buildSvelte () {
       this.dialogError = false
+      this.comment = false
       webview.send('buildSvelte', {
         file: join(this.$route.params.repo, this.$route.params.id),
         componentPath: join(this.configData.userData, 'bundle.js'),

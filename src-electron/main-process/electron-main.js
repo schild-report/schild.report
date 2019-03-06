@@ -1,7 +1,7 @@
 import { join, basename, dirname } from 'path'
 import { lstatSync, readdirSync } from 'fs'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import ipc from 'electron-better-ipc'
 import { is } from 'electron-util'
 import Schild from 'schild'
@@ -40,18 +40,21 @@ function createWindow () {
   mainWindow.loadURL(process.env.APP_URL)
   if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.openDevTools()
 
-  mainWindow.on('close', async (e) => {
+  mainWindow.on('close', e => {
     if (!configData.close) {
       e.preventDefault()
-      const data = await ipc.callRenderer(mainWindow, 'getConfigData')
-      data.windowBounds.main = mainWindow.getBounds()
-      if (win) data.windowBounds.editor = win.getBounds()
-      configFile.set(data)
+      configFile.set('windowBounds.main', mainWindow.getBounds())
+      win && configFile.set('windowBounds.editor', win.getBounds())
       console.log('Konfigurationsdaten gespeichert.')
       configData.close = true
       mainWindow.close()
       win && win.close()
     }
+  })
+  mainWindow.webContents.on('will-navigate', (e, url) => {
+    console.log(e, url)
+    e.preventDefault()
+    shell.openExternal(url)
   })
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -150,8 +153,6 @@ ipc.on('runRollup', async (event, args) => {
   runRollup(args)
 })
 
-ipc.answerRenderer('getConfig', async () => configData)
-
 const schild = new Schild()
 ipc.answerRenderer('schildConnect', async options => schild.connect(options))
 ipc.answerRenderer('schildTestConnection', async () => schild.testConnection())
@@ -162,6 +163,8 @@ ipc.answerRenderer('schildGetSchueler', async id => schild.getSchueler(id))
 ipc.answerRenderer('schildGetSchuelerfoto', async id => schild.getSchuelerfoto(id))
 ipc.answerRenderer('schildGetNutzer', async id => schild.getNutzer(id))
 ipc.answerRenderer('getBundle', async () => bundle)
+ipc.answerRenderer('getConfigData', async () => configData)
+ipc.answerRenderer('setConfigData', async data => configData.set(data))
 
 ipc.answerRenderer('openEditor', async () => {
   if (win) {
