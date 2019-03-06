@@ -1,7 +1,7 @@
 import { join, basename, dirname } from 'path'
 import { lstatSync, readdirSync } from 'fs'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import ipc from 'electron-better-ipc'
 import { is } from 'electron-util'
 import Schild from 'schild'
@@ -26,7 +26,7 @@ if (process.env.PROD) {
   global.__statics = join(__dirname, 'statics').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
+let mainWindow, win
 function createWindow () {
   mainWindow = new BrowserWindow({
     ...configData.windowBounds.main,
@@ -40,24 +40,31 @@ function createWindow () {
   mainWindow.loadURL(process.env.APP_URL)
   if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.openDevTools()
 
-  mainWindow.on('close', async (e) => {
+  mainWindow.on('close', e => {
     if (!configData.close) {
       e.preventDefault()
-      const data = await ipc.callRenderer(mainWindow, 'getConfigData')
-      data.windowBounds.main = mainWindow.getBounds()
-      configFile.set(data)
+      configFile.set('windowBounds.main', mainWindow.getBounds())
+      win && configFile.set('windowBounds.editor', win.getBounds())
       console.log('Konfigurationsdaten gespeichert.')
       configData.close = true
       mainWindow.close()
+      win && win.close()
     }
+  })
+  mainWindow.webContents.on('will-navigate', (e, url) => {
+    console.log(e, url)
+    e.preventDefault()
+    shell.openExternal(url)
   })
   mainWindow.on('closed', () => {
     mainWindow = null
+    win = null
   })
   mainWindow.once('ready-to-show', async () => {
     mainWindow.show()
     scanSource()
     const fileWatcher = new CheapWatch({
+      debounce: 50,
       dir: configData.reports,
       filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
     })
@@ -94,18 +101,21 @@ ipc.answerRenderer('repos', async () => scanSource())
 let webview
 ipc.on('webview', async (event) => { webview = event.sender })
 
-let watcher = []
 const rollup = new RollupBuild()
-rollup.on('message', error => {
-  ipc.callRenderer(mainWindow, 'messageRollup', serializeError(error))
+rollup.on('message', error => ipc.callRenderer(mainWindow, 'messageRollup', serializeError(error)))
+let bundle
+rollup.on('bundle', b => {
+  win && win.isVisible() && ipc.callRenderer(win, 'bundleRollup', b)
+  bundle = b
 })
+let watcher = []
 rollup.on('moduleIDs', moduleIDs => {
   while (watcher.length) { watcher.pop().close() }
   Array.from(moduleIDs).forEach(async (moduleID) => {
     if (!moduleID.includes('node_modules')) {
       const emitter = new CheapWatch({
         dir: dirname(moduleID),
-        debounce: 50,
+        debounce: 30,
         filter: ({ path, stats }) => moduleID.endsWith(path)
       })
       console.log('Beobachte: ' + moduleID)
@@ -143,14 +153,35 @@ ipc.on('runRollup', async (event, args) => {
   runRollup(args)
 })
 
-ipc.answerRenderer('getConfig', async () => configData)
-
 const schild = new Schild()
 ipc.answerRenderer('schildConnect', async options => schild.connect(options))
 ipc.answerRenderer('schildTestConnection', async () => schild.testConnection())
-ipc.answerRenderer('schildSuche', async data => schild.suche(data.arg))
+ipc.answerRenderer('schildSuche', async data => schild.suche(data))
 ipc.answerRenderer('schildGetKlasse', async id => schild.getKlasse(id))
 ipc.answerRenderer('schildGetSchule', async () => schild.getSchule())
 ipc.answerRenderer('schildGetSchueler', async id => schild.getSchueler(id))
 ipc.answerRenderer('schildGetSchuelerfoto', async id => schild.getSchuelerfoto(id))
 ipc.answerRenderer('schildGetNutzer', async id => schild.getNutzer(id))
+ipc.answerRenderer('getBundle', async () => bundle)
+ipc.answerRenderer('getConfigData', async () => configData)
+ipc.answerRenderer('setConfigData', async data => configData.set(data))
+
+ipc.answerRenderer('openEditor', async () => {
+  if (win) {
+    ipc.callRenderer(win, 'bundleRollup', bundle)
+    win.show()
+  } else {
+    win = new BrowserWindow({ ...configData.windowBounds.editor, show: false })
+    win.loadURL(process.env.APP_URL + '#/app/editor')
+    win.once('ready-to-show', async () => {
+      win.show()
+    })
+    win.on('closed', () => { win = null })
+    win.on('close', async (e) => {
+      if (!configData.close) {
+        win.hide()
+        e.preventDefault()
+      }
+    })
+  }
+})

@@ -60,14 +60,31 @@
         v-for="(dokumente, repo) in repos"
         :key="repo"
       >
-         <q-item-label header>{{repo}}</q-item-label>
+        <q-expansion-item
+          dense
+          icon="folder_open"
+          dense-toggle
+          :label="repo"
+          v-model="folderStates[repo]"
+        >
           <q-item
             :active="repo === $route.params.repo && dokument === $route.params.id"
             :to="`/dokument/${repo}/${dokument}`"
             v-for="(dokument) in dokumente" :key="dokument"
+            @mouseover="showIcon = true"
+            @mouseleave="showIcon = false"
+            dense
           >
             <q-item-section>{{dokument.slice(0, -5)}}</q-item-section>
+            <q-item-section
+              avatar
+              v-if="repo === $route.params.repo && dokument === $route.params.id"
+              @click.native="openEditor"
+            >
+              <q-icon color="grey" name="edit"></q-icon>
+            </q-item-section>
           </q-item>
+        </q-expansion-item>
       </q-list>
     </q-drawer>
 
@@ -116,6 +133,10 @@ export default {
     })
   },
   mounted () {
+    Mousetrap.bind(['e'], () => {
+      this.openEditor()
+      return false
+    })
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
       remote.clipboard.writeText(JSON.stringify(this.schueler))
       console.log('Daten in die Zwischenablage kopiert.')
@@ -124,7 +145,7 @@ export default {
   },
   data () {
     return {
-      terms: null,
+      terms: '',
       options: [],
       // pdfpath
       configData: this.$store.state.data.configData
@@ -136,6 +157,7 @@ export default {
     repos () { return this.$store.state.data.repos },
     schule () { return this.$store.state.data.schule },
     svelteProps () { return this.$store.getters['data/reportData'] },
+    folderStates () { return this.configData.folderStates },
     zurueckZu () {
       return this.klasse.Klasse
         ? `Zurück zur ${this.klasse.Klasse}`
@@ -143,15 +165,16 @@ export default {
     }
   },
   methods: {
-    search (terms, update, abort) {
-      if (terms === '') {
+    openEditor () { ipc.callMain('openEditor') },
+    async search (val, update, abort) {
+      if (val === '') {
         update(() => {
           this.options = []
         })
         return
       }
       update(async () => {
-        const response = await ipc.callMain('schildSuche', { arg: terms })
+        const response = await ipc.callMain('schildSuche', val)
         this.options = response
           .map(d => {
             const status = statusFeedback(d.status)
@@ -183,7 +206,13 @@ export default {
       if (this.$route.name !== 'dokument') this.updateSchuelerfoto(id)
     },
     async updateSchuelerfoto (id) {
-      const schuelerfoto = await ipc.callMain('schildGetSchuelerfoto', id)
+      let schuelerfoto
+      try {
+        schuelerfoto = await ipc.callMain('schildGetSchuelerfoto', id)
+      } catch (error) {
+        console.log('Fehler Foto:', error)
+        schuelerfoto = ''
+      }
       this.$store.commit('data/updateSchuelerfoto', schuelerfoto)
     },
     async updateKlasse (id) {
