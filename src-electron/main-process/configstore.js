@@ -18,7 +18,7 @@ const configFile = new Store({
     privateDaten: {},
     folderStates: {},
     debug: false,
-    db: {}
+    db: null
   }
 })
 

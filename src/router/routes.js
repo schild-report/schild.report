@@ -4,9 +4,9 @@ import Klasse from 'pages/klasse'
 import Schueler from 'pages/schueler'
 import Dokument from 'pages/dokument'
 import Einstellungen from 'pages/einstellungen'
-const Datenbank = () => import('layouts/datenbank')
-const Login = () => import('layouts/login')
-const Editor = () => import('pages/editor.vue')
+import Datenbank from 'layouts/datenbank'
+import Login from 'layouts/login'
+const Editor = () => import('pages/editor')
 
 export default [
   {

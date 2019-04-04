@@ -15,7 +15,7 @@ import { mkDirByPathSync } from './mkdir'
 
 console.log(VERSION)
 if (process.argv.some(a => a === '-v')) app.exit()
-let configData = configFile.store
+const configData = configFile.store
 configData['passAuth'] = process.argv.some(a => a === '--no-login') || is.development
 configData['debug'] = process.argv.some(a => a === '--debug') || is.development
 configData['version'] = VERSION
@@ -53,6 +53,7 @@ function createWindow () {
   })
   mainWindow.webContents.on('will-navigate', (e, url) => {
     console.log(e, url)
+    console.log('Navigation')
     e.preventDefault()
     shell.openExternal(url)
   })
