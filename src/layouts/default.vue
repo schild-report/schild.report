@@ -234,7 +234,7 @@ export default {
         marginsType: options.marginsType || 1,
         printBackground: options.printBackground || true
       }
-      webview.printToPDF({ ...options }, (error, data) => {
+      webview.getWebContents().printToPDF({ ...options }, (error, data) => {
         if (error) throw error
         ensureDirectoryExistence(pdfPath)
         writeFile(pdfPath, data, error => {

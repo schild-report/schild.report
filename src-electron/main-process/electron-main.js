@@ -52,10 +52,12 @@ function createWindow () {
     }
   })
   mainWindow.webContents.on('will-navigate', (e, url) => {
-    console.log(e, url)
-    console.log('Navigation')
-    e.preventDefault()
-    shell.openExternal(url)
+    if (url.includes('http')) {
+      console.log(url)
+      e.preventDefault()
+      shell.openExternal(url)
+      console.log('Navigation umgeleitet auf Browser etc.')
+    }
   })
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -165,7 +167,12 @@ ipc.answerRenderer('schildGetSchuelerfoto', async id => schild.getSchuelerfoto(i
 ipc.answerRenderer('schildGetNutzer', async id => schild.getNutzer(id))
 ipc.answerRenderer('getBundle', async () => bundle)
 ipc.answerRenderer('getConfigData', async () => configData)
-ipc.answerRenderer('setConfigData', async data => configData.set(data))
+ipc.answerRenderer('setConfigData', async data => configFile.set(data))
+//   try {
+//   } catch (e) {
+//     console.log('Fehler beim Speichern der Konfiguration:', e)
+//   }
+// })
 
 ipc.answerRenderer('openEditor', async () => {
   if (win) {

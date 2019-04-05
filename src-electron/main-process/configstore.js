@@ -21,5 +21,4 @@ const configFile = new Store({
     db: null
   }
 })
-
 export default configFile

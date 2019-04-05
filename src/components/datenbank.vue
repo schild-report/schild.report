@@ -100,13 +100,9 @@ export default {
           this.checkConnection = 'Verbindungsdaten speichern'
           this.configData.db = this.db
           this.$store.commit('data/updateConfigData', this.configData)
-          try {
-            const schule = await ipc.callMain('schildGetSchule')
-            this.$store.commit('data/updateSchule', schule)
-            this.$router.push('/')
-          } catch (err) {
-            console.log('DB-Einstellungen konnten nicht gespeichert werden:' + err)
-          }
+          const schule = await ipc.callMain('schildGetSchule')
+          this.$store.commit('data/updateSchule', schule)
+          this.$router.push('/')
         } catch (error) {
           console.log(error)
           this.testing = 'red'

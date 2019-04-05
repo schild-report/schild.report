@@ -22,12 +22,10 @@ export default async ({ router, store }) => {
   } else {
     console.log('Verbindungsdaten zur Schilddatenbank fehlen')
     router.push({ name: 'datenbank' })
-    console.log(router)
   }
   store.subscribe((mutation, state) => {
-    if (mutation.type === 'updateConfigData') {
-      const data = state.configData
-      ipc.callMain('setConfigData', data)
+    if (mutation.type === 'data/updateConfigData') {
+      ipc.callMain('setConfigData', state.data.configData)
     }
   })
   ipc.callMain('repos')
