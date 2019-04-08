@@ -66,6 +66,7 @@
           dense-toggle
           :label="repo"
           v-model="folderStates[repo]"
+          @input="updateFolderStates"
         >
           <q-item
             :active="repo === $route.params.repo && dokument === $route.params.id"
@@ -147,7 +148,6 @@ export default {
     return {
       terms: '',
       options: [],
-      // pdfpath
       configData: this.$store.state.data.configData
     }
   },
@@ -157,7 +157,7 @@ export default {
     repos () { return this.$store.state.data.repos },
     schule () { return this.$store.state.data.schule },
     svelteProps () { return this.$store.getters['data/reportData'] },
-    folderStates () { return this.configData.folderStates },
+    folderStates () { return this.$store.state.data.configData.folderStates || {} },
     zurueckZu () {
       return this.klasse.Klasse
         ? `Zurück zur ${this.klasse.Klasse}`
@@ -165,6 +165,9 @@ export default {
     }
   },
   methods: {
+    updateFolderStates () {
+      this.$store.commit('data/updateConfigData', { folderStates: this.folderStates })
+    },
     openEditor () { ipc.callMain('openEditor') },
     async search (val, update, abort) {
       if (val === '') {
