@@ -168,11 +168,6 @@ ipc.answerRenderer('schildGetNutzer', async id => schild.getNutzer(id))
 ipc.answerRenderer('getBundle', async () => bundle)
 ipc.answerRenderer('getConfigData', async () => configData)
 ipc.answerRenderer('setConfigData', async data => configFile.set(data))
-//   try {
-//   } catch (e) {
-//     console.log('Fehler beim Speichern der Konfiguration:', e)
-//   }
-// })
 
 ipc.answerRenderer('openEditor', async () => {
   if (win) {
