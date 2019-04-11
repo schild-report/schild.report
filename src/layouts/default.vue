@@ -170,12 +170,6 @@ export default {
     },
     openEditor () { ipc.callMain('openEditor') },
     async search (val, update, abort) {
-      if (val === '') {
-        update(() => {
-          this.options = []
-        })
-        return
-      }
       update(async () => {
         const response = await ipc.callMain('schildSuche', val)
         this.options = response
