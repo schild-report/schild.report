@@ -20,7 +20,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.0.1",
     "rollup-plugin-svelte": "^5.0.3",
-    "schild": "^0.5.1",
+    "schild": "^0.5.2",
     "serialize-error": "^4.1.0",
     "svelte": "^3.4.4",
     "vue-monaco": "^0.3.2"
