@@ -76,7 +76,7 @@
             @mouseleave="showIcon = false"
             dense
           >
-            <q-item-section>{{dokument.slice(0, -5)}}</q-item-section>
+            <q-item-section>{{parse(dokument)}}</q-item-section>
             <q-item-section
               avatar
               v-if="repo === $route.params.repo && dokument === $route.params.id"
@@ -165,6 +165,9 @@ export default {
     }
   },
   methods: {
+    parse (filename) {
+      return parse(filename).name
+    },
     updateFolderStates () {
       this.$store.commit('data/updateConfigData', { folderStates: this.folderStates })
     },
