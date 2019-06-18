@@ -12,18 +12,18 @@
   },
   "dependencies": {
     "cheap-watch": "^1.0.2",
-    "electron-store": "^3.2.0",
+    "electron-store": "^3.3.0",
     "lodash": "^4.17.11",
     "mark.js": "^8.11.1",
     "pg": "^7.11.0",
-    "rollup": "^1.14.4",
+    "rollup": "^1.15.1",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.0.1",
-    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-svelte": "^5.1.0",
     "schild": "^0.5.2",
     "serialize-error": "^4.1.0",
-    "svelte": "^3.4.4",
+    "svelte": "^3.5.1",
     "vue-monaco": "^0.3.2"
   },
   "devDependencies": {
