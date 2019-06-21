@@ -7,7 +7,8 @@ ipcRenderer.send('webview')
 const libraries = {
   lodash: 'lodash',
   schild: 'schild',
-  knex: 'knex'
+  knex: 'knex',
+  pg: 'pg'
 }
 
 global.R = (lib) => require(libraries[lib])

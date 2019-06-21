@@ -7,7 +7,7 @@ import json from 'rollup-plugin-json'
 import * as EventEmitter from 'events'
 
 // svelte components möchten svelte importieren. Da wir aber auch components
-// ohne node_modules zulassen, müssen wir das verzwichnis an svelte weiterreichen
+// ohne node_modules zulassen, müssen wir das Verzeichnis an svelte weiterreichen
 const __nodeModules = process.env.PROD
   ? presolve(__dirname, 'node_modules/svelte')
   : presolve(__dirname, '../../node_modules/svelte')
@@ -46,7 +46,7 @@ export default class rollupBuild extends EventEmitter {
           },
           sveltePath: __nodeModules,
           // accessors: true,
-          immutable: true,
+          immutable: false,
           dev: !!this.options.debug
         }),
         moduleIds(ids => this.emit('moduleIDs', ids)),

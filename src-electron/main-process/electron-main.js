@@ -69,7 +69,7 @@ function createWindow () {
     const fileWatcher = new CheapWatch({
       debounce: 50,
       dir: configData.reports,
-      filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : path.endsWith('.html')
+      filter: ({ path, stats }) => stats.isDirectory() ? !path.includes('/') : /\.((html)|(svelte))$/.test(path)
     })
     await fileWatcher.init()
     fileWatcher.on('+', ({ path, stats, isNew }) => { if (isNew) scanSource() })
@@ -95,7 +95,7 @@ const scanSource = () => {
     readdirSync(source).map(name => join(source, name)).filter(isDirectory)
   const obj = getDirectories(configData.reports)
     .reduce((o, element) => ({ ...o,
-      [basename(element)]: readdirSync(element).filter(fn => fn.slice(-5) === '.html' && fn.charAt(0) !== '_')
+      [basename(element)]: readdirSync(element).filter(fn => /\.((html)|(svelte))$/.test(fn) && fn.charAt(0) !== '_')
     }), {})
   ipc.callRenderer(mainWindow, 'updateRepos', obj)
 }
@@ -168,11 +168,6 @@ ipc.answerRenderer('schildGetNutzer', async id => schild.getNutzer(id))
 ipc.answerRenderer('getBundle', async () => bundle)
 ipc.answerRenderer('getConfigData', async () => configData)
 ipc.answerRenderer('setConfigData', async data => configFile.set(data))
-//   try {
-//   } catch (e) {
-//     console.log('Fehler beim Speichern der Konfiguration:', e)
-//   }
-// })
 
 ipc.answerRenderer('openEditor', async () => {
   if (win) {
