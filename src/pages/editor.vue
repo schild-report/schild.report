@@ -27,7 +27,7 @@
 
 <script>
 import MonacoEditor from 'vue-monaco'
-import ipc from 'electron-better-ipc'
+const { ipcRenderer: ipc } = require('electron-better-ipc')
 import { basename, extname } from 'path'
 import { writeFile } from 'fs'
 import { debounce } from 'quasar'

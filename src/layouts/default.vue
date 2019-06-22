@@ -101,7 +101,7 @@ import { parse, join, dirname } from 'path'
 import { shell, remote } from 'electron'
 import Mousetrap from 'mousetrap'
 
-const ipc = require('electron-better-ipc')
+const { ipcRenderer: ipc } = require('electron-better-ipc')
 const sortierfolge = [1, 0, 9, 8, 3, 6, 2]
 
 function statusFeedback (status) {

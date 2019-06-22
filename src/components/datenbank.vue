@@ -73,7 +73,7 @@
 </template>
 
 <script>
-const ipc = require('electron-better-ipc')
+const { ipcRenderer: ipc } = require('electron-better-ipc')
 
 export default {
   data () {

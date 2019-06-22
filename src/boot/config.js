@@ -4,7 +4,7 @@
 // export default async ({ app, router, Vue }) => {
 //   // something to do
 // }
-import ipc from 'electron-better-ipc'
+const { ipcRenderer: ipc } = require('electron-better-ipc')
 
 export default async ({ router, store }) => {
   const configData = await ipc.callMain('getConfigData')

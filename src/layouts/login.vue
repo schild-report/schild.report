@@ -26,7 +26,7 @@
 </template>
 
 <script>
-const ipc = require('electron-better-ipc')
+const { ipcRenderer: ipc } = require('electron-better-ipc')
 
 function crypt (password) {
   const p = Array.from(password)
