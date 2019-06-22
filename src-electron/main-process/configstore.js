@@ -17,7 +17,7 @@ const configFile = new Store({
     userData: join(api.app.getPath('userData')),
     privateDaten: {},
     folderStates: {},
-    debug: false,
+    debug: true,
     db: null
   }
 })
