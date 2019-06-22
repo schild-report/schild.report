@@ -6,11 +6,9 @@ ipcRenderer.send('webview')
 
 const libraries = {
   lodash: 'lodash',
-  schild: 'schild',
-  knex: 'knex',
-  pg: 'pg'
+  pg: 'pg',
+  mysql: 'mysql'
 }
-
 global.R = (lib) => require(libraries[lib])
 let svelte, props, Component, componentPath, mark
 

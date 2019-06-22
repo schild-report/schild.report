@@ -32,7 +32,10 @@ function createWindow () {
     ...configData.windowBounds.main,
     show: false,
     useContentSize: true,
-    nodeIntegration: is.development,
+    webPreferences: {
+      nodeIntegration: true,
+      webviewTag: true
+    },
     title: `${app.getName()} ${VERSION['buildVersion']}`,
     icon: join(__dirname, '../icons/linux-256x256.png')
   })
@@ -174,7 +177,7 @@ ipc.answerRenderer('openEditor', async () => {
     ipc.callRenderer(win, 'bundleRollup', bundle)
     win.show()
   } else {
-    win = new BrowserWindow({ ...configData.windowBounds.editor, show: false })
+    win = new BrowserWindow({ ...configData.windowBounds.editor, show: false, webPreferences: { nodeIntegration: true } })
     win.loadURL(process.env.APP_URL + '#/app/editor')
     win.once('ready-to-show', async () => {
       win.show()
