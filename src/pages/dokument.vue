@@ -1,6 +1,6 @@
 <template>
   <div>
-    <webview src="about:blank" :preload="preload" nodeintegration></webview>
+    <webview src="about:blank" :preload="preload"></webview>
     <q-page-sticky position="top-right" :offset="[18, 18]" v-if="schuelerGewaehlt.length > 0">
       <q-fab
         ref="abschnitte"
