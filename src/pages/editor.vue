@@ -67,7 +67,7 @@ export default {
     }
   },
   computed: {
-    modules () { return this.bundle.cache && this.bundle.cache.modules.filter(m => !m.id.includes('node_modules') && !m.id.includes('commonjsHelpers')) }
+    modules () { return this.bundle.cache && this.bundle.cache.modules.filter(m => !m.id.includes('node_modules') && !m.id.includes('commonjsHelpers')).reverse() }
   },
   methods: {
     name (id) { return basename(id) },

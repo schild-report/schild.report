@@ -25,7 +25,7 @@
     "schild": "^0.5.2",
     "serialize-error": "^4.1.0",
     "svelte": "^3.6.1",
-    "vue-monaco": "^0.3.2"
+    "vue-monaco": "^1.0.0"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0-rc.7",
