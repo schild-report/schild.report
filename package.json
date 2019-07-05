@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "cheap-watch": "^1.0.2",
-    "electron-store": "^3.3.0",
     "lodash": "^4.17.11",
     "mark.js": "^8.11.1",
     "mysql": "^2.17.1",
@@ -38,6 +37,7 @@
     "electron-debug": "^3.0.0",
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^14.0.0",
+    "electron-store": "^4.0.0",
     "electron-util": "^0.12.1",
     "electron-wix-msi": "^2.1.1",
     "eslint": "^5.16.0",
