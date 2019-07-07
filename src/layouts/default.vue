@@ -2,10 +2,10 @@
   <q-layout view="hHh LpR lFf">
     <q-header>
       <q-toolbar color="primary">
-          <q-item dark><q-item-section>
-            <q-item-label caption><b>{{schule.Bezeichnung1}}</b></q-item-label>
-            <q-item-label caption>{{schule.Bezeichnung2}}</q-item-label>
-          </q-item-section></q-item>
+        <q-item dark><q-item-section>
+          <q-item-label caption><b>{{schule.Bezeichnung1}}</b></q-item-label>
+          <q-item-label caption>{{schule.Bezeichnung2}}</q-item-label>
+        </q-item-section></q-item>
         <q-select
           use-input
           color="white"

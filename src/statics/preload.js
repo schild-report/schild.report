@@ -22,6 +22,7 @@ function createSvelte () {
     svelte = new Component({ target: document.querySelector('svelte'), props })
     console.log('Svelte-Dokument erfolgreich geladen.')
     ipcRenderer.sendToHost('clearDialog')
+    ipcRenderer.sendToHost('svelteComment', svelte.kommentar)
   } catch (error) {
     const serializeError = require('serialize-error')
     console.log('Das Svelte-Dokument konnte nicht geladen werden:', error)
@@ -63,10 +64,6 @@ ipcRenderer.on('editContent', (event, edit) => {
 })
 ipcRenderer.on('setMark', (event, state) => {
   state ? runMark() : mark.unmark()
-})
-ipcRenderer.on('toggleComment', (event, state) => {
-  console.log('sende Kommentar:', svelte.kommentar)
-  ipcRenderer.sendToHost('svelteComment', svelte.kommentar)
 })
 
 global.ipc = () => {

@@ -19,7 +19,7 @@
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[24, 85]">
       <q-btn round
-        color="red"
+        color="blue"
         @click="showDataInConsole()"
       ><q-tooltip>Schülerdaten in der Konsole ausgeben</q-tooltip><b>{ }</b></q-btn>
     </q-page-sticky>
@@ -27,7 +27,7 @@
       <q-btn
         round
         contenteditable="false"
-        :color="edit ? 'green' : 'red'"
+        :color="edit ? 'blue' : 'blue-10'"
         icon="create"
         @click="editContent"
       ><q-tooltip>Bearbeitungsmodus {{edit ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
@@ -35,28 +35,20 @@
     <q-page-sticky position="top-right" :offset="[24, 189]">
       <q-btn
         round
-        :color="devToolsColor"
-        icon="build"
-        @click="toggleDevTools"
-      ><q-tooltip>Devtools {{devToolsColor === 'red' ? 'öffnen' : 'schließen'}}</q-tooltip></q-btn>
-    </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[24, 241]">
-      <q-btn
-        round
-        :color="mark ? 'green' : 'red'"
-        :icon="mark ? 'report' : 'report_off'"
+        :color="mark ? 'blue-10' : 'blue'"
+        :icon="mark ? 'report_off' : 'report'"
         @click="toggleMark"
       ><q-tooltip>Fehlermarkierungen {{mark ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
     </q-page-sticky>
-    <q-page-sticky position="top-right" :offset="[24, 293]">
+    <q-page-sticky position="top-right" :offset="[24, 241]" v-if="comment">
       <q-btn
         round
-        :color="comment ? 'green' : 'red'"
+        :color="zeigeComment ? 'blue-10' : 'blue'"
         icon="comment"
-        @click="toggleComment"
-      ><q-tooltip>Report-Kommentare {{comment ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
+        @click="zeigeComment = !zeigeComment"
+      ><q-tooltip>Report-Kommentare {{comment ? 'nicht' : ''}} anzeigen</q-tooltip></q-btn>
     </q-page-sticky>
-    <q-dialog :value="!!comment" position="bottom" seamless>
+    <q-dialog :value="zeigeComment" position="bottom" seamless>
       <q-card style="width: 700px; max-width: 80vw;" class="bg-blue-2">
         <q-card-section>
           <span v-html="markdownComment()"></span>
@@ -100,10 +92,10 @@ export default {
     return {
       preload: join('file:///', __statics, '/preload.js'),
       edit: false,
-      devToolsColor: 'red',
       mark: true,
       dialogError: false,
       comment: false,
+      zeigeComment: false,
       configData: this.$store.state.data.configData
     }
   },
@@ -160,17 +152,9 @@ export default {
       this.edit = !this.edit
       webview.send('editContent', this.edit)
     },
-    toggleDevTools () {
-      const is = webview.isDevToolsOpened()
-      is ? webview.closeDevTools() : webview.openDevTools()
-    },
     toggleMark () {
       this.mark = !this.mark
       webview.send('setMark', this.mark)
-    },
-    toggleComment () {
-      if (this.comment) this.comment = false
-      else webview.send('toggleComment')
     },
     createSvelteEnv () {
       webview.loadURL(
