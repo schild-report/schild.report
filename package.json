@@ -23,7 +23,7 @@
     "rollup-plugin-svelte": "^5.1.0",
     "schild": "^0.5.2",
     "serialize-error": "^4.1.0",
-    "svelte": "^3.6.4",
+    "svelte": "^3.6.5",
     "vue-monaco": "^1.0.0"
   },
   "devDependencies": {
