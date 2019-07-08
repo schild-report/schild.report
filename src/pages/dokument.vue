@@ -55,33 +55,18 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="dialogError" position="bottom" seamless>
-      <q-card style="width: 700px; max-width: 80vw;">
-        <q-card-section class="text-h6">{{message.message}}</q-card-section>
-        <q-card-section v-if="message.filename">
-          Fehler in <b>{{message.filename}}</b>
-          <br>Von Zeile {{message.start.line}} bis {{message.end.line}}
-          <br><pre>{{message.frame}}</pre>
-        </q-card-section>
-        <q-expansion-item
-          expand-separator
-          label="Stack anzeigen"
-        >
-          <q-card-section>
-            <pre>{{message.stack}}</pre>
-          </q-card-section>
-        </q-expansion-item>
-      </q-card>
-    </q-dialog>
+    <errorDialog v-if="dialogError"></errorDialog>
   </div>
 </template>
 
 <script>
 import { join } from 'path'
 import snarkdown from 'snarkdown'
+import errorDialog from './../components/error-dialog.vue'
 let webview
 
 export default {
+  components: { errorDialog },
   name: 'Dokument',
   watch: {
     $route (to, from) { this.createSvelteEnv() },
