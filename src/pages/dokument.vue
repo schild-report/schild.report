@@ -27,7 +27,7 @@
       <q-btn
         round
         contenteditable="false"
-        :color="edit ? 'blue' : 'blue-10'"
+        :color="edit ? 'blue-10' : 'blue'"
         icon="create"
         @click="editContent"
       ><q-tooltip>Bearbeitungsmodus {{edit ? 'de' : ''}}aktivieren</q-tooltip></q-btn>
