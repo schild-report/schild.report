@@ -24,6 +24,8 @@
     "schild": "^0.5.2",
     "serialize-error": "^4.1.0",
     "svelte": "^3.6.7",
+    "snarkdown": "^1.2.2",
+    "dot-prop": "^5.1.0",
     "vue-monaco": "^1.0.0"
   },
   "devDependencies": {
@@ -46,7 +48,6 @@
     "monaco-editor-webpack-plugin": "^1.7.0",
     "mousetrap": "^1.6.3",
     "quasar": "^1.0.4",
-    "snarkdown": "^1.2.2",
     "strip-ansi": "=3.0.1"
   },
   "engines": {
@@ -55,8 +56,6 @@
     "yarn": ">= 1.6.0"
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 10"
+    "Electron 4.2"
   ]
 }
