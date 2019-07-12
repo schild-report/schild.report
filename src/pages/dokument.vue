@@ -100,8 +100,6 @@ export default {
     webview.addEventListener('console-message', (e) => {
       console.log('%cSvelte:', 'color: blue', e.message)
     })
-    webview.addEventListener('devtools-opened', () => { this.devToolsColor = 'green' })
-    webview.addEventListener('devtools-closed', () => { this.devToolsColor = 'red' })
     webview.addEventListener('ipc-message', (event) => {
       switch (event.channel) {
         case 'buildSvelte': this.buildSvelte(); break

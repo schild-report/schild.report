@@ -45,7 +45,7 @@ ipcRenderer.on('setSveltePropsAbschnitt', (event, abschnitt) => {
   props.jahr = abschnitt.jahr
   props.abschnitt = abschnitt.abschnitt
   createSvelte()
-  console.log(`Neuen Abschnitt gewählt: ${abschnitt.jahr}/${abschnitt.abschnitt}`)
+  console.log(`Neuer Abschnitt gewählt: ${abschnitt.jahr}/${abschnitt.abschnitt}`)
 })
 ipcRenderer.on('setSvelteProps', (event, newData) => {
   props = newData

@@ -2,7 +2,6 @@ import { join, basename, dirname } from 'path'
 import { lstatSync, readdirSync } from 'fs'
 
 import { app, BrowserWindow, shell } from 'electron'
-// import ipc from 'electron-better-ipc'
 const { ipcMain: ipc } = require('electron-better-ipc')
 import { is } from 'electron-util'
 import Schild from 'schild'
