@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "cheap-watch": "^1.0.2",
+    "dot-prop": "^5.1.0",
     "lodash": "^4.17.14",
     "mark.js": "^8.11.1",
     "mysql": "^2.17.1",
@@ -21,15 +22,14 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.1.0",
-    "schild": "^0.5.2",
+    "schild": "^0.5.3",
     "serialize-error": "^4.1.0",
-    "svelte": "^3.6.7",
     "snarkdown": "^1.2.2",
-    "dot-prop": "^5.1.0",
+    "svelte": "^3.6.7",
     "vue-monaco": "^1.0.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.3",
+    "@quasar/app": "^1.0.4",
     "@quasar/extras": "^1.1.4",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.2",
