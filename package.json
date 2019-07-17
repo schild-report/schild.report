@@ -17,7 +17,7 @@
     "mark.js": "^8.11.1",
     "mysql": "^2.17.1",
     "pg": "^7.11.0",
-    "rollup": "^1.16.7",
+    "rollup": "^1.17.0",
     "rollup-plugin-commonjs": "^10.0.1",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
@@ -30,11 +30,11 @@
   },
   "devDependencies": {
     "@quasar/app": "^1.0.4",
-    "@quasar/extras": "^1.1.4",
+    "@quasar/extras": "^1.2.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.2",
     "devtron": "^1.4.0",
-    "electron": "^4.2.6",
+    "electron": "^4.2.7",
     "electron-better-ipc": "github:hmt/electron-better-ipc",
     "electron-debug": "^3.0.1",
     "electron-devtools-installer": "^2.2.4",
@@ -47,7 +47,7 @@
     "eslint-plugin-vue": "^5.2.3",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "mousetrap": "^1.6.3",
-    "quasar": "^1.0.4",
+    "quasar": "^1.0.5",
     "strip-ansi": "=3.0.1"
   },
   "engines": {
