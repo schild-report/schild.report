@@ -46,6 +46,7 @@ export default class rollupBuild extends EventEmitter {
           },
           sveltePath: __nodeModules,
           immutable: false,
+          accessors: true,
           dev: !!this.options.debug
         }),
         moduleIds(ids => this.emit('moduleIDs', ids)),

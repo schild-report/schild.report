@@ -25,6 +25,7 @@ export default async ({ router, store }) => {
   }
   store.subscribe((mutation, state) => {
     if (mutation.type === 'data/updateConfigData') {
+      console.log('Config Data geänder:', state.data.configData)
       ipc.callMain('setConfigData', state.data.configData)
     }
   })

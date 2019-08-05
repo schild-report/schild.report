@@ -114,7 +114,7 @@ export default {
     showDataInConsole () {
       webview.openDevTools()
       webview.send('showDataInConsole', this.shorterReportData())
-      console.log(this.configData)
+      // console.log(this.configData)
     },
     shorterReportData () { const { knexConfig, ...rest } = this.svelteProps; return rest },
     buildSvelte () {
