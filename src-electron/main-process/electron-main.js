@@ -39,6 +39,7 @@ function createWindow () {
     title: `${app.getName()} ${VERSION['buildVersion']}`,
     icon: join(__dirname, '../icons/linux-256x256.png')
   })
+  mainWindow.removeMenu()
 
   mainWindow.loadURL(process.env.APP_URL)
   if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.openDevTools()
