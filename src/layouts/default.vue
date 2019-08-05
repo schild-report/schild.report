@@ -77,13 +77,6 @@
             dense
           >
             <q-item-section>{{parse(dokument)}}</q-item-section>
-            <q-item-section
-              avatar
-              v-if="repo === $route.params.repo && dokument === $route.params.id"
-              @click.native="openEditor"
-            >
-              <q-icon color="grey" name="edit"></q-icon>
-            </q-item-section>
           </q-item>
         </q-expansion-item>
       </q-list>
@@ -134,10 +127,6 @@ export default {
     })
   },
   mounted () {
-    Mousetrap.bind(['e'], () => {
-      this.openEditor()
-      return false
-    })
     Mousetrap.bind(['command+d', 'ctrl+d'], () => {
       remote.clipboard.writeText(JSON.stringify(this.schueler))
       console.log('Daten in die Zwischenablage kopiert.')
@@ -171,7 +160,6 @@ export default {
     updateFolderStates () {
       this.$store.commit('data/updateConfigData', { folderStates: this.folderStates })
     },
-    openEditor () { ipc.callMain('openEditor') },
     async search (val, update, abort) {
       update(async () => {
         const response = await ipc.callMain('schildSuche', val)

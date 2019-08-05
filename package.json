@@ -1,6 +1,6 @@
 {
   "name": "schild.report",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Schild Reports mit HTML erstellen",
   "productName": "schild.report",
   "cordovaId": "org.cordova.quasar.app",
@@ -25,8 +25,7 @@
     "schild": "^0.5.4",
     "serialize-error": "^4.1.0",
     "snarkdown": "^1.2.2",
-    "svelte": "^3.7.0",
-    "vue-monaco": "^1.0.0"
+    "svelte": "^3.7.0"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.4",
@@ -45,7 +44,6 @@
     "eslint": "^5.16.0",
     "eslint-loader": "^2.2.1",
     "eslint-plugin-vue": "^5.2.3",
-    "monaco-editor-webpack-plugin": "^1.7.0",
     "mousetrap": "^1.6.3",
     "quasar": "^1.0.5",
     "strip-ansi": "=3.0.1"
@@ -56,6 +54,6 @@
     "yarn": ">= 1.6.0"
   },
   "browserslist": [
-    "Electron 4.2"
+    "Electron 6.0"
   ]
 }

@@ -48,7 +48,6 @@ function createWindow () {
     if (!configData.close) {
       e.preventDefault()
       configFile.set('windowBounds.main', mainWindow.getBounds())
-      win && configFile.set('windowBounds.editor', win.getBounds())
       console.log('Konfigurationsdaten gespeichert.')
       configData.close = true
       mainWindow.close()
@@ -172,23 +171,3 @@ ipc.answerRenderer('schildGetNutzer', async id => schild.getNutzer(id))
 ipc.answerRenderer('getBundle', async () => bundle)
 ipc.answerRenderer('getConfigData', async () => configData)
 ipc.answerRenderer('setConfigData', async data => configFile.set(data))
-
-ipc.answerRenderer('openEditor', async () => {
-  if (win) {
-    ipc.callRenderer(win, 'bundleRollup', bundle)
-    win.show()
-  } else {
-    win = new BrowserWindow({ ...configData.windowBounds.editor, show: false, webPreferences: { nodeIntegration: true } })
-    win.loadURL(process.env.APP_URL + '#/app/editor')
-    win.once('ready-to-show', async () => {
-      win.show()
-    })
-    win.on('closed', () => { win = null })
-    win.on('close', async (e) => {
-      if (!configData.close) {
-        win.hide()
-        e.preventDefault()
-      }
-    })
-  }
-})
