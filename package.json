@@ -25,7 +25,7 @@
     "schild": "^0.5.4",
     "serialize-error": "^4.1.0",
     "snarkdown": "^1.2.2",
-    "svelte": "^3.9.1"
+    "svelte": "^3.9.2"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.6",
