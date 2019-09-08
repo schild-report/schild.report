@@ -8,8 +8,8 @@
     "build": "rollup --config",
     "start": "npm run build && run-s start:*",
     "dev": "rollup -c && run-p dev:*",
-    "package-win":   "electron-packager . --overwrite --name=schild.report --platform=win32  --arch=ia32 --icon=icons/icon.ico  --asar --out=release",
-    "package-mac":   "electron-packager . --overwrite --name=schild.report --platform=darwin --arch=x64  --icon=icons/icon.icns --asar --out=release",
+    "package-win": "electron-packager . --overwrite --name=schild.report --platform=win32  --arch=ia32 --icon=icons/icon.ico  --asar --out=release",
+    "package-mac": "electron-packager . --overwrite --name=schild.report --platform=darwin --arch=x64  --icon=icons/icon.icns --asar --out=release",
     "package-linux": "electron-packager . --overwrite --name=schild.report --platform=linux  --arch=x64  --icon=icons/icon.png  --asar --out=release",
     "start:electron": "electron .",
     "dev:development": "rollup --config --watch",
@@ -41,6 +41,6 @@
     "rollup-plugin-svelte": "^5.1.0",
     "serialize-error": "^4.1.0",
     "snarkdown": "^1.2.2",
-    "svelte": "^3.10.0"
+    "svelte": "^3.10.1"
   }
 }
