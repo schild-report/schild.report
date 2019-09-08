@@ -8,7 +8,7 @@ Hauptmerkmale von _schild.report_ lassen sich wie folgt zusammenfassen:
 * perfekte Typografie
 * vollständige Steuerung der Druckausgabe
 * unterstützung aller gängigen Grafikformate
-* schnelle Anzeige der Dokumente
+* schnelle Anzeige und Ausgabe der Dokumente in Vorschau und PDF
 * Live-Vorschau bei der Erstellung von Dokumenten
 
 _schild.report_ verwendet zur Erstellung von Reports das für Internetseiten
@@ -73,8 +73,8 @@ z.B. VS-Code. Aber auch notepad.exe lässt sich problemlos einsetzen.
 
 #### Installation
 Für Windows stehen unter Github aktuelle Ausgaben im MSI-Format zur Verfügung,
-d.h. es sind automatisch ausführbare Installationsdateien. Für Linux können auf
-Wunsch gerne komprimierte Pakete erstellt werden. Bitte anfragen.
+d.h. es sind automatisch ausführbare Installationsdateien. Für Linux und MacOS
+können auf Wunsch gerne komprimierte Pakete erstellt werden. Bitte anfragen.
 
 _schild.report_ erstellt im Dokumentenverzeichnis folgende Ordner:
 
@@ -94,7 +94,8 @@ Um _schild.report_ nutzen zu können, müssen Reports im oben genannten
 die sich auf Github befinden.
 
 #### So siehts aus
-Hier ein paar Bilder mit Schülern aus der Testdatenbank und den Demo-Reports:
+Hier ein paar Bilder mit Schülern aus der Testdatenbank und den Demo-Reports
+unter Version 1. Version 2 startet mit leicht veränderter Optik:
 
 ![auswahl](https://b.hmt.im/auswahl.png)
 Über eine Suchfunktion können Klassen oder einzelne Schüler ausgewählt werden.
@@ -147,4 +148,4 @@ Das in den Bildern verwendete Demo-Verzeichnis: [https://github.com/schild-repor
 
 Ein Video mit den wichtigsten Funktionen: [https://b.hmt.im/schild.report.webm](https://b.hmt.im/schild.report.webm)
 
-Eine Übersicht zu Svelte, dem verwendenten Framework zur Steuerung der Reports: [https://svelte.technology/guide](https://svelte.technology/guide)
+Eine Übersicht zu Svelte, dem verwendenten Framework zur Steuerung der Reports: [https://svelte.dev](https://svelte.dev)

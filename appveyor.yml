@@ -3,10 +3,9 @@ skip_tags: true
 
 install:
   - set path=c:\Program Files (x86)\WiX Toolset v3.11\bin;%path%
-  - npm install -g @quasar/cli
   - |-
-      echo export const VERSION = { buildID: '%APPVEYOR_BUILD_ID%', buildVersion: '%APPVEYOR_BUILD_VERSION%', buildNo: '%APPVEYOR_BUILD_NUMBER%', gitHash: '%APPVEYOR_REPO_COMMIT%', gitMessage: '%APPVEYOR_REPO_COMMIT_MESSAGE%' }> src-electron/main-process/version.js
-  - cat src-electron/main-process/version.js
+      echo export const VERSION = { buildID: '%APPVEYOR_BUILD_ID%', buildVersion: '%APPVEYOR_BUILD_VERSION%', buildNo: '%APPVEYOR_BUILD_NUMBER%', gitHash: '%APPVEYOR_REPO_COMMIT%', gitMessage: '%APPVEYOR_REPO_COMMIT_MESSAGE%' }> src/version.js
+  - cat src/version.js
   - npm install
 
 cache:
@@ -18,13 +17,14 @@ test_script:
 build_script:
   - node --version
   - npm --version
-  - quasar info
-  - quasar build -m electron
-  - C:\projects\schild-report\dist\electron\schild.report-win32-ia32\schild.report.exe -v
+  - npm run build -m
+  - npm run package-win
+  - ls C:\projects\schild-report\release\schild.report-win32-ia32\
+  - C:\projects\schild-report\release\schild.report-win32-ia32\schild.report.exe -v
   - node create-msi.js
 
 artifacts:
-  - path: dist/msi/schild.report.msi
+  - path: release/msi/schild.report.msi
     name: schild.report
 
 deploy:
@@ -33,7 +33,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: xf39YWukS9Xjl8akZBdy3e/7xbl4pQn7qdpsguMuV2JcZkZ4zBj2nyh1D0ooi9pW
-  artifact: dist/msi/schild.report.msi
+  artifact: release/msi/schild.report.msi
   draft: false
   prerelease: false
   on:

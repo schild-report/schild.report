@@ -3,14 +3,14 @@ const path = require('path')
 
 // Step 1: Instantiate the MSICreator
 const msiCreator = new MSICreator({
-  appDirectory: path.resolve(__dirname, 'dist/electron/schild.report-win32-ia32'),
+  appDirectory: path.resolve(__dirname, 'release/schild.report-win32-ia32'),
   description: 'Desktop Anwendung zum Erstellen von Schild-Reports',
   exe: 'schild.report.exe',
   name: 'schild.report',
   manufacturer: process.env['AUTHOR'],
   upgradeCode: process.env['UPGRADECODE'],
   version: process.env['APPVEYOR_BUILD_VERSION'],
-  outputDirectory: path.resolve(__dirname, 'dist/msi'),
+  outputDirectory: path.resolve(__dirname, 'release/msi'),
   shortcutFolderName: 'schild.report',
   language: 1031
 })
