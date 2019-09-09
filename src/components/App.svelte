@@ -8,10 +8,11 @@
 <script>
   import { onMount } from 'svelte';
   import { configData, state } from './../stores.js';
+  import { VERSION } from './../version.js';
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
 
-  let development = false
+  const production =  VERSION.production
 
   function callback(obj) {
     $state.repos = obj
@@ -42,7 +43,7 @@
 </style>
 
 {#await init() then weiter}
-  {#if connected && ($state.user || development)}
+  {#if connected && ($state.user || !production)}
     <Main />
   {:else}
     <Intro bind:connected />
