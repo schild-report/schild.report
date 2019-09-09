@@ -26,7 +26,7 @@
     "bulma": "^0.7.5",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.0.2",
-    "electron-store": "^4.0.0",
+    "electron-store": "^5.0.0",
     "electron-util": "^0.12.1",
     "knex": "^0.19.3",
     "lodash": "^4.17.15",
