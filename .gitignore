@@ -6,3 +6,4 @@ build/*.js
 build/*.map
 .DS_Store
 .vscode
+schild-report.code-workspace
