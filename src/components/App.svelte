@@ -11,7 +11,7 @@
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
 
-  let development = true
+  let development = false
 
   function callback(obj) {
     $state.repos = obj
