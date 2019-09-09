@@ -40,7 +40,6 @@
     }
   }
 
-  $: $state //3.10.1 bug
   async function show_selected(item) {
     res = [];
     selected = -1;

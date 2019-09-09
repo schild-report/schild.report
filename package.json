@@ -34,13 +34,13 @@
     "mysql": "^2.17.1",
     "objection": "^1.6.9",
     "pg": "^7.12.1",
-    "rollup": "^1.21.0",
+    "rollup": "^1.21.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.1.0",
     "serialize-error": "^4.1.0",
     "snarkdown": "^1.2.2",
-    "svelte": "^3.10.1"
+    "svelte": "^3.12.0"
   }
 }
