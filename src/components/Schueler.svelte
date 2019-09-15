@@ -14,6 +14,8 @@
       });
     });
   }
+  const faecher = new Set
+  $: s.abschnitte.forEach(a => a.noten.forEach(n => faecher.add(n.fach.FachKrz)))
 </script>
 
 <div class="card">
@@ -46,6 +48,26 @@
           <br>
       {:else} – keine –
       {/each}
+      <h5 class="title is-5"> Noten </h5>
+      <table>
+        <thead>
+          <td></td>
+          {#each Array.from(faecher) as f}
+            <td>{f}</td>
+          {/each}
+        </thead>
+        {#each s.abschnitte as hj}
+        <tr>
+        {#each Array.from(faecher) as f}
+          {#each [hj.noten.find(n => n.fach.FachKrz === f)||{}] as n}
+            <td class="text-center" style={parseInt(n.NotenKrz) > 4 ? 'background:tomato;':''}>
+              <span class:kreis={n.Warnung==='+'}>{n.NotenKrz || '–'}</span>
+            </td>
+          {/each}
+        {/each}
+        </tr>
+        {/each}
+      </table>
     </div>
   </div>
 </div>
