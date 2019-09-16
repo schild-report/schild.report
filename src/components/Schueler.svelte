@@ -14,8 +14,8 @@
       });
     });
   }
-  const faecher = new Set
-  $: s.abschnitte.forEach(a => a.noten.forEach(n => faecher.add(n.fach.FachKrz)))
+  // const faecher = new Set
+  $: faecher = new Set(s.abschnitte.reverse().map(a => a.noten.map(n => n.fach.FachKrz)).flat())
 </script>
 
 <div class="card">
@@ -48,19 +48,22 @@
           <br>
       {:else} – keine –
       {/each}
+    </div>
+    <div class="content">
       <h5 class="title is-5"> Noten </h5>
-      <table>
+      <table class="table is-narrow is-bordered is-striped">
         <thead>
-          <td></td>
+          <td>Abschnitt</td>
           {#each Array.from(faecher) as f}
-            <td>{f}</td>
+            <td class="has-text-centered">{f}</td>
           {/each}
         </thead>
         {#each s.abschnitte as hj}
         <tr>
+        <td>{`${hj.Jahr}/${hj.Abschnitt}`}</td>
         {#each Array.from(faecher) as f}
           {#each [hj.noten.find(n => n.fach.FachKrz === f)||{}] as n}
-            <td class="text-center" style={parseInt(n.NotenKrz) > 4 ? 'background:tomato;':''}>
+            <td class="has-text-centered" style={parseInt(n.NotenKrz) > 4 ? 'background:tomato;':''}>
               <span class:kreis={n.Warnung==='+'}>{n.NotenKrz || '–'}</span>
             </td>
           {/each}
@@ -72,3 +75,10 @@
   </div>
 </div>
 
+<style>
+  .kreis {
+    border: 0.2rem solid red;
+    border-radius: 20%;
+    padding: 0.2rem;
+  }
+</style>
