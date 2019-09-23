@@ -39,6 +39,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-svelte": "^5.1.0",
+    "schild": "^0.5.4",
     "serialize-error": "^5.0.0",
     "snarkdown": "^1.2.2",
     "svelte": "^3.12.1"
