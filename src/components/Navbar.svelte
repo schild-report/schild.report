@@ -3,6 +3,7 @@
   import Schueler from './Schueler.svelte';
   import Klasse from './Klasse.svelte'
   import Einstellungen from "./Einstellungen.svelte";
+  import Start from "./Start.svelte";
   import { configData, state } from './../stores.js';
   import { join, dirname } from 'path'
   import { writeFile, existsSync, mkdirSync } from 'fs'
@@ -69,12 +70,17 @@
     $state.webview.send('open_devtools', data)
   }
   const kommentar = _ => snarkdown($state.kommentar)
+  const einstellungen_oder_so = _ => {
+    if ($state.component === Einstellungen) {
+      $state.component = $state.zurueck_zu.status ? Schueler : Klasse
+    } else $state.component = Einstellungen
+  }
 </script>
 
 <nav class="navbar is-info">
   <div class="navbar-item">
       <div class="has-text-white-ter brand is-size-7"
-          on:click={()=>$state.component = Einstellungen}>
+          on:click={()=>$state.component = Start}>
       <b>{$state.schule.Bezeichnung1}</b>
       <br> {$state.schule.Bezeichnung2}
     </div>
@@ -86,8 +92,8 @@
       <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
     {/if}
   </div>
-  {#if !$state.component}
-    <div class="navbar-end">
+  <div class="navbar-end">
+    {#if !$state.component}
       <div class="navbar-item has-dropdown is-hoverable">
         <span class="navbar-link" style="font-variant-numeric: tabular-nums;">{$state.jahr}/{$state.abschnitt}</span>
         <div class="navbar-dropdown">
@@ -101,48 +107,55 @@
         </div>
       </div>
       <div class="navbar-item">
-          <button class="button is-link">
-            <span class="icon">
-              <i class="mdi" on:click={open_devtools}>code</i>
-            </span>
-          </button>
-          <button class="button is-link">
-            <span class="icon">
-              <i class="mdi" class:has-text-warning={$state.set_edit} on:click={toggle_edit}>edit</i>
-            </span>
-          </button>
-          <button class="button is-link">
-            <span class="icon">
-              <i class="mdi" class:has-text-warning={$state.set_mark} on:click={toggle_mark}>warning</i>
-            </span>
-          </button>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <div class="dropdown is-hoverable is-right">
-              <div class="dropdown-trigger">
-                <button class="button is-link" disabled={!$state.kommentar}>
-                  <span class="icon">
-                    <i class="mdi">comment</i>
-                  </span>
-                </button>
-              </div>
-              {#if $state.kommentar}
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                  <div class="dropdown-content" style="width: 50rem">
-                    <div class="dropdown-item">
-                        <p class="card-header-title"> Information</p>
-                    </div>
-                    <hr class="dropdown-divider">
-                    <div class="dropdown-item">
-                      {@html kommentar()}
-                    </div>
+        <button class="button is-link">
+          <span class="icon">
+            <i class="mdi" on:click={open_devtools}>code</i>
+          </span>
+        </button>
+        <button class="button is-link">
+          <span class="icon">
+            <i class="mdi" class:has-text-warning={$state.set_edit} on:click={toggle_edit}>edit</i>
+          </span>
+        </button>
+        <button class="button is-link">
+          <span class="icon">
+            <i class="mdi" class:has-text-warning={$state.set_mark} on:click={toggle_mark}>warning</i>
+          </span>
+        </button>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="dropdown is-hoverable is-right">
+            <div class="dropdown-trigger">
+              <button class="button is-link" disabled={!$state.kommentar}>
+                <span class="icon">
+                  <i class="mdi">comment</i>
+                </span>
+              </button>
+            </div>
+            {#if $state.kommentar}
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content" style="width: 50rem">
+                  <div class="dropdown-item">
+                      <p class="card-header-title"> Information</p>
+                  </div>
+                  <hr class="dropdown-divider">
+                  <div class="dropdown-item">
+                    {@html kommentar()}
                   </div>
                 </div>
-              {/if}
-            </div>
+              </div>
+            {/if}
           </div>
+        </div>
       </div>
+    {/if}
+    <div class="navbar-item">
+      <button class="button is-info">
+        <span class="icon">
+          <i class="mdi" on:click={einstellungen_oder_so}>settings</i>
+        </span>
+      </button>
     </div>
-  {/if}
+  </div>
 </nav>
 
 <style>

@@ -20,7 +20,13 @@
     </div>
   {/if}
   <div class="main">
-    <svelte:component this={$state.component}/>
+    {#if $state.component}
+      <section class="section">
+        <div class="container">
+          <svelte:component this={$state.component}/>
+        </div>
+      </section>
+    {/if}
     <div class:show>
       <Dokument></Dokument>
     </div>
