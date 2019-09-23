@@ -2,7 +2,6 @@
   import Autocomplete from "./Autocomplete.svelte";
   import Schueler from './Schueler.svelte';
   import Klasse from './Klasse.svelte'
-  import Dokument from './Dokument.svelte'
   import Einstellungen from "./Einstellungen.svelte";
   import { configData, state } from './../stores.js';
   import { join, dirname } from 'path'

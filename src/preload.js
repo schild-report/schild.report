@@ -28,7 +28,7 @@ ipcRenderer.on('set_dokument', () => {
     // ipcRenderer.sendToHost('clearDialog')
     ipcRenderer.sendToHost('svelte_comment', svelte.kommentar)
   } catch (error) {
-    const serializeError = require('serialize-error')
+    const { serializeError } = require('serialize-error')
     console.log('Das Svelte-Dokument konnte nicht geladen werden:', error)
     ipcRenderer.sendToHost('error_message', serializeError(error))
   }
