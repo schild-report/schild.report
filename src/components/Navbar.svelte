@@ -72,7 +72,10 @@
   const kommentar = _ => snarkdown($state.kommentar)
   const einstellungen_oder_so = _ => {
     if ($state.component === Einstellungen) {
-      $state.component = $state.zurueck_zu.status ? Schueler : Klasse
+      if (!$state.schueler.length) {
+        $state.component = Start
+        return
+      } else $state.component = $state.zurueck_zu.status ? Schueler : Klasse
     } else $state.component = Einstellungen
   }
 </script>
