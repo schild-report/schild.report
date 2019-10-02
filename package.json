@@ -16,7 +16,7 @@
     "dev:electron": "electron ."
   },
   "devDependencies": {
-    "electron": "^6.0.10",
+    "electron": "^6.0.11",
     "electron-packager": "^14.0.6",
     "electron-wix-msi": "^2.1.1",
     "npm-run-all": "^4.1.5",
@@ -25,7 +25,7 @@
   "dependencies": {
     "bulma": "^0.7.5",
     "cheap-watch": "^1.0.2",
-    "comlink": "^4.0.2",
+    "comlink": "^4.0.3",
     "electron-store": "^5.0.0",
     "electron-util": "^0.12.1",
     "knex": "^0.19.4",
@@ -34,7 +34,7 @@
     "mysql": "^2.17.1",
     "objection": "^1.6.11",
     "pg": "^7.12.1",
-    "rollup": "^1.21.3",
+    "rollup": "^1.22.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
