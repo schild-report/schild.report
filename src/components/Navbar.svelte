@@ -21,12 +21,17 @@
 
   const open_pdf = async _ => {
     console.log('öffne PDF')
-    const s = $state.schueler[0]
-    const schuelerName = $state.schueler.length === 1 ? `${s.Name}_` : ''
     const d = $state.dokument.replace(/\.[^/.]+$/, "")
     const jahr = $state.jahr
-    const abschnitt = $state.abschnitt
-    const pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`
+    let pdfName
+    if ($state.generic_pdf) {
+      pdfName = `${$state.pdf_name || d}.pdf`
+    } else {
+      const s = $state.schueler[0]
+      const schuelerName = $state.schueler.length === 1 ? `${s.Name}_` : ''
+      const abschnitt = $state.abschnitt
+      pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`
+    }
     const pdfPath = join($configData.pdf, jahr.toString(), pdfName)
     const options = {
       marginsType: 1,
@@ -92,7 +97,9 @@
       <button class="button" on:click={()=>$state.component = $state.zurueck_zu.status ? Schueler : Klasse}>
         <span class="icon"><i class="mdi">{$state.zurueck_zu.status ? 'person':'people'}</span>
       </button>
-      <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
+      {#if !$state.error}
+        <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
+      {/if}
     {/if}
   </div>
   <div class="navbar-end">

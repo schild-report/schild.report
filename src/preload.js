@@ -25,8 +25,11 @@ ipcRenderer.on('set_dokument', () => {
   try {
     svelte = new Component({ target: document.querySelector('svelte'), props })
     console.log('Svelte-Dokument erfolgreich geladen.')
-    // ipcRenderer.sendToHost('clearDialog')
-    ipcRenderer.sendToHost('svelte_comment', svelte.kommentar)
+    ipcRenderer.sendToHost('dokument_options', {
+      kommentar: svelte.kommentar,
+      pdf_name: svelte.pdf_name,
+      generic_pdf: svelte.generic_pdf
+    })
   } catch (error) {
     const { serializeError } = require('serialize-error')
     console.log('Das Svelte-Dokument konnte nicht geladen werden:', error)
