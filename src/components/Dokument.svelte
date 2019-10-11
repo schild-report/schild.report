@@ -4,7 +4,7 @@
   import { configData, state } from './../stores.js';
   import { join } from 'path'
 
-  let webview
+  let webview, error
 
   $: props = {
     file: join($configData.reports, $state.dokument),
@@ -40,6 +40,7 @@
     $state.set_edit = false
   }
   async function set_repo () {
+    error = null
     if ($state.component) return
     webview.loadURL(
       // <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
@@ -62,7 +63,7 @@
     })
     webview.addEventListener('ipc-message', (event) => {
       switch (event.channel) {
-        case 'error_message': console.log(event.args[0]); break
+        case 'error_message': error = event.args[0];console.log(event.args[0]); break
         case 'svelte_comment': $state.kommentar = (event.args[0]); break
       }
     })
@@ -73,7 +74,22 @@
          preload="./preload.js"
          bind:this={webview}
 ></webview>
+{#if error}
+  <div class="fehlermeldung">
+    <h3 class="is-size-3">{error.message}</h3>
+    <pre>{error.stack}</pre>
+  </div>
+{/if}
 
 <style>
   webview { height: -webkit-fill-available; }
+  .fehlermeldung {
+    position: absolute;
+    left: 250px;
+    bottom: 0;
+    background: rgba(255,255,255,.9);
+    width: 100%;
+    height: 200px;
+    overflow: auto;
+  }
 </style>
