@@ -1,4 +1,5 @@
 <script>
+  import { schild } from './App.svelte'
   import Autocomplete from "./Autocomplete.svelte";
   import Schueler from './Schueler.svelte';
   import Klasse from './Klasse.svelte'
@@ -83,6 +84,16 @@
       } else $state.component = $state.zurueck_zu.status ? Schueler : Klasse
     } else $state.component = Einstellungen
   }
+  const refresh = async _ => {
+    const item = $state.zurueck_zu
+    if (item.status) {
+      const schueler = await schild.getSchueler(item.id)
+      $state.schueler = [schueler]
+    } else {
+      $state.klasse = await schild.getKlasse(item.id)
+      $state.schueler = $state.klasse.schueler
+    }
+  }
 </script>
 
 <nav class="navbar is-info">
@@ -93,6 +104,9 @@
       <br> {$state.schule.Bezeichnung2}
     </div>
     <Autocomplete />
+    <button class="button" on:click={()=>refresh()}>
+      <span class="icon"><i class="mdi">sync</span>
+    </button>
     {#if !$state.component}
       <button class="button" on:click={()=>$state.component = $state.zurueck_zu.status ? Schueler : Klasse}>
         <span class="icon"><i class="mdi">{$state.zurueck_zu.status ? 'person':'people'}</span>

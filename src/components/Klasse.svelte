@@ -12,7 +12,6 @@
     8: 'Ausbildung beendet',
     9: 'Abgänger'
   }
-  $: console.log($state.selected)
 </script>
 {#each $state.schueler_sortiert as gruppe}
   <h2 class="subtitle">{status[gruppe[0]]}</h2>

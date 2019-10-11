@@ -30,7 +30,11 @@
     items[selected].scrollIntoView({block: "center", inline: "nearest"})
   };
   const blur = _ => {setTimeout(_=> show = false, 500)}
-  async function schueler_sortieren () {
+
+  $: sortieren = $state.schueler
+  $: sortieren.length && schueler_sortieren()
+
+  function schueler_sortieren () {
     const gruppiert = _.groupBy($state.schueler, 'Status')
     $state.schueler_sortiert = Object.entries(gruppiert).sort((a,b)=>b[1].length - a[1].length)
     try {
@@ -60,7 +64,6 @@
     ({ AktSchuljahr: $state.jahr, AktAbschnitt: $state.abschnitt } = $state.schueler.length > 0
       ? $state.schueler[0]
       : { AktSchuljahr: null, AktAbschnitt: null })
-    schueler_sortieren()
   }
 </script>
 
