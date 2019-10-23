@@ -32,7 +32,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each gruppe[1] as s,i}
+      {#each gruppe[1] || [] as s,i}
         <tr>
           <td><input type="checkbox" bind:group={$state.selected} value={s}></td>
           <td>{i+1}</td>
