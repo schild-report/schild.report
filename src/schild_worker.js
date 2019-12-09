@@ -36,11 +36,12 @@ class Schild {
 
   async suche(pattern) {
     try {
-      const schueler = await Schueler.query().where(function () {
+      const sres = await Schueler.query().where(function () {
         this.where('Geloescht', '-').andWhere('Gesperrt', '-');
       }).andWhere(function () {
         this.where('Vorname', 'like', pattern + '%').orWhere('Name', 'like', pattern + '%');
-      }).select('Name', 'Vorname', 'Klasse', 'Status', 'AktSchuljahr', 'ID').orderBy('AktSchuljahr', 'desc').map(s => {
+      }).select('Name', 'Vorname', 'Klasse', 'Status', 'AktSchuljahr', 'ID').orderBy('AktSchuljahr', 'desc')
+      const schueler = sres.map(s => {
         return {
           value: `${s.Name}, ${s.Vorname} (${s.Klasse})`,
           status: s.Status,
@@ -48,7 +49,8 @@ class Schild {
           id: s.ID
         };
       })
-      const klassen = await Versetzung.query().where('Klasse', 'like', pattern + '%').select('Klasse').orderBy('Klasse', 'desc').map(k => {
+      const kres = await Versetzung.query().where('Klasse', 'like', pattern + '%').select('Klasse').orderBy('Klasse', 'desc')
+      const klassen = kres.map(k => {
           return {
             value: k.Klasse,
             id: k.Klasse
@@ -62,11 +64,11 @@ class Schild {
 
   async getSchueler(id) {
     try {
-      const res = await Schueler.query().where('ID', id).eager(`[abschnitte.[noten.fach, lehrer],
+      const res = await Schueler.query().where('ID', id).withGraphFetched(`[abschnitte.[noten.fach, lehrer],
               fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
               bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
               abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach]
-            `).modifyEager('abschnitte', builder => {
+            `).modifyGraph('abschnitte', builder => {
         builder.orderBy('ID');
       }).first();
       return res.toJSON()
@@ -77,12 +79,12 @@ class Schild {
 
   async getKlasse(klasse) {
     try {
-      const res = await Versetzung.query().where('Klasse', klasse).eager(`[schueler.[abschnitte.[noten.fach, lehrer],
+      const res = await Versetzung.query().where('Klasse', klasse).withGraphFetched(`[schueler.[abschnitte.[noten.fach, lehrer],
               fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
               bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
               abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach], fachklasse,
               jahrgang]
-            `).modifyEager('schueler', builder => {
+            `).modifyGraph('schueler', builder => {
         builder.orderBy('Name');
       }).first();
       return res.toJSON()
