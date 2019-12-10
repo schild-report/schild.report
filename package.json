@@ -28,7 +28,6 @@
     "comlink": "^4.2.0",
     "electron-store": "^5.1.0",
     "electron-util": "^0.13.0",
-    "kne": "^3.0.23",
     "knex": "^0.20.4",
     "lodash": "^4.17.15",
     "mark.js": "^8.11.1",
