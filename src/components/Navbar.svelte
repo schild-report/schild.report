@@ -124,8 +124,9 @@
         <span class="navbar-link" style="font-variant-numeric: tabular-nums;">{$state.jahr}/{$state.abschnitt}</span>
         <div class="navbar-dropdown">
           {#each $state.schueler[0].abschnitte as a}
-            <span class="navbar-item"
-                  class:has-text-danger={$state.jahr === a.Jahr && $state.abschnitt === a.Abschnitt}
+            <span class="navbar-item abschnittwahl"
+                  class:has-background-success={$state.jahr === a.Jahr && $state.abschnitt === a.Abschnitt}
+                  class:has-text-white={$state.jahr === a.Jahr && $state.abschnitt === a.Abschnitt}
                   style="cursor: pointer"
                   on:click={()=>{$state.jahr = a.Jahr; $state.abschnitt = a.Abschnitt}}
             >{a.Jahr}/{a.Abschnitt}</span>
@@ -193,5 +194,8 @@
   .button {
     margin-right: 0.4rem;
     margin-left: 0.4rem;
+  }
+  .abschnittwahl:hover {
+    background-color: hsl(0, 0%, 96%);
   }
 </style>
