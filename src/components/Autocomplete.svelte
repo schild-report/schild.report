@@ -55,11 +55,11 @@
       const schueler = await schild.getSchueler(item.id)
       $state.schueler = [schueler]
       $state.klasse = {}
-      $state.component = $state.component && Schueler
+      $state.component = ($state.component || $state.plugin) && Schueler
     } else {
       $state.klasse = await schild.getKlasse(item.id)
       $state.schueler = $state.klasse.schueler
-      $state.component = $state.component && Klasse
+      $state.component = ($state.component || $state.plugin) && Klasse
     }
     ({ AktSchuljahr: $state.jahr, AktAbschnitt: $state.abschnitt } = $state.schueler.length > 0
       ? $state.schueler[0]

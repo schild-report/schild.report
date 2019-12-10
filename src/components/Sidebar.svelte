@@ -13,7 +13,8 @@
     const options = args && args.file ? {
       source: join($configData.reports, args.repo, args.file),
       dest: join($configData.userData),
-      debug: args.debug || true
+      debug: args.debug || true,
+      plugin: args.file.startsWith('plugin')
     } : null
     await rollup.set_options(options);
     try {

@@ -12,6 +12,7 @@ if (process.argv.some(a => a === '-v')) app.exit()
 const configData = configFile.store
 console.log('Verzeichnisse anlegen oder verwenden …')
 mkDirByPathSync(configData.reports)
+mkDirByPathSync(configData.plugins)
 
 let mainWindow
 

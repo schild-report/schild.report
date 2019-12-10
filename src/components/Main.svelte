@@ -9,7 +9,7 @@
   const sidebar_components = [Einstellungen, Start]
   $state.component = Start
 
-  $: sidebar = !sidebar_components.includes($state.component)
+  $: sidebar = !sidebar_components.includes($state.component) && !$state.plugin
   $: show = !!$state.component
 </script>
 

@@ -1,14 +1,12 @@
 <script>
-  import { schild } from './App.svelte'
   import { onMount } from 'svelte';
   import { configData, state } from './../stores.js';
   import { join } from 'path'
-
   let webview
 
   $: props = {
     file: join($configData.reports, $state.dokument),
-    componentPath: join($configData.userData, 'bundle.js'),
+    componentPath: !$state.plugin ? join($configData.userData, 'bundle.js') : join($state.plugin || '', $state.plugin_entry || ''),
     debug: $configData.debug,
     svelteProps: {
       schule: $state.schule,
@@ -21,12 +19,14 @@
     }
   }
   $: reload = $state.reload
+  $: component = $state.component
   $: if (reload > 1) set_repo()
   $: props && set_props()
-  $: $state.component && set_destroy()
+  $: reload > 1 && component && set_destroy()
 
   async function set_destroy () {
-    if ($state.component) return
+    $state.plugin = null
+    $state.reload = 1
     webview && await webview.send('destroy')
   }
   async function set_props () {
@@ -52,7 +52,7 @@
       PC9zdHlsZT48L2hlYWQ+PGJvZHk+PGRpdiBpZD0iY29udGVudCIgY29udGVudGVkaXRhYmxlPSJm
       YWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2JvZHk+PC9odG1sPg==
       `
-      , { baseURLForDataURL: `file://${join($configData.reports, $state.repo)}/` })
+      , { baseURLForDataURL: `file://${$state.plugin ? join($state.plugin) : join($configData.reports, $state.repo)}/` })
     webview.addEventListener('dom-ready', set_dokument)
   }
 

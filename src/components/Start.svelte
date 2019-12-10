@@ -1,13 +1,46 @@
+<script>
+  import { configData, state } from './../stores.js';
+  import { lstatSync, readdirSync, readFileSync } from 'fs'
+  import { join, basename } from 'path'
+
+  function scanSource (report_location) {
+    const isDirectory = (source) => lstatSync(source).isDirectory() && !basename(source).startsWith('.')
+    const getDirectories = (source) =>
+      readdirSync(source).map(name => join(source, name)).filter(isDirectory)
+    const obj = getDirectories(report_location)
+      .reduce((o, element) => ({
+        ...o,
+        [element]: json(element)
+      }), {})
+    return obj
+  }
+  const json = dir => {
+    try {
+      return JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'))
+    } catch (e) {
+      return {name: 'Keine Beschreibung vorhanden', description: ''}
+    }
+  }
+  const dir = scanSource($configData.plugins)
+
+  const run_plugin = (p,d) => {
+    $state.plugin = p
+    $state.plugin_entry = d.main || 'bundle.js'
+    $state.component = null
+    $state.reload += 1
+  }
+
+</script>
 <div class="tile is-ancestor">
-  <div class="tile is-parent is-4">
+{#each Object.entries(dir) as [p,d]}
+  <div class="tile is-parent is-4" on:click={()=>run_plugin(p,d)} style="cursor: pointer">
     <article class="tile is-child notification is-info">
       <div class="content">
-        <p class="title">Erweiterung</p>
-        <p class="subtitle">Könnte hier auftauchen</p>
-        <div class="content">
-          z.B. die Projektwochen - und SV-Wahl, aber da fehlt mir noch eine gute Idee
-        </div>
+        <p class="title">{basename(p)}</p>
+        <p class="subtitle">{d.name}</p>
+        <div class="content">{d.description}</div>
       </div>
     </article>
   </div>
+  {/each}
 </div>
