@@ -104,12 +104,12 @@
       <br> {$state.schule.Bezeichnung2}
     </div>
     <Autocomplete />
-    {#if ![Einstellungen, Plugin, Start].includes($state.component)}
+    {#if ![Einstellungen, Start].includes($state.component) && !$state.plugin}
       <button class="button" on:click={()=>refresh()}>
         <span class="icon"><i class="mdi">sync</span>
       </button>
     {/if}
-    {#if !$state.component}
+    {#if !$state.component && !$state.plugin}
       <button class="button" on:click={()=>$state.component = $state.zurueck_zu.status ? Schueler : Klasse}>
         <span class="icon"><i class="mdi">{$state.zurueck_zu.status ? 'person':'people'}</span>
       </button>
@@ -119,7 +119,7 @@
     {/if}
   </div>
   <div class="navbar-end">
-    {#if !$state.component && $state.schueler.length}
+    {#if !$state.component && $state.schueler.length && !$state.plugin}
       <div class="navbar-item has-dropdown is-hoverable">
         <span class="navbar-link" style="font-variant-numeric: tabular-nums;">{$state.jahr}/{$state.abschnitt}</span>
         <div class="navbar-dropdown">

@@ -32,15 +32,14 @@
 
 </script>
 <div class="tile is-ancestor">
-{#each Object.entries(dir) as [p,d]}
-  <div class="tile is-parent is-4" on:click={()=>run_plugin(p,d)} style="cursor: pointer">
-    <article class="tile is-child notification is-info">
-      <div class="content">
-        <p class="title">{basename(p)}</p>
-        <p class="subtitle">{d.name}</p>
-        <div class="content">{d.description}</div>
-      </div>
-    </article>
-  </div>
+  {#each Object.entries(dir) as [p,d]}
+    <div class="tile is-parent is-4" on:click={()=>run_plugin(p,d)} style="cursor: pointer">
+      <article class="tile is-child notification is-info">
+        <div class="content">
+          <p class="title">{d.name}</p>
+          <p class="subtitle">{d.description}</p>
+        </div>
+      </article>
+    </div>
   {/each}
 </div>
