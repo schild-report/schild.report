@@ -34,7 +34,7 @@
 <div class="tile is-ancestor">
   {#each Object.entries(dir) as [p,d]}
     <div class="tile is-parent is-4" on:click={()=>run_plugin(p,d)} style="cursor: pointer">
-      <article class="tile is-child notification is-info">
+      <article class="tile is-child notification is-grey-dark">
         <div class="content">
           <p class="title">{d.name}</p>
           <p class="subtitle">{d.description}</p>
