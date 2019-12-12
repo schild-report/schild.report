@@ -14,7 +14,6 @@
       });
     });
   }
-  // const faecher = new Set
   $: faecher = new Set(s.abschnitte.reverse().map(a => a.noten.map(n => n.fach.FachKrz)).flat())
 </script>
 

@@ -64,13 +64,20 @@ class Schild {
 
   async getSchueler(id) {
     try {
-      const res = await Schueler.query().where('ID', id).withGraphFetched(`[abschnitte.[noten.fach, lehrer],
-              fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
-              bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
-              abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach]
-            `).modifyGraph('abschnitte', builder => {
-        builder.orderBy('ID');
-      }).first();
+      const res = await Schueler.query()
+        .where(function () {
+          this.where('Geloescht', '-')
+          .andWhere('Gesperrt', '-')
+          .andWhere('ID', id)})
+        .withGraphFetched(`
+          [abschnitte.[noten.fach, lehrer],
+          fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
+          bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
+          abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach]
+        `)
+        .modifyGraph('abschnitte', builder => {
+          builder.orderBy('Status');
+        }).first();
       return res.toJSON()
     } catch (e) {
       throw e;
@@ -79,14 +86,22 @@ class Schild {
 
   async getKlasse(klasse) {
     try {
-      const res = await Versetzung.query().where('Klasse', klasse).withGraphFetched(`[schueler.[abschnitte.[noten.fach, lehrer],
-              fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
-              bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
-              abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach], fachklasse,
-              jahrgang]
-            `).modifyGraph('schueler', builder => {
-        builder.orderBy('Name');
-      }).first();
+      const res = await Versetzung.query()
+        .where('Klasse', klasse)
+        .withGraphFetched(`
+          [schueler.[abschnitte.[noten.fach, lehrer],
+          fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
+          bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
+          abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach], fachklasse,
+          jahrgang]
+        `)
+        .modifyGraph('schueler', builder => {
+          builder.where(function () {
+            this.where('Geloescht', '-')
+            .andWhere('Gesperrt', '-')})
+            .orderBy('Name');
+          })
+        .first();
       return res.toJSON()
     } catch (e) {
       throw e;

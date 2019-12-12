@@ -43,7 +43,7 @@
       $state.gewaehlt = null
     }
   }
-
+  $: console.log($state.schueler_sortiert)
   async function show_selected(item) {
     res = [];
     selected = -1;

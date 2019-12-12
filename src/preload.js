@@ -41,7 +41,7 @@ ipcRenderer.on('set_dokument', () => {
 ipcRenderer.on('open_devtools', (event, data) => {
   global.daten = data
   console.group('Report-Daten')
-  console.log('Die für Reports zur Verfügung stehenden Daten sind unter `daten` abegelegt:')
+  console.log('Die für Reports zur Verfügung stehenden Daten sind unter `daten` abgelegt:')
   console.log(global.daten)
   console.groupEnd()
 })
