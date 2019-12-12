@@ -113,9 +113,9 @@
       <button class="button" on:click={()=>$state.component = $state.zurueck_zu.status ? Schueler : Klasse}>
         <span class="icon"><i class="mdi">{$state.zurueck_zu.status ? 'person':'people'}</span>
       </button>
-      {#if !$state.error}
-        <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
-      {/if}
+    {/if}
+    {#if !$state.error && !$state.component}
+      <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
     {/if}
   </div>
   <div class="navbar-end">

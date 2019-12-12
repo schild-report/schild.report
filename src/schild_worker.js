@@ -76,7 +76,7 @@ class Schild {
           abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach]
         `)
         .modifyGraph('abschnitte', builder => {
-          builder.orderBy('Status');
+          builder.orderBy('ID');
         }).first();
       return res.toJSON()
     } catch (e) {
