@@ -16,25 +16,25 @@
     "dev:electron": "electron ."
   },
   "devDependencies": {
-    "electron": "^6.1.6",
+    "electron": "^6.1.7",
     "electron-packager": "^14.1.1",
     "electron-wix-msi": "^2.2.0",
     "npm-run-all": "^4.1.5",
-    "rollup-plugin-node-externals": "^2.1.2"
+    "rollup-plugin-node-externals": "^2.1.3"
   },
   "dependencies": {
     "bulma": "^0.8.0",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.2.0",
     "electron-store": "^5.1.0",
-    "electron-util": "^0.13.0",
+    "electron-util": "^0.13.1",
     "knex": "^0.20.4",
     "lodash": "^4.17.15",
     "mark.js": "^8.11.1",
     "mysql": "^2.17.1",
-    "objection": "^2.0.6",
-    "pg": "^7.14.0",
-    "rollup": "^1.27.11",
+    "objection": "^2.0.10",
+    "pg": "^7.16.0",
+    "rollup": "^1.27.14",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
@@ -43,6 +43,6 @@
     "schild": "^0.5.4",
     "serialize-error": "^5.0.0",
     "snarkdown": "^1.2.2",
-    "svelte": "^3.16.4"
+    "svelte": "^3.16.7"
   }
 }
