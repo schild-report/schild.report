@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { configData, state } from './../stores.js';
   import { join } from 'path'
   let webview
@@ -38,6 +37,7 @@
     webview.send('set_dokument')
     $state.set_mark = true
     $state.set_edit = false
+    webview.removeEventListener('dom-ready', set_dokument)
   }
   async function set_repo () {
     $state.error = null
@@ -56,29 +56,38 @@
     webview.addEventListener('dom-ready', set_dokument)
   }
 
-	onMount(async () => {
-    $state.webview = webview
-    webview.addEventListener('console-message', (e) => {
+	function startup (node) {
+    $state.webview = node
+    const console_message = e => {
       console.log('%cSvelte:', 'color: blue', e.message)
-    })
-    webview.addEventListener('ipc-message', (event) => {
-      switch (event.channel) {
-        case 'error_message': $state.error = event.args[0];console.log(event.args[0]); break
+    }
+    const ipc_message = e => {
+      switch (e.channel) {
+        case 'error_message': $state.error = e.args[0];console.log(e.args[0]); break
         case 'dokument_options': {
-          const opts = event.args[0]
+          const opts = e.args[0]
           $state.kommentar = opts.kommentar
           $state.pdf_name = opts.pdf_name
           $state.generic_pdf = opts.generic_pdf
           break
         }
       }
-    })
-	});
+    }
+    node.addEventListener('console-message', console_message)
+    node.addEventListener('ipc-message', ipc_message)
+    return {
+			destroy() {
+        node.removeEventListener('ipc-message', ipc_message)
+        node.removeEventListener('console-message', console_message)
+			}
+		};
+	};
 </script>
 
 <webview src="about:blank"
          preload="./preload.js"
          bind:this={webview}
+         use:startup
 ></webview>
 {#if $state.error}
   <div class="fehlermeldung">
