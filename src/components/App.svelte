@@ -18,9 +18,9 @@
     $state.repos = obj
   }
   const init = async () => {
-    await repo_worker.set_report_location($configData.reports)
-    await repo_worker.watch_repos(Comlink.proxy(callback))
     try {
+      await repo_worker.set_report_location($configData.reports)
+      await repo_worker.watch_repos(Comlink.proxy(callback))
       await schild.connect($configData.db)
       $state.connected = await schild.testConnection()
     } catch (e) {

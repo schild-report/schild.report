@@ -11,8 +11,12 @@ console.log(VERSION)
 if (process.argv.some(a => a === '-v')) app.exit()
 const configData = configFile.store
 console.log('Verzeichnisse anlegen oder verwenden …')
-mkDirByPathSync(configData.reports)
-mkDirByPathSync(configData.plugins)
+try {
+  mkDirByPathSync(configData.reports)
+  mkDirByPathSync(configData.plugins)
+} catch (e) {
+  console.log(e, 'Verzeichnisse konnten nicht angelegt werden: ', configData.reports, configData.plugins)
+}
 
 let mainWindow
 
