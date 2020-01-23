@@ -17,7 +17,9 @@
       return true
     }
     ensureDirectoryExistence(dir)
-    mkdirSync(dir)
+    try {
+      mkdirSync(dir)
+    } catch(e) { console.log(`Verzeichnis ${dir} konnte nicht erstellt werden: `,e.message)}
   }
 
   const open_pdf = async _ => {
@@ -46,7 +48,7 @@
       })
       shell.openItem(pdfPath)
     } catch (e) {
-      throw e
+      console.log(`PDF konnte nicht geöffnet oder geschrieben werden: `,e.message)
     }
   }
 

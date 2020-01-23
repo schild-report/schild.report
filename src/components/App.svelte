@@ -6,7 +6,6 @@
 </script>
 
 <script>
-  import { onMount } from 'svelte';
   import { configData, state } from './../stores.js';
   import { VERSION } from './../version.js';
   import Main from "./Main.svelte";
