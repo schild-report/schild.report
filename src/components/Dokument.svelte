@@ -42,6 +42,7 @@
   async function set_repo () {
     $state.error = null
     if ($state.component) return
+    const base_url = `file2://${$state.plugin ? join($state.plugin) : join($configData.reports, $state.repo)}/`
     webview.loadURL(
       // <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
       // <style>@media print{.noprint *{display:none;height:0;}}</style></head>
@@ -52,7 +53,7 @@
       PC9zdHlsZT48L2hlYWQ+PGJvZHk+PGRpdiBpZD0iY29udGVudCIgY29udGVudGVkaXRhYmxlPSJm
       YWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2JvZHk+PC9odG1sPg==
       `
-      , { baseURLForDataURL: `file://${$state.plugin ? join($state.plugin) : join($configData.reports, $state.repo)}/` })
+      , {baseURLForDataURL: base_url})
     webview.addEventListener('dom-ready', set_dokument)
   }
 

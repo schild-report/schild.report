@@ -1,6 +1,6 @@
-import { join } from 'path'
+import { join, normalize } from 'path'
 import url from 'url'
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell, protocol } from 'electron'
 import { is } from 'electron-util'
 
 import configFile from './configstore'
@@ -19,6 +19,7 @@ try {
 }
 
 let mainWindow
+app.allowRendererProcessReuse = true
 
 const handleRedirect = (e, url) => {
   if (url !== e.sender.getURL()) {
@@ -37,7 +38,7 @@ function createWindow() {
       webviewTag: true,
       nodeIntegrationInWorker: true
     },
-    title: `${app.getName()} ${VERSION['buildVersion']}`,
+    title: `${app.name} ${VERSION['buildVersion']}`,
     icon: join(__dirname, '../icons/icon.icns')
   })
   mainWindow.removeMenu()
@@ -65,6 +66,12 @@ function createWindow() {
     mainWindow.show()
   })
   mainWindow.webContents.on('will-navigate', handleRedirect)
+  // baseDir bug
+  protocol.registerFileProtocol('file2', (request, callback) => {
+    const url = request.url.substr(6)
+    const file = { path: normalize(`${url}`) }
+    callback(file)
+  })
 }
 
 app.on('ready', createWindow)
