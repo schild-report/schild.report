@@ -13,7 +13,6 @@ ipcRenderer.on('destroy', (event, data) => {
 })
 ipcRenderer.on('props', (event, data) => {
   props = data.svelteProps
-  console.log('update Props', props)
   svelte && svelte.$set(props)
   componentPath = data.componentPath
 })
@@ -25,7 +24,7 @@ ipcRenderer.on('set_dokument', () => {
   Component = require(componentPath)
   try {
     svelte = new Component({ target: document.querySelector('svelte'), props })
-    console.log('Svelte-Dokument erfolgreich geladen.', svelte)
+    console.log('Svelte-Dokument erfolgreich geladen.')
     ipcRenderer.sendToHost('dokument_options', {
       kommentar: svelte.kommentar,
       pdf_name: svelte.pdf_name,
