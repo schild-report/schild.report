@@ -3,7 +3,7 @@
   import { state } from './../stores.js';
   import Schueler from './Schueler.svelte';
   import Klasse from './Klasse.svelte';
-  import _ from 'lodash';
+  import { groupBy } from './../helfer.js';
 
   let input;
   let term = "";
@@ -35,7 +35,7 @@
   $: sortieren.length && schueler_sortieren()
 
   function schueler_sortieren () {
-    const gruppiert = _.groupBy($state.schueler, 'Status')
+    const gruppiert = groupBy($state.schueler, 'Status')
     $state.schueler_sortiert = Object.entries(gruppiert).sort((a,b)=>b[1].length - a[1].length)
     try {
       $state.gewaehlt = $state.schueler_sortiert[0][0]

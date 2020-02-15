@@ -35,12 +35,19 @@ class Schild {
   }
 
   async suche(pattern) {
+    const pattern_w = pattern+'%'
     try {
-      const sres = await Schueler.query().where(function () {
-        this.where('Geloescht', '-').andWhere('Gesperrt', '-');
-      }).andWhere(function () {
-        this.where('Vorname', 'like', pattern + '%').orWhere('Name', 'like', pattern + '%');
-      }).select('Name', 'Vorname', 'Klasse', 'Status', 'AktSchuljahr', 'ID').orderBy('AktSchuljahr', 'desc')
+      const sres = await Schueler
+      .query()
+      .whereRaw(`
+        Geloescht='-'
+          AND Gesperrt='-'
+          AND (CONCAT(Vorname,' ',Name) LIKE ?
+            OR CONCAT(Name,', ',Vorname) LIKE ?)
+          `
+        , [pattern_w, pattern_w])
+      .select('Name', 'Vorname', 'Klasse', 'Status', 'AktSchuljahr', 'ID')
+      .orderBy('AktSchuljahr', 'desc')
       const schueler = sres.map(s => {
         return {
           value: `${s.Name}, ${s.Vorname} (${s.Klasse})`,
