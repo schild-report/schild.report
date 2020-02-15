@@ -1,5 +1,5 @@
 <script>
-  import { state } from './../stores.js';
+  import { state, component, plugin } from './../stores.js';
   import Dokument from './Dokument.svelte'
   import Sidebar from "./Sidebar.svelte";
   import Navbar from "./Navbar.svelte";
@@ -7,10 +7,10 @@
   import Start from "./Start.svelte";
 
   const sidebar_components = [Einstellungen, Start]
-  $state.component = Start
+  $component = Start
 
-  $: sidebar = !sidebar_components.includes($state.component) && !$state.plugin
-  $: show = !!$state.component
+  $: sidebar = !sidebar_components.includes($component) && !$plugin
+  $: show = !!$component
 </script>
 
 <div class="grid-container" class:sidebar>
@@ -20,10 +20,10 @@
     </div>
   {/if}
   <div class="main">
-    {#if $state.component}
+    {#if $component}
       <section class="section">
         <div class="container">
-          <svelte:component this={$state.component}/>
+          <svelte:component this={$component}/>
         </div>
       </section>
     {/if}

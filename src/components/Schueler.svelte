@@ -1,7 +1,7 @@
 <script>
-  import { configData, state } from './../stores.js';
+  import { configData, schueler } from './../stores.js';
   import mysql from 'mysql'
-  $: s = $state.schueler[0]
+  $: s = $schueler[0]
   async function foto (s) {
     const connection = mysql.createConnection($configData.db.connection)
     connection.connect()

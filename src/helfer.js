@@ -1,8 +1,11 @@
-export const groupBy = (arr, id) =>
-  arr.reduce((entryMap, f) => {
-    const fx = id.split(".").reduce((p, c) => (p && p[c]) || null, f);
-    return entryMap.set(fx, [...(entryMap.get(fx) || []), f]);
-  }, new Map());
+export const group_by = (array, key) => {
+  return array.reduce((result, currentValue) => {
+    (result[currentValue[key]] = result[currentValue[key]] || []).push(
+      currentValue
+    );
+    return result;
+  }, {});
+};
 export const datum = t => {
   // gibt ein Datum im deutschen Format zurück
   try {

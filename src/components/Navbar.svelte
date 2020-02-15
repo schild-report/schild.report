@@ -5,7 +5,8 @@
   import Klasse from './Klasse.svelte'
   import Einstellungen from "./Einstellungen.svelte";
   import Start from "./Start.svelte";
-  import { configData, state } from './../stores.js';
+  import { configData, state, dokument, jahr, generic_pdf, schueler, abschnitt, pdf_name, webview, set_edit, set_mark,
+  schule, klasse, component, zurueck_zu, error, plugin, kommentar } from './../stores.js';
   import { join, dirname } from 'path'
   import { writeFile, existsSync, mkdirSync } from 'fs'
   import { shell } from 'electron'
@@ -24,15 +25,15 @@
 
   const open_pdf = async _ => {
     console.log('öffne PDF')
-    const d = $state.dokument.replace(/\.[^/.]+$/, "")
-    const jahr = $state.jahr
+    const d = $dokument.replace(/\.[^/.]+$/, "")
+    const jahr = $jahr
     let pdfName
-    if ($state.generic_pdf) {
-      pdfName = `${$state.pdf_name || d}.pdf`
+    if ($generic_pdf) {
+      pdfName = `${$pdf_name || d}.pdf`
     } else {
-      const s = $state.schueler[0]
-      const schuelerName = $state.schueler.length === 1 ? `${s.Name}_` : ''
-      const abschnitt = $state.abschnitt
+      const s = $schueler[0]
+      const schuelerName = $schueler.length === 1 ? `${s.Name}_` : ''
+      const abschnitt = $abschnitt
       pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`
     }
     const pdfPath = join($configData.pdf, jahr.toString(), pdfName)
@@ -41,7 +42,7 @@
       printBackground: true
     }
     try {
-      const data = await $state.webview.printToPDF(options)
+      const data = await $webview.printToPDF(options)
       ensureDirectoryExistence(pdfPath)
       writeFile(pdfPath, data, error => {
         if (error) throw error
@@ -53,47 +54,43 @@
   }
 
   const toggle_mark = async _ => {
-    $state.set_mark = !$state.set_mark
-    $state.webview.send('set_mark', $state.set_mark)
+    $set_mark = !$set_mark
+    $webview.send('set_mark', $set_mark)
   }
   const toggle_edit = async _ => {
-    $state.set_edit = !$state.set_edit
-    $state.webview.send('set_edit', $state.set_edit)
-  }
-  const toggle_comment = _ => {
-    $state.show_comment = !$state.show_comment
-    console.log('comment:',$state.show_comment)
+    $set_edit = !$set_edit
+    $webview.send('set_edit', $set_edit)
   }
   const open_devtools = async _ => {
-    const open = $state.webview.isDevToolsOpened()
-    open || $state.webview.openDevTools()
+    const open = $webview.isDevToolsOpened()
+    open || $webview.openDevTools()
     const data = {
-      schule: $state.schule,
-      klasse: $state.klasse,
-      schueler: $state.schueler,
-      jahr: $state.jahr,
-      abschnitt: $state.abschnitt,
+      schule: $schule,
+      klasse: $klasse,
+      schueler: $schueler,
+      jahr: $jahr,
+      abschnitt: $abschnitt,
       privat: $configData.privateDaten
     }
-    $state.webview.send('open_devtools', data)
+    $webview.send('open_devtools', data)
   }
-  const kommentar = _ => snarkdown($state.kommentar)
+  const md_kommentar = _ => snarkdown($kommentar)
   const einstellungen_oder_so = _ => {
-    if ($state.component === Einstellungen) {
-      if (!$state.schueler.length) {
-        $state.component = Start
+    if ($component === Einstellungen) {
+      if (!$schueler.length) {
+        $component = Start
         return
-      } else $state.component = $state.zurueck_zu.status ? Schueler : Klasse
-    } else $state.component = Einstellungen
+      } else $component = $zurueck_zu.status ? Schueler : Klasse
+    } else $component = Einstellungen
   }
   const refresh = async _ => {
-    const item = $state.zurueck_zu
+    const item = $zurueck_zu
     if (item.status) {
       const schueler = await schild.getSchueler(item.id)
-      $state.schueler = [schueler]
+      $schueler = [schueler]
     } else {
-      $state.klasse = await schild.getKlasse(item.id)
-      $state.schueler = $state.klasse.schueler
+      $klasse = await schild.getKlasse(item.id)
+      $schueler = $klasse.schueler
     }
   }
 </script>
@@ -101,36 +98,36 @@
 <nav class="navbar is-info">
   <div class="navbar-item">
       <div class="has-text-white-ter brand is-size-7"
-          on:click={()=>$state.component = Start}>
-      <b>{$state.schule.Bezeichnung1}</b>
-      <br> {$state.schule.Bezeichnung2}
+          on:click={()=>$component = Start}>
+      <b>{$schule ? $schule.Bezeichnung1 : 'schild.report'}</b>
+      <br> {$schule ? $schule.Bezeichnung2 : ''}
     </div>
     <Autocomplete />
-    {#if ![Einstellungen, Start].includes($state.component) && !$state.plugin}
+    {#if ![Einstellungen, Start].includes($component) && !$plugin}
       <button class="button" on:click={()=>refresh()}>
         <span class="icon"><i class="mdi">sync</span>
       </button>
     {/if}
-    {#if !$state.component && !$state.plugin}
-      <button class="button" on:click={()=>$state.component = $state.zurueck_zu.status ? Schueler : Klasse}>
-        <span class="icon"><i class="mdi">{$state.zurueck_zu.status ? 'person':'people'}</span>
+    {#if !$component && !$plugin}
+      <button class="button" on:click={()=>$component = $zurueck_zu.status ? Schueler : Klasse}>
+        <span class="icon"><i class="mdi">{$zurueck_zu.status ? 'person':'people'}</span>
       </button>
     {/if}
-    {#if !$state.error && !$state.component}
+    {#if !$error && !$component}
       <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
     {/if}
   </div>
   <div class="navbar-end">
-    {#if !$state.component && $state.schueler.length && !$state.plugin}
+    {#if !$component && $schueler.length && !$plugin}
       <div class="navbar-item has-dropdown is-hoverable">
-        <span class="navbar-link" style="font-variant-numeric: tabular-nums;">{$state.jahr}/{$state.abschnitt}</span>
+        <span class="navbar-link" style="font-variant-numeric: tabular-nums;">{$jahr}/{$abschnitt}</span>
         <div class="navbar-dropdown">
-          {#each $state.schueler[0].abschnitte as a}
+          {#each $schueler[0].abschnitte as a}
             <span class="navbar-item abschnittwahl"
-                  class:has-background-success={$state.jahr === a.Jahr && $state.abschnitt === a.Abschnitt}
-                  class:has-text-white={$state.jahr === a.Jahr && $state.abschnitt === a.Abschnitt}
+                  class:has-background-success={$jahr === a.Jahr && $abschnitt === a.Abschnitt}
+                  class:has-text-white={$jahr === a.Jahr && $abschnitt === a.Abschnitt}
                   style="cursor: pointer"
-                  on:click={()=>{$state.jahr = a.Jahr; $state.abschnitt = a.Abschnitt}}
+                  on:click={()=>{$jahr = a.Jahr; $abschnitt = a.Abschnitt}}
             >{a.Jahr}/{a.Abschnitt}</span>
           {/each}
         </div>
@@ -143,24 +140,24 @@
         </button>
         <button class="button is-link">
           <span class="icon">
-            <i class="mdi" class:has-text-warning={$state.set_edit} on:click={toggle_edit}>edit</i>
+            <i class="mdi" class:has-text-warning={$set_edit} on:click={toggle_edit}>edit</i>
           </span>
         </button>
         <button class="button is-link">
           <span class="icon">
-            <i class="mdi" class:has-text-warning={$state.set_mark} on:click={toggle_mark}>warning</i>
+            <i class="mdi" class:has-text-warning={$set_mark} on:click={toggle_mark}>warning</i>
           </span>
         </button>
         <div class="navbar-item has-dropdown is-hoverable">
           <div class="dropdown is-hoverable is-right">
             <div class="dropdown-trigger">
-              <button class="button is-link" disabled={!$state.kommentar}>
+              <button class="button is-link" disabled={!$kommentar}>
                 <span class="icon">
                   <i class="mdi">comment</i>
                 </span>
               </button>
             </div>
-            {#if $state.kommentar}
+            {#if $kommentar}
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content" style="width: 50rem">
                   <div class="dropdown-item">
@@ -168,7 +165,7 @@
                   </div>
                   <hr class="dropdown-divider">
                   <div class="dropdown-item">
-                    {@html kommentar()}
+                    {@html md_kommentar()}
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 <script>
-  import { configData, state } from './../stores.js';
+  import { configData, state, plugin, plugin_entry, component, reload } from './../stores.js';
   import { lstatSync, readdirSync, readFileSync } from 'fs'
   import { join, basename } from 'path'
 
@@ -24,10 +24,10 @@
   const dir = scanSource($configData.plugins)
 
   const run_plugin = (p,d) => {
-    $state.plugin = p
-    $state.plugin_entry = d.main || 'bundle.js'
-    $state.component = null
-    $state.reload += 1
+    $plugin = p
+    $plugin_entry = d.main || 'bundle.js'
+    $component = null
+    $reload += 1
   }
 
 </script>

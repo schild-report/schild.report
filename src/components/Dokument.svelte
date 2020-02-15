@@ -1,49 +1,47 @@
 <script>
-  import { configData, state } from './../stores.js';
+  import { configData, component, set_edit, set_mark, error, repo, state, dokument,
+  plugin, plugin_entry, schule, klasse, selected, jahr, abschnitt, schueler_sortiert, reload,
+  kommentar, pdf_name, generic_pdf, webview } from './../stores.js';
   import { join } from 'path'
-  let webview
 
   $: props = {
-    file: join($configData.reports, $state.dokument),
-    componentPath: !$state.plugin ? join($configData.userData, 'bundle.js') : join($state.plugin || '', $state.plugin_entry || ''),
+    componentPath: !$plugin ? join($configData.userData, 'bundle.js') : join($plugin || '', $plugin_entry || ''),
     debug: $configData.debug,
     svelteProps: {
-      schule: $state.schule,
-      klasse: $state.klasse,
-      schueler: $state.selected.length ? $state.selected : $state.schueler_sortiert[0][1],
-      jahr: $state.jahr,
-      abschnitt: $state.abschnitt,
+      schule: $schule,
+      klasse: $klasse,
+      schueler: $selected && $selected.length ? $selected : [],
+      jahr: $jahr,
+      abschnitt: $abschnitt,
       privat: $configData.privateDaten,
       knexConfig: $configData.db
     }
   }
-  $: reload = $state.reload
-  $: component = $state.component
-  $: if (reload > 1) set_repo()
+  $: if ($reload > 1) set_repo()
+  $: $reload > 1 && component && set_destroy()
   $: props && set_props()
-  $: reload > 1 && component && set_destroy()
 
   async function set_destroy () {
-    $state.plugin = null
-    $state.reload = 1
-    webview && await webview.send('destroy')
+    $plugin = null
+    $reload = 1
+    $webview && await $webview.send('destroy')
   }
   async function set_props () {
-    if ($state.component) return
-    webview && await webview.send('props', props)
+    if ($component) return
+    $webview && await $webview.send('props', props)
   }
   async function set_dokument () {
-    await webview.send('props', props)
-    webview.send('set_dokument')
-    $state.set_mark = true
-    $state.set_edit = false
-    webview.removeEventListener('dom-ready', set_dokument)
+    await $webview.send('props', props)
+    $webview.send('set_dokument')
+    $set_mark = true
+    $set_edit = false
+    $webview.removeEventListener('dom-ready', set_dokument)
   }
   async function set_repo () {
-    $state.error = null
-    if ($state.component) return
-    const base_url = `file2://${$state.plugin ? join($state.plugin) : join($configData.reports, $state.repo)}/`
-    webview.loadURL(
+    $error = null
+    if ($component) return
+    const base_url = `file2://${$plugin ? join($plugin) : join($configData.reports, $repo)}/`
+    $webview.loadURL(
       // <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
       // <style>@media print{.noprint *{display:none;height:0;}}</style></head>
       // <body><div id="content" contenteditable="false"><svelte></svelte></div></body></html>
@@ -54,22 +52,22 @@
       YWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2JvZHk+PC9odG1sPg==
       `
       , {baseURLForDataURL: base_url})
-    webview.addEventListener('dom-ready', set_dokument)
+    $webview.addEventListener('dom-ready', set_dokument)
   }
 
 	function startup (node) {
-    $state.webview = node
+    $webview = node
     const console_message = e => {
       console.log('%cSvelte:', 'color: blue', e.message)
     }
     const ipc_message = e => {
       switch (e.channel) {
-        case 'error_message': $state.error = e.args[0];console.log(e.args[0]); break
+        case 'error_message': $error = e.args[0];console.log(e.args[0]); break
         case 'dokument_options': {
           const opts = e.args[0]
-          $state.kommentar = opts.kommentar
-          $state.pdf_name = opts.pdf_name
-          $state.generic_pdf = opts.generic_pdf
+          $kommentar = opts.kommentar
+          $pdf_name = opts.pdf_name
+          $generic_pdf = opts.generic_pdf
           break
         }
       }
@@ -87,13 +85,12 @@
 
 <webview src="about:blank"
          preload="./preload.js"
-         bind:this={webview}
          use:startup
 ></webview>
-{#if $state.error}
+{#if $error}
   <div class="fehlermeldung">
-    <h3 class="is-size-3">{$state.error.message}</h3>
-    <pre>{$state.error.stack}</pre>
+    <h3 class="is-size-3">{$error.message}</h3>
+    <pre>{$error.stack}</pre>
   </div>
 {/if}
 

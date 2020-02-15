@@ -1,92 +1,79 @@
 <script>
-  import { schild } from './App.svelte'
-  import { state } from './../stores.js';
-  import Schueler from './Schueler.svelte';
-  import Klasse from './Klasse.svelte';
-  import { groupBy } from './../helfer.js';
+  import { schild } from "./App.svelte";
+  import {
+    schueler_sortiert,
+    schueler,
+    selected,
+    zurueck_zu,
+    component,
+    plugin,
+    klasse,
+    abschnitt,
+    jahr
+  } from "./../stores.js";
+  import Schueler from "./Schueler.svelte";
+  import Klasse from "./Klasse.svelte";
+  import { group_by } from "./../helfer.js";
 
   let input;
   let term = "";
   let res = [];
-  let selected = -1
-  let items = []
-  let show
+  let sel = -1;
+  let items = [];
+  let show;
 
   $: if (term.length > 1) {
-    selected = -1;
-    schild.suche(term).then(r=> res = r)
+    sel = -1;
+    schild.suche(term).then(r => (res = r));
   }
   $: if (term.length < 2) res = [];
   const key = e => {
-    if (e.key === "ArrowDown") selected += 1;
-    else if (e.key === "ArrowUp") selected -= 1;
+    if (e.key === "ArrowDown") sel += 1;
+    else if (e.key === "ArrowUp") sel -= 1;
     else if (e.key === "Enter") {
-      show_selected(res[selected]);
-      return
+      show_selected(res[sel]);
+      return;
     } else return;
-    if (selected > res.length - 1) selected = 0;
-    if (selected < 0) selected = res.length - 1;
+    if (sel > res.length - 1) sel = 0;
+    if (sel < 0) sel = res.length - 1;
     e.preventDefault();
-    items[selected].scrollIntoView({block: "center", inline: "nearest"})
+    items[sel].scrollIntoView({ block: "center", inline: "nearest" });
   };
-  const blur = _ => {setTimeout(_=> show = false, 500)}
+  const blur = _ => {
+    setTimeout(_ => (show = false), 500);
+  };
 
-  $: sortieren = $state.schueler
-  $: sortieren.length && schueler_sortieren()
+  $: $schueler && schueler_sortieren();
 
-  function schueler_sortieren () {
-    const gruppiert = groupBy($state.schueler, 'Status')
-    $state.schueler_sortiert = Object.entries(gruppiert).sort((a,b)=>b[1].length - a[1].length)
-    try {
-      $state.gewaehlt = $state.schueler_sortiert[0][0]
-    } catch (e) {
-      $state.gewaehlt = null
-    }
+  function schueler_sortieren() {
+    const gruppiert = group_by($schueler, "Status");
+    $schueler_sortiert = Object.entries(gruppiert).sort(
+      (a, b) => b[1].length - a[1].length
+    );
+    $selected = $schueler_sortiert[0][1];
   }
   async function show_selected(item) {
     res = [];
-    selected = -1;
-    term = ''
-    input.blur()
-    $state.selected = []
-    $state.zurueck_zu = item
+    sel = -1;
+    term = "";
+    input.blur();
+    $zurueck_zu = item;
     if (item.status) {
-      const schueler = await schild.getSchueler(item.id)
-      $state.schueler = [schueler]
-      $state.klasse = {}
-      $state.component = ($state.component || $state.plugin) && Schueler
+      const res = await schild.getSchueler(item.id);
+      $schueler = [res];
+      $klasse = {};
+      $component = ($component || $plugin) && Schueler;
     } else {
-      $state.klasse = await schild.getKlasse(item.id)
-      $state.schueler = $state.klasse.schueler
-      $state.component = ($state.component || $state.plugin) && Klasse
+      $klasse = await schild.getKlasse(item.id);
+      $schueler = $klasse.schueler;
+      $component = ($component || $plugin) && Klasse;
     }
-    ({ AktSchuljahr: $state.jahr, AktAbschnitt: $state.abschnitt } = $state.schueler.length > 0
-      ? $state.schueler[0]
-      : { AktSchuljahr: null, AktAbschnitt: null })
+    ({ AktSchuljahr: $jahr, AktAbschnitt: $abschnitt } =
+      $schueler.length > 0
+        ? $schueler[0]
+        : { AktSchuljahr: null, AktAbschnitt: null });
   }
 </script>
-
-<div class="wrapper">
-  <input
-    class="input"
-    type="text"
-    placeholder="suchen ..."
-    bind:this={input}
-    bind:value={term}
-    on:keydown={key}
-    on:blur={blur}
-    on:focus={()=>show=true}
-  />
-  {#if res.length && show}
-    <div class="items">
-      {#each res as r, i}
-        <div on:click={()=>show_selected(r)}
-             class:active={selected === i}
-             bind:this={items[i]}>{r.value}</div>
-      {/each}
-    </div>
-  {/if}
-</div>
 
 <style>
   .wrapper {
@@ -119,3 +106,27 @@
     color: #ffffff;
   }
 </style>
+
+<div class="wrapper">
+  <input
+    class="input"
+    type="text"
+    placeholder="suchen ..."
+    bind:this={input}
+    bind:value={term}
+    on:keydown={key}
+    on:blur={blur}
+    on:focus={() => (show = true)} />
+  {#if res.length && show}
+    <div class="items">
+      {#each res as r, i}
+        <div
+          on:click={() => show_selected(r)}
+          class:active={sel === i}
+          bind:this={items[i]}>
+          {r.value}
+        </div>
+      {/each}
+    </div>
+  {/if}
+</div>

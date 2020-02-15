@@ -1,7 +1,7 @@
 <script>
   import { rollup } from './App.svelte'
   import * as Comlink from "comlink";
-  import { configData, state } from './../stores.js';
+  import { configData, state, component, dokument, repo, repos, reload } from './../stores.js';
   import { join } from 'path'
 
   function callback () {
@@ -20,11 +20,11 @@
     try {
       const res = await rollup.build()
       if (args) {
-        $state.component = null
-        $state.dokument = args.file
-        $state.repo = args.repo
+        $component = null
+        $dokument = args.file
+        $repo = args.repo
       }
-      $state.reload += 1
+      $reload += 1
     } catch (error) {
       console.log(error)
     }
@@ -36,7 +36,7 @@
 </script>
 
   <div class="sidebar">
-    {#each Object.entries($state.repos) as [key, values]}
+    {#each Object.entries($repos) as [key, values]}
       <ul class="tree-group">
         <li class="tree-item tree-item--chevron-down"
             class:closed={$configData.folderStates[key]}
@@ -46,7 +46,7 @@
         {#if !$configData.folderStates[key]}
           <ul class="tree-group">
           {#each values as v}
-            <li class="tree-item hoverable" class:active={key === $state.repo && v === $state.dokument} on:click={()=>run_rollup({ repo: key, file: v })}>
+            <li class="tree-item hoverable" class:active={key === $repo && v === $dokument} on:click={()=>run_rollup({ repo: key, file: v })}>
               <span class="tree-item-label">{v.replace(/\.[^/.]+$/, "")}</span>
             </li>
           {/each}

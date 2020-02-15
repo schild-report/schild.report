@@ -1,5 +1,5 @@
 <script>
-  import { state } from './../stores.js';
+  import { state, schueler_sortiert, selected } from './../stores.js';
   const status = {
     0: 'Neue Schüler',
     1: '1',
@@ -13,7 +13,7 @@
     9: 'Abgänger'
   }
 </script>
-{#each $state.schueler_sortiert as gruppe}
+{#each $schueler_sortiert as gruppe}
   <h2 class="subtitle">{status[gruppe[0]]}</h2>
   <table class="table">
     <thead>
@@ -34,7 +34,7 @@
     <tbody>
       {#each gruppe[1] || [] as s,i}
         <tr>
-          <td><input type="checkbox" bind:group={$state.selected} value={s}></td>
+          <td><input type="checkbox" bind:group={$selected} value={s}></td>
           <td>{i+1}</td>
           <td>{s.Name}</td>
           <td>{s.Vorname}</td>

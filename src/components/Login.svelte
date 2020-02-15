@@ -1,10 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import { schild } from './App.svelte'
-  import { state } from './../stores.js';
+  import { user } from './../stores.js';
 
   let user_form
-  let user = ''
+  let username = ''
   let password = ''
   let fehler = false
 
@@ -28,7 +28,7 @@
   const authorize = async _ => {
     try {
       const u = await schild.getNutzer(user)
-      if (u.US_Password === crypt(password)) $state.user = u
+      if (u.US_Password === crypt(password)) $user = u
       else throw 'Fehler'
     } catch (e) {
       console.log(e)
@@ -44,7 +44,7 @@
                 type="text"
                 placeholder="Schild-Benutzername"
                 bind:this={user_form}
-                bind:value={user}>
+                bind:value={username}>
       </p>
     </div>
     <div class="field">

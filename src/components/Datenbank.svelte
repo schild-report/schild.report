@@ -1,8 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { schild } from './App.svelte'
-  import { configData, state } from './../stores.js';
-  export let connected
+  import { configData, connected } from './../stores.js';
   let host_form
   let fehler = false
 
@@ -21,14 +20,12 @@
   const connect = async _ => {
     try {
       await schild.connect({client: 'mysql', connection: db})
-      $state.connected = await schild.testConnection()
-      connected = true
+      $connected = await schild.testConnection()
       fehler = false
       $configData.db = {client: 'mysql', useNullAsDefault: true, connection: db}
-      if (!$state.connected) throw 'Fehler'
+      if (!$connected) throw 'Fehler'
     } catch (e) {
       console.log(e)
-      connected = false
       fehler = true
     }
   }
@@ -117,6 +114,6 @@
     </div>
     <button class="button is-block is-link is-fullwidth"
             class:is-danger={fehler}
-            class:is-success={$state.connected}
+            class:is-success={$connected}
             on:click={connect}>{fehler ? 'Verbindung fehlgeschlagen' : 'Verbinden'}</button><br>
 </div>
