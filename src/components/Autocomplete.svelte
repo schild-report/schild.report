@@ -9,7 +9,8 @@
     plugin,
     klasse,
     abschnitt,
-    jahr
+    jahr,
+    warten
   } from "./../stores.js";
   import Schueler from "./Schueler.svelte";
   import Klasse from "./Klasse.svelte";
@@ -22,11 +23,14 @@
   let items = [];
   let show;
 
+  $: $schueler && schueler_sortieren();
+  $: if (term.length < 2) res = [];
   $: if (term.length > 1) {
     sel = -1;
     schild.suche(term).then(r => (res = r));
   }
-  $: if (term.length < 2) res = [];
+
+  const blur = _ => setTimeout(_ => (show = false), 500);
   const key = e => {
     if (e.key === "ArrowDown") sel += 1;
     else if (e.key === "ArrowUp") sel -= 1;
@@ -39,39 +43,40 @@
     e.preventDefault();
     items[sel].scrollIntoView({ block: "center", inline: "nearest" });
   };
-  const blur = _ => {
-    setTimeout(_ => (show = false), 500);
-  };
-
-  $: $schueler && schueler_sortieren();
 
   function schueler_sortieren() {
     const gruppiert = group_by($schueler, "Status");
     $schueler_sortiert = Object.entries(gruppiert).sort(
       (a, b) => b[1].length - a[1].length
     );
+    try {
     $selected = $schueler_sortiert[0][1];
+    } catch {
+      $selected = []
+    }
   }
   async function show_selected(item) {
+    $warten = true
     res = [];
     sel = -1;
     term = "";
     input.blur();
     $zurueck_zu = item;
-    if (item.status) {
+    if (Number.isInteger(item.status)) {
       const res = await schild.getSchueler(item.id);
+      $component = ($component || $plugin) && Schueler;
       $schueler = [res];
       $klasse = {};
-      $component = ($component || $plugin) && Schueler;
     } else {
       $klasse = await schild.getKlasse(item.id);
-      $schueler = $klasse.schueler;
       $component = ($component || $plugin) && Klasse;
+      $schueler = $klasse.schueler;
     }
     ({ AktSchuljahr: $jahr, AktAbschnitt: $abschnitt } =
       $schueler.length > 0
         ? $schueler[0]
         : { AktSchuljahr: null, AktAbschnitt: null });
+    $warten = false
   }
 </script>
 
@@ -116,7 +121,7 @@
     bind:value={term}
     on:keydown={key}
     on:blur={blur}
-    on:focus={() => (show = true)} />
+    on:focus={() => show=true} />
   {#if res.length && show}
     <div class="items">
       {#each res as r, i}

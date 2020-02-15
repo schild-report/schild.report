@@ -1,69 +1,99 @@
 <script>
-  import { schild } from './App.svelte'
+  import { schild } from "./App.svelte";
   import Autocomplete from "./Autocomplete.svelte";
-  import Schueler from './Schueler.svelte';
-  import Klasse from './Klasse.svelte'
+  import Schueler from "./Schueler.svelte";
+  import Klasse from "./Klasse.svelte";
   import Einstellungen from "./Einstellungen.svelte";
   import Start from "./Start.svelte";
-  import { configData, state, dokument, jahr, generic_pdf, schueler, abschnitt, pdf_name, webview, set_edit, set_mark,
-  schule, klasse, component, zurueck_zu, error, plugin, kommentar } from './../stores.js';
-  import { join, dirname } from 'path'
-  import { writeFile, existsSync, mkdirSync } from 'fs'
-  import { shell } from 'electron'
-  import snarkdown from 'snarkdown'
+  import Spinner from 'svelte-spinner';
 
-  function ensureDirectoryExistence (filePath) {
-    const dir = dirname(filePath)
+  import {
+    configData,
+    dokument,
+    jahr,
+    generic_pdf,
+    schueler,
+    abschnitt,
+    pdf_name,
+    webview,
+    set_edit,
+    set_mark,
+    schule,
+    klasse,
+    component,
+    zurueck_zu,
+    error,
+    plugin,
+    kommentar,
+    warten
+  } from "./../stores.js";
+  import { join, dirname } from "path";
+  import { writeFile, existsSync, mkdirSync } from "fs";
+  import { shell } from "electron";
+  import snarkdown from "snarkdown";
+
+  function ensureDirectoryExistence(filePath) {
+    const dir = dirname(filePath);
     if (existsSync(dir)) {
-      return true
+      return true;
     }
-    ensureDirectoryExistence(dir)
+    ensureDirectoryExistence(dir);
     try {
-      mkdirSync(dir)
-    } catch(e) { console.log(`Verzeichnis ${dir} konnte nicht erstellt werden: `,e.message)}
+      mkdirSync(dir);
+    } catch (e) {
+      console.log(
+        `Verzeichnis ${dir} konnte nicht erstellt werden: `,
+        e.message
+      );
+    }
   }
 
   const open_pdf = async _ => {
-    console.log('öffne PDF')
-    const d = $dokument.replace(/\.[^/.]+$/, "")
-    const jahr = $jahr
-    let pdfName
+    $warten = true
+    console.log("öffne PDF");
+    const d = $dokument.replace(/\.[^/.]+$/, "");
+    const jahr = $jahr;
+    let pdfName;
     if ($generic_pdf) {
-      pdfName = `${$pdf_name || d}.pdf`
+      pdfName = `${$pdf_name || d}.pdf`;
     } else {
-      const s = $schueler[0]
-      const schuelerName = $schueler.length === 1 ? `${s.Name}_` : ''
-      const abschnitt = $abschnitt
-      pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`
+      const s = $schueler[0];
+      const schuelerName = $schueler.length === 1 ? `${s.Name}_` : "";
+      const abschnitt = $abschnitt;
+      pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`;
     }
-    const pdfPath = join($configData.pdf, jahr.toString(), pdfName)
+    const pdfPath = join($configData.pdf, jahr.toString(), pdfName);
     const options = {
       marginsType: 1,
       printBackground: true
-    }
+    };
     try {
-      const data = await $webview.printToPDF(options)
-      ensureDirectoryExistence(pdfPath)
+      const data = await $webview.printToPDF(options);
+      ensureDirectoryExistence(pdfPath);
       writeFile(pdfPath, data, error => {
-        if (error) throw error
-      })
-      shell.openItem(pdfPath)
+        if (error) throw error;
+      });
+      shell.openItem(pdfPath);
     } catch (e) {
-      console.log(`PDF konnte nicht geöffnet oder geschrieben werden: `,e.message)
+      console.log(
+        `PDF konnte nicht geöffnet oder geschrieben werden: `,
+        e.message
+      );
     }
-  }
+    $warten = false
+  };
 
   const toggle_mark = async _ => {
-    $set_mark = !$set_mark
-    $webview.send('set_mark', $set_mark)
-  }
+    $set_mark = !$set_mark;
+    $webview.send("set_mark", $set_mark);
+  };
   const toggle_edit = async _ => {
-    $set_edit = !$set_edit
-    $webview.send('set_edit', $set_edit)
-  }
+    $set_edit = !$set_edit;
+    $webview.send("set_edit", $set_edit);
+  };
   const open_devtools = async _ => {
-    const open = $webview.isDevToolsOpened()
-    open || $webview.openDevTools()
+    const open = $webview.isDevToolsOpened();
+    open || $webview.openDevTools();
     const data = {
       schule: $schule,
       klasse: $klasse,
@@ -71,64 +101,107 @@
       jahr: $jahr,
       abschnitt: $abschnitt,
       privat: $configData.privateDaten
-    }
-    $webview.send('open_devtools', data)
-  }
-  const md_kommentar = _ => snarkdown($kommentar)
+    };
+    $webview.send("open_devtools", data);
+  };
+  const md_kommentar = _ => snarkdown($kommentar);
   const einstellungen_oder_so = _ => {
     if ($component === Einstellungen) {
       if (!$schueler.length) {
-        $component = Start
-        return
-      } else $component = $zurueck_zu.status ? Schueler : Klasse
-    } else $component = Einstellungen
-  }
+        $component = Start;
+        return;
+      } else $component = $zurueck_zu.status ? Schueler : Klasse;
+    } else $component = Einstellungen;
+  };
   const refresh = async _ => {
-    const item = $zurueck_zu
-    if (item.status) {
-      const schueler = await schild.getSchueler(item.id)
-      $schueler = [schueler]
+    $warten = true
+    const item = $zurueck_zu;
+    if (Number.isInteger(item.status)) {
+      const res = await schild.getSchueler(item.id);
+      $schueler = [res];
     } else {
-      $klasse = await schild.getKlasse(item.id)
-      $schueler = $klasse.schueler
+      $klasse = await schild.getKlasse(item.id);
+      $schueler = $klasse.schueler;
     }
-  }
+    $warten = false
+  };
 </script>
+
+<style>
+  .brand {
+    text-transform: uppercase;
+    padding-right: 10px;
+    cursor: pointer;
+  }
+  .button {
+    margin-right: 0.4rem;
+    margin-left: 0.4rem;
+  }
+  .abschnittwahl:hover {
+    background-color: hsl(0, 0%, 96%);
+  }
+</style>
 
 <nav class="navbar is-info">
   <div class="navbar-item">
-      <div class="has-text-white-ter brand is-size-7"
-          on:click={()=>$component = Start}>
+    <div
+      class="has-text-white-ter brand is-size-7"
+      on:click={() => ($component = Start)}>
       <b>{$schule ? $schule.Bezeichnung1 : 'schild.report'}</b>
-      <br> {$schule ? $schule.Bezeichnung2 : ''}
+      <br />
+      {$schule ? $schule.Bezeichnung2 : ''}
+      {#if $warten}
+        <Spinner
+          size="10"
+          speed="750"
+          color="tomato"
+          thickness="6"
+          gap="40"
+        />
+      {/if}
     </div>
     <Autocomplete />
     {#if ![Einstellungen, Start].includes($component) && !$plugin}
-      <button class="button" on:click={()=>refresh()}>
-        <span class="icon"><i class="mdi">sync</span>
+      <button class="button" on:click={() => refresh()}>
+        <span class="icon">
+          <i class="mdi">sync</i>
+        </span>
       </button>
     {/if}
     {#if !$component && !$plugin}
-      <button class="button" on:click={()=>$component = $zurueck_zu.status ? Schueler : Klasse}>
-        <span class="icon"><i class="mdi">{$zurueck_zu.status ? 'person':'people'}</span>
+      <button
+        class="button"
+        on:click={() => ($component = $zurueck_zu.status ? Schueler : Klasse)}>
+        <span class="icon">
+          <i class="mdi">{$zurueck_zu.status ? 'person' : 'people'}</i>
+        </span>
       </button>
     {/if}
     {#if !$error && !$component}
-      <button class="button is-primary" on:click={open_pdf}>PDF erstellen</button>
+      <button class="button is-primary" on:click={open_pdf}>
+        PDF erstellen
+      </button>
     {/if}
   </div>
   <div class="navbar-end">
     {#if !$component && $schueler.length && !$plugin}
       <div class="navbar-item has-dropdown is-hoverable">
-        <span class="navbar-link" style="font-variant-numeric: tabular-nums;">{$jahr}/{$abschnitt}</span>
+        <span class="navbar-link" style="font-variant-numeric: tabular-nums;">
+          {$jahr}/{$abschnitt}
+        </span>
         <div class="navbar-dropdown">
           {#each $schueler[0].abschnitte as a}
-            <span class="navbar-item abschnittwahl"
-                  class:has-background-success={$jahr === a.Jahr && $abschnitt === a.Abschnitt}
-                  class:has-text-white={$jahr === a.Jahr && $abschnitt === a.Abschnitt}
-                  style="cursor: pointer"
-                  on:click={()=>{$jahr = a.Jahr; $abschnitt = a.Abschnitt}}
-            >{a.Jahr}/{a.Abschnitt}</span>
+            <span
+              class="navbar-item abschnittwahl"
+              class:has-background-success={$jahr === a.Jahr && $abschnitt === a.Abschnitt}
+              class:has-text-white={$jahr === a.Jahr && $abschnitt === a.Abschnitt}
+              style="cursor: pointer"
+              on:click={() => {
+                $jahr = a.Jahr;
+                $abschnitt = a.Abschnitt;
+              }}>
+              {a.Jahr}/{a.Abschnitt}
+            </span>
           {/each}
         </div>
       </div>
@@ -140,12 +213,22 @@
         </button>
         <button class="button is-link">
           <span class="icon">
-            <i class="mdi" class:has-text-warning={$set_edit} on:click={toggle_edit}>edit</i>
+            <i
+              class="mdi"
+              class:has-text-warning={$set_edit}
+              on:click={toggle_edit}>
+              edit
+            </i>
           </span>
         </button>
         <button class="button is-link">
           <span class="icon">
-            <i class="mdi" class:has-text-warning={$set_mark} on:click={toggle_mark}>warning</i>
+            <i
+              class="mdi"
+              class:has-text-warning={$set_mark}
+              on:click={toggle_mark}>
+              warning
+            </i>
           </span>
         </button>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -161,9 +244,9 @@
               <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content" style="width: 50rem">
                   <div class="dropdown-item">
-                      <p class="card-header-title"> Information</p>
+                    <p class="card-header-title">Information</p>
                   </div>
-                  <hr class="dropdown-divider">
+                  <hr class="dropdown-divider" />
                   <div class="dropdown-item">
                     {@html md_kommentar()}
                   </div>
@@ -183,18 +266,3 @@
     </div>
   </div>
 </nav>
-
-<style>
-  .brand {
-    text-transform: uppercase;
-    padding-right: 10px;
-    cursor: pointer;
-  }
-  .button {
-    margin-right: 0.4rem;
-    margin-left: 0.4rem;
-  }
-  .abschnittwahl:hover {
-    background-color: hsl(0, 0%, 96%);
-  }
-</style>

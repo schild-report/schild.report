@@ -1,5 +1,5 @@
 <script>
-  import { state, schueler_sortiert, selected } from './../stores.js';
+  import { schueler_sortiert, selected } from './../stores.js';
   const status = {
     0: 'Neue Schüler',
     1: '1',
@@ -19,7 +19,7 @@
     <thead>
       <tr>
         <th>
-          <!-- <input type="checkbox" bind:checked={$state.selected} value={gruppe}> -->
+          <!-- <input type="checkbox" bind:checked={$selected} value={gruppe}> -->
         </th>
         <th></th>
         <th>Name</th>

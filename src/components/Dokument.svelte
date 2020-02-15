@@ -1,5 +1,5 @@
 <script>
-  import { configData, component, set_edit, set_mark, error, repo, state, dokument,
+  import { configData, component, set_edit, set_mark, error, repo, dokument,
   plugin, plugin_entry, schule, klasse, selected, jahr, abschnitt, schueler_sortiert, reload,
   kommentar, pdf_name, generic_pdf, webview } from './../stores.js';
   import { join } from 'path'
@@ -10,15 +10,15 @@
     svelteProps: {
       schule: $schule,
       klasse: $klasse,
-      schueler: $selected && $selected.length ? $selected : [],
+      schueler: $selected,
       jahr: $jahr,
       abschnitt: $abschnitt,
       privat: $configData.privateDaten,
       knexConfig: $configData.db
     }
   }
-  $: if ($reload > 1) set_repo()
-  $: $reload > 1 && component && set_destroy()
+  $: $reload > 1 && set_repo()
+  $: $reload > 1 && $component && set_destroy()
   $: props && set_props()
 
   async function set_destroy () {
@@ -27,8 +27,8 @@
     $webview && await $webview.send('destroy')
   }
   async function set_props () {
-    if ($component) return
-    $webview && await $webview.send('props', props)
+    if ($component || !$webview) return
+    $webview.send('props', props)
   }
   async function set_dokument () {
     await $webview.send('props', props)

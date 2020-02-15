@@ -1,7 +1,7 @@
 <script>
   import { rollup } from './App.svelte'
   import * as Comlink from "comlink";
-  import { configData, state, component, dokument, repo, repos, reload } from './../stores.js';
+  import { configData, component, dokument, repo, repos, reload, warten } from './../stores.js';
   import { join } from 'path'
 
   function callback () {
@@ -9,6 +9,7 @@
     run_rollup()
   }
   async function run_rollup (args) {
+    $warten = true
     console.log('rollup starten...')
     const options = args && args.file ? {
       source: join($configData.reports, args.repo, args.file),
@@ -28,6 +29,7 @@
     } catch (error) {
       console.log(error)
     }
+    $warten = false
     await rollup.watch(Comlink.proxy(callback))
   }
   function toggle_folder_state (key) {
@@ -53,6 +55,7 @@
         </ul>
         {/if}
       </ul>
+    {:else} Keine Dokumente vorhanden
     {/each}
   </div>
 

@@ -1,9 +1,8 @@
 <script>
-  import { onMount } from 'svelte';
   import { schild } from './App.svelte'
   import { user } from './../stores.js';
+  import { focus } from './../helfer.js';
 
-  let user_form
   let username = ''
   let password = ''
   let fehler = false
@@ -14,10 +13,6 @@
       .map(c => c.codePointAt(0))
       .map(c => (Math.floor(c / 16) * 32 + 15 - c)))
   }
-
-	onMount(async () => {
-    user_form.focus()
-  })
 
   const key = e => {
     if (e.key === "Enter") {
@@ -43,7 +38,7 @@
         <input class="input is-medium"
                 type="text"
                 placeholder="Schild-Benutzername"
-                bind:this={user_form}
+                use:focus
                 bind:value={username}>
       </p>
     </div>

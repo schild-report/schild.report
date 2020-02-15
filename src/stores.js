@@ -29,20 +29,6 @@ export const pdf_name = writable()
 export const generic_pdf = writable()
 export const user = writable()
 export const component = writable()
-export const state = writable()
-export const connected = writable(false)
-export const webview = writable(false)
-// export const state = writable({
-//   klasse: [],
-//   schueler: [],
-//   selected: [],
-//   reload: 1,
-//   abschnitt: {},
-//   repos: [],
-//   schule: {},
-//   connected: false,
-//   zurueck_zu: {},
-//   dokument: '',
-//   repo: '',
-//   set_mark: true
-// });
+export const connected = writable()
+export const webview = writable()
+export const warten = writable()

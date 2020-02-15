@@ -1,5 +1,5 @@
 <script>
-  import { state, component, plugin } from './../stores.js';
+  import { component, plugin } from './../stores.js';
   import Dokument from './Dokument.svelte'
   import Sidebar from "./Sidebar.svelte";
   import Navbar from "./Navbar.svelte";

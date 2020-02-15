@@ -1,5 +1,5 @@
 <script>
-  import { configData, state, plugin, plugin_entry, component, reload } from './../stores.js';
+  import { configData, plugin, plugin_entry, component, reload } from './../stores.js';
   import { lstatSync, readdirSync, readFileSync } from 'fs'
   import { join, basename } from 'path'
 

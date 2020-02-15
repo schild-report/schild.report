@@ -1,15 +1,10 @@
 <script>
-  import { onMount } from 'svelte';
   import { schild } from './App.svelte'
   import { configData, connected } from './../stores.js';
-  let host_form
+  import { focus } from './../helfer.js';
+
   let fehler = false
-
   const db = $configData.db && $configData.db.connection || {}
-
-	onMount(async () => {
-    host_form.focus()
-  })
 
   const key = e => {
     if (e.key === "Enter") {
@@ -39,7 +34,7 @@
         <input class="input"
                 type="text"
                 placeholder="z.B. localhost oder 192.168.178.99"
-                bind:this={host_form}
+                use:focus
                 on:keydown={key}
                 bind:value={db.host}>
       </p>

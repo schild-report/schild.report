@@ -1,3 +1,4 @@
+export const focus = node => node.focus();
 export const group_by = (array, key) => {
   return array.reduce((result, currentValue) => {
     (result[currentValue[key]] = result[currentValue[key]] || []).push(
