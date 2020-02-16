@@ -1,10 +1,9 @@
 <script>
   import { schild } from "./App.svelte";
   import {
-    schueler_sortiert,
     schueler,
     selected,
-    zurueck_zu,
+    schueler_sortiert,
     component,
     plugin,
     klasse,
@@ -16,6 +15,8 @@
   import Klasse from "./Klasse.svelte";
   import { group_by } from "./../helfer.js";
 
+  export let zurueck_zu
+
   let input;
   let term = "";
   let res = [];
@@ -23,11 +24,21 @@
   let items = [];
   let show;
 
-  $: $schueler && schueler_sortieren();
   $: if (term.length < 2) res = [];
   $: if (term.length > 1) {
     sel = -1;
     schild.suche(term).then(r => (res = r));
+  }
+  function schueler_sortieren() {
+    const gruppiert = group_by($schueler, "Status");
+    $schueler_sortiert = Object.entries(gruppiert).sort(
+      (a, b) => b[1].length - a[1].length
+    );
+    try {
+      $selected = $schueler_sortiert[0][1];
+    } catch {
+      $selected = []
+    }
   }
 
   const blur = _ => setTimeout(_ => (show = false), 500);
@@ -44,33 +55,24 @@
     items[sel].scrollIntoView({ block: "center", inline: "nearest" });
   };
 
-  function schueler_sortieren() {
-    const gruppiert = group_by($schueler, "Status");
-    $schueler_sortiert = Object.entries(gruppiert).sort(
-      (a, b) => b[1].length - a[1].length
-    );
-    try {
-    $selected = $schueler_sortiert[0][1];
-    } catch {
-      $selected = []
-    }
-  }
   async function show_selected(item) {
     $warten = true
     res = [];
     sel = -1;
     term = "";
     input.blur();
-    $zurueck_zu = item;
+    zurueck_zu = item;
     if (Number.isInteger(item.status)) {
       const res = await schild.getSchueler(item.id);
       $component = ($component || $plugin) && Schueler;
       $schueler = [res];
       $klasse = {};
+      $selected = $schueler
     } else {
       $klasse = await schild.getKlasse(item.id);
       $component = ($component || $plugin) && Klasse;
       $schueler = $klasse.schueler;
+      schueler_sortieren()
     }
     ({ AktSchuljahr: $jahr, AktAbschnitt: $abschnitt } =
       $schueler.length > 0

@@ -1,38 +1,50 @@
 <script>
-  import { component, plugin } from './../stores.js';
-  import Dokument from './Dokument.svelte'
+  import { configData, component, plugin } from "./../stores.js";
+  import Dokument from "./Dokument.svelte";
   import Sidebar from "./Sidebar.svelte";
   import Navbar from "./Navbar.svelte";
   import Einstellungen from "./Einstellungen.svelte";
   import Start from "./Start.svelte";
+  import { repo_worker, schild } from "./App.svelte";
+  import * as Comlink from "comlink";
 
-  const sidebar_components = [Einstellungen, Start]
-  $component = Start
+  let repos;
+  let schule = schild.getSchule();
 
-  $: sidebar = !sidebar_components.includes($component) && !$plugin
-  $: show = !!$component
+  function callback(obj) {
+    repos = obj;
+  }
+  repo_worker.set_report_location($configData.reports);
+  repo_worker.watch_repos(Comlink.proxy(callback));
+  const sidebar_components = [Einstellungen, Start];
+  $component = Start;
+
+  $: sidebar = !sidebar_components.includes($component) && !$plugin;
+  $: show = !!$component;
 </script>
 
 <div class="grid-container" class:sidebar>
   {#if sidebar}
     <div class="menu has-background-white-ter">
-      <Sidebar/>
+      <Sidebar {repos} />
     </div>
   {/if}
   <div class="main">
     {#if $component}
       <section class="section">
         <div class="container">
-          <svelte:component this={$component}/>
+          <svelte:component this={$component} />
         </div>
       </section>
     {/if}
     <div class:show>
-      <Dokument></Dokument>
+      {#await schule then schule}
+        <Dokument {schule} />
+      {/await}
     </div>
   </div>
   <div class="header">
-    <Navbar />
+    <Navbar {schule} />
   </div>
 </div>
 

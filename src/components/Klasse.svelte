@@ -1,5 +1,7 @@
 <script>
-  import { schueler_sortiert, selected } from './../stores.js';
+  import { schueler, selected, schueler_sortiert } from './../stores.js';
+  import { group_by } from "./../helfer.js";
+
   const status = {
     0: 'Neue Schüler',
     1: '1',

@@ -1,14 +1,15 @@
 <script>
+	import { fade } from 'svelte/transition';
   import { schild } from "./App.svelte";
   import Autocomplete from "./Autocomplete.svelte";
   import Schueler from "./Schueler.svelte";
   import Klasse from "./Klasse.svelte";
   import Einstellungen from "./Einstellungen.svelte";
   import Start from "./Start.svelte";
-  import Spinner from 'svelte-spinner';
-
+  import Spinner from "svelte-spinner";
   import {
     configData,
+    selected,
     dokument,
     jahr,
     generic_pdf,
@@ -18,10 +19,8 @@
     webview,
     set_edit,
     set_mark,
-    schule,
     klasse,
     component,
-    zurueck_zu,
     error,
     plugin,
     kommentar,
@@ -31,6 +30,9 @@
   import { writeFile, existsSync, mkdirSync } from "fs";
   import { shell } from "electron";
   import snarkdown from "snarkdown";
+
+  export let schule;
+  let zurueck_zu;
 
   function ensureDirectoryExistence(filePath) {
     const dir = dirname(filePath);
@@ -49,7 +51,7 @@
   }
 
   const open_pdf = async _ => {
-    $warten = true
+    $warten = true;
     console.log("öffne PDF");
     const d = $dokument.replace(/\.[^/.]+$/, "");
     const jahr = $jahr;
@@ -80,7 +82,7 @@
         e.message
       );
     }
-    $warten = false
+    $warten = false;
   };
 
   const toggle_mark = async _ => {
@@ -95,7 +97,7 @@
     const open = $webview.isDevToolsOpened();
     open || $webview.openDevTools();
     const data = {
-      schule: $schule,
+      schule: schule,
       klasse: $klasse,
       schueler: $schueler,
       jahr: $jahr,
@@ -110,20 +112,21 @@
       if (!$schueler.length) {
         $component = Start;
         return;
-      } else $component = $zurueck_zu.status ? Schueler : Klasse;
+      } else $component = zurueck_zu.status ? Schueler : Klasse;
     } else $component = Einstellungen;
   };
   const refresh = async _ => {
-    $warten = true
-    const item = $zurueck_zu;
+    $warten = true;
+    const item = zurueck_zu;
     if (Number.isInteger(item.status)) {
       const res = await schild.getSchueler(item.id);
       $schueler = [res];
+      $selected = $schueler;
     } else {
       $klasse = await schild.getKlasse(item.id);
       $schueler = $klasse.schueler;
     }
-    $warten = false
+    $warten = false;
   };
 </script>
 
@@ -144,23 +147,25 @@
 
 <nav class="navbar is-info">
   <div class="navbar-item">
-    <div
-      class="has-text-white-ter brand is-size-7"
-      on:click={() => ($component = Start)}>
-      <b>{$schule ? $schule.Bezeichnung1 : 'schild.report'}</b>
-      <br />
-      {$schule ? $schule.Bezeichnung2 : ''}
-      {#if $warten}
-        <Spinner
-          size="10"
-          speed="750"
-          color="tomato"
-          thickness="6"
-          gap="40"
-        />
-      {/if}
-    </div>
-    <Autocomplete />
+    {#await schule then schule}
+      <div
+        in:fade="{{ duration: 2000 }}"
+        class="has-text-white-ter brand is-size-7"
+        on:click={() => ($component = Start)}>
+        <b>{schule.Bezeichnung1 || 'schild.report'}</b>
+        <br />
+        {schule.Bezeichnung2 || ''}
+        {#if $warten}
+          <Spinner
+            size="10"
+            speed="750"
+            color="tomato"
+            thickness="6"
+            gap="40" />
+        {/if}
+      </div>
+    {/await}
+    <Autocomplete bind:zurueck_zu />
     {#if ![Einstellungen, Start].includes($component) && !$plugin}
       <button class="button" on:click={() => refresh()}>
         <span class="icon">
@@ -171,9 +176,9 @@
     {#if !$component && !$plugin}
       <button
         class="button"
-        on:click={() => ($component = $zurueck_zu.status ? Schueler : Klasse)}>
+        on:click={() => ($component = zurueck_zu.status ? Schueler : Klasse)}>
         <span class="icon">
-          <i class="mdi">{$zurueck_zu.status ? 'person' : 'people'}</i>
+          <i class="mdi">{zurueck_zu.status ? 'person' : 'people'}</i>
         </span>
       </button>
     {/if}

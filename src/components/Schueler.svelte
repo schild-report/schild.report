@@ -1,8 +1,9 @@
 <script>
-  import { configData, schueler } from "./../stores.js";
+  import { configData, schueler, selected } from "./../stores.js";
   import mysql from "mysql";
   import { datum } from "./../helfer.js";
   $: s = $schueler[0];
+  $: $selected = $schueler
   $: faecher = new Set(
     s.abschnitte
       .reverse()

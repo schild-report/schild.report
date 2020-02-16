@@ -6,31 +6,20 @@
 </script>
 
 <script>
-  import { configData, repos, connected, schule, user } from './../stores.js';
+  import { configData, connected, schule, user } from './../stores.js';
   import { VERSION } from './../version.js';
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
 
   const production =  VERSION.production
 
-  function callback(obj) {
-    $repos = obj
-  }
   const init = async () => {
     try {
-      await repo_worker.set_report_location($configData.reports)
-      await repo_worker.watch_repos(Comlink.proxy(callback))
       await schild.connect($configData.db)
       $connected = await schild.testConnection()
     } catch (e) {
       console.log(e)
     }
-  }
-  $: if ($connected) update_ui()
-
-  async function update_ui () {
-    $schule = await schild.getSchule()
-    console.log('Update UI')
   }
 </script>
 

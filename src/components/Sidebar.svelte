@@ -1,63 +1,53 @@
 <script>
-  import { rollup } from './App.svelte'
+  import { rollup } from "./App.svelte";
   import * as Comlink from "comlink";
-  import { configData, component, dokument, repo, repos, reload, warten } from './../stores.js';
-  import { join } from 'path'
+  import {
+    configData,
+    component,
+    dokument,
+    repo,
+    reload,
+    warten
+  } from "./../stores.js";
+  import { join } from "path";
 
-  function callback () {
-    console.log('Modul wurde modifiziert, ...')
-    run_rollup()
+  export let repos;
+
+  function callback() {
+    console.log("Modul wurde modifiziert, ...");
+    run_rollup();
   }
-  async function run_rollup (args) {
-    $warten = true
-    console.log('rollup starten...')
-    const options = args && args.file ? {
-      source: join($configData.reports, args.repo, args.file),
-      dest: join($configData.userData),
-      debug: args.debug || true,
-      plugin: args.file.startsWith('plugin')
-    } : null
+  async function run_rollup(args) {
+    $warten = true;
+    console.log("rollup starten...");
+    const options =
+      args && args.file
+        ? {
+            source: join($configData.reports, args.repo, args.file),
+            dest: join($configData.userData),
+            debug: args.debug || true,
+            plugin: args.file.startsWith("plugin")
+          }
+        : null;
     await rollup.set_options(options);
     try {
-      const res = await rollup.build()
+      const res = await rollup.build();
       if (args) {
-        $component = null
-        $dokument = args.file
-        $repo = args.repo
+        $component = null;
+        $dokument = args.file;
+        $repo = args.repo;
       }
-      $reload += 1
+      $reload += 1;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-    $warten = false
-    await rollup.watch(Comlink.proxy(callback))
+    $warten = false;
+    await rollup.watch(Comlink.proxy(callback));
   }
-  function toggle_folder_state (key) {
-    $configData.folderStates[key] = !$configData.folderStates[key]
+  function toggle_folder_state(key) {
+    $configData.folderStates[key] = !$configData.folderStates[key];
   }
 </script>
-
-  <div class="sidebar">
-    {#each Object.entries($repos) as [key, values]}
-      <ul class="tree-group">
-        <li class="tree-item tree-item--chevron-down"
-            class:closed={$configData.folderStates[key]}
-            on:click={()=>toggle_folder_state(key)}>
-          <span class="tree-item-label tree-header">{key}</span>
-        </li>
-        {#if !$configData.folderStates[key]}
-          <ul class="tree-group">
-          {#each values as v}
-            <li class="tree-item hoverable" class:active={key === $repo && v === $dokument} on:click={()=>run_rollup({ repo: key, file: v })}>
-              <span class="tree-item-label">{v.replace(/\.[^/.]+$/, "")}</span>
-            </li>
-          {/each}
-        </ul>
-        {/if}
-      </ul>
-    {:else} Keine Dokumente vorhanden
-    {/each}
-  </div>
 
 <style>
   .sidebar {
@@ -84,7 +74,7 @@
     color: #ffffff;
   }
   .sidebar .tree-item:before {
-    font-family: 'Material Icons' !important;
+    font-family: "Material Icons" !important;
     position: absolute;
     left: 10px;
   }
@@ -106,8 +96,33 @@
     text-overflow: ellipsis;
   }
   .sidebar .tree-item-label:before {
-    font-family: 'Material Icons' !important;
+    font-family: "Material Icons" !important;
     font-size: 17px;
     margin-right: 10px;
   }
 </style>
+
+<div class="sidebar">
+  {#each Object.entries(repos) as [key, values]}
+    <ul class="tree-group">
+      <li
+        class="tree-item tree-item--chevron-down"
+        class:closed={$configData.folderStates[key]}
+        on:click={() => toggle_folder_state(key)}>
+        <span class="tree-item-label tree-header">{key}</span>
+      </li>
+      {#if !$configData.folderStates[key]}
+        <ul class="tree-group">
+          {#each values as v}
+            <li
+              class="tree-item hoverable"
+              class:active={key === $repo && v === $dokument}
+              on:click={() => run_rollup({ repo: key, file: v })}>
+              <span class="tree-item-label">{v.replace(/\.[^/.]+$/, '')}</span>
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    </ul>
+  {:else}Keine Dokumente vorhanden{/each}
+</div>
