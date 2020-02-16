@@ -6,7 +6,7 @@
 </script>
 
 <script>
-  import { configData, connected, schule, user } from './../stores.js';
+  import { configData, connected, user } from './../stores.js';
   import { VERSION } from './../version.js';
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
