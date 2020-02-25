@@ -1,0 +1,45 @@
+name: Build and release schild.report
+on: push
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    strategy:
+      matrix:
+        os: [windows-latest]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install Node.js, NPM
+        uses: actions/setup-node@v1
+        with:
+          node-version: 13
+      - name: Install Dependencies
+        run: npm install
+      - name: Build
+        run: npm run build -m
+      - name: Package
+        run: npm run dist
+      - name: show dir
+        run: ls dist
+      - uses: actions/upload-artifact@v1
+        with:
+          name: schild.report
+          path: "./dist"
+      - uses: ncipollo/release-action@v1
+        with:
+          artifact: "./dist/schild.report.msi"
+          allowUpdates: true
+          tag: v2.2.${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,7 +1,7 @@
 {
   "name": "schild.report",
   "author": "hmt",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "main": "build/main.js",
   "private": true,
   "scripts": {
@@ -11,12 +11,31 @@
     "package-win": "electron-packager . --overwrite --name=schild.report --platform=win32  --arch=ia32 --icon=icons/icon.ico  --asar --out=release",
     "package-mac": "electron-packager . --overwrite --name=schild.report --platform=darwin --arch=x64  --icon=icons/icon.icns --asar --out=release",
     "package-linux": "electron-packager . --overwrite --name=schild.report --platform=linux  --arch=x64  --icon=icons/icon.png  --asar --out=release",
+    "dist": "electron-builder",
     "start:electron": "electron .",
     "dev:development": "rollup --config --watch",
-    "dev:electron": "electron ."
+    "dev:electron": "electron .",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "im.hmt.report.schild",
+    "productName": "schild.report",
+    "artifactName": "schild.report.${ext}",
+    "files": [
+      "./build/**/*"
+    ],
+    "win": {
+      "icon": "icons/icon.ico",
+      "target": [
+        {
+          "target": "msi"
+        }
+      ]
+    }
   },
   "devDependencies": {
     "electron": "^8.0.1",
+    "electron-builder": "^22.3.2",
     "electron-packager": "^14.2.1",
     "electron-wix-msi": "^2.2.0",
     "npm-run-all": "^4.1.5",
