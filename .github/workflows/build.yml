@@ -10,23 +10,24 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
-      - name: Cache node modules
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-node-modules
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v1
         with:
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-node-
       - name: Install Node.js, NPM
         uses: actions/setup-node@v1
         with:
           node-version: 13
       - name: Install Dependencies
         run: npm install
+      - name: set version
+      - run: echo export const VERSION = { gitHash: '${{ github.sha }}', buildVersion: '2.2.${{ github.run_number }}', production: true }> src/version.js
       - name: Build
         run: npm run build -m
       - name: Package
