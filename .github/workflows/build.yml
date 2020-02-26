@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: set version
-        run: echo export const VERSION = { gitHash: \'$GITHUB_SHA\', buildVersion: \'2.2.$GITHUB_RUN_NUMBER\', production: true }> src/version.js
+        run: "echo export const VERSION = { gitHash: \'$GITHUB_SHA\', buildVersion: \'2.2.$GITHUB_RUN_NUMBER\', production: true }> src/version.js"
       - name: show version
         run: cat src/version.js
       - name: Build
