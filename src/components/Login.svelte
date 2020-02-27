@@ -22,7 +22,7 @@
   };
   const authorize = async _ => {
     try {
-      const u = await schild.getNutzer(user)
+      const u = await schild.getNutzer(username)
       if (u.US_Password === crypt(password)) $user = u
       else throw 'Fehler'
     } catch (e) {
