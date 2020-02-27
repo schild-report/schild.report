@@ -74,7 +74,9 @@ z.B. VS-Code. Aber auch notepad.exe lässt sich problemlos einsetzen.
 #### Installation
 Für Windows stehen unter Github aktuelle Ausgaben im MSI-Format zur Verfügung,
 d.h. es sind automatisch ausführbare Installationsdateien. Für Linux und MacOS
-können auf Wunsch gerne komprimierte Pakete erstellt werden. Bitte anfragen.
+sind ebenfalls aktuelle Pakete verfügbar. Bitte unter
+[https://github.com/schild-report/schild.report/releases](https://github.com/schild-report/schild.report/releases)
+nachschauen.
 
 _schild.report_ erstellt im Dokumentenverzeichnis folgende Ordner:
 
@@ -140,11 +142,11 @@ und neue Ideen sind ausdrücklich erwünscht.
 #### Quellen
 Hier nun eine Übersicht über die verwendeten Quellen:
 
-*schild.report* für Windows (jeweils aktuelle MSI-Datei): [https://github.com/schild-report/schild.report/releases](https://github.com/schild-report/schild.report/releases)
+*schild.report* für Windows, Mac und Linux (jeweils aktuelle MSI-Datei): [https://github.com/schild-report/schild.report/releases](https://github.com/schild-report/schild.report/releases)
 
 Quellcode für *schild.report*: [https://github.com/schild-report/schild.report](https://github.com/schild-report/schild.report)
 
-Das in den Bildern verwendete Demo-Verzeichnis: [https://github.com/schild-report/demo](https://github.com/schild-report/demo)
+Das in den Bildern verwendete Demo-Verzeichnis ist veraltet. Bitte das bk-2018 verwenden. Diese Dokumente sind aktuell und gepflegt: [https://github.com/schild-report/demo](https://github.com/schild-report/bk-2018)
 
 Ein Video mit den wichtigsten Funktionen: [https://b.hmt.im/schild.report.webm](https://b.hmt.im/schild.report.webm)
 
