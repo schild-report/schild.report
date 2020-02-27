@@ -47,5 +47,6 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "./dist/schild.report.msi,./dist/schild.report.dmg,./dist/schild.report.AppImage,./dist/schild.report.snap"
+          allowUpdates: true
           tag: v2.2.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
