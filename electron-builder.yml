@@ -1,0 +1,43 @@
+appId: im.hmt.report.schild
+productName: schild.report
+artifactName: schild.report.${ext}
+buildVersion: 2.2.${ env.RUN_NUMBER }
+copyright: Copyright ${ env.THE_AUTHOR }
+
+extraMetadata:
+  author:
+    name: ${ env.THE_AUTHOR }
+    email: ${ env.THE_EMAIL }
+
+files:
+  - ./build/**/*
+
+win:
+  icon: icons/icon.ico
+  target: msi
+
+linux:
+  icon: icons/icon.png
+  category: app.tools
+  executableName: schild.report
+  target:
+    - AppImage
+    - snap
+
+mac:
+  icon: icons/icon.icns
+  target: dmg
+
+dmg:
+  icon: icons/icon.icns
+  contents:
+  - x: 130
+    y: 220
+  - x: 550
+    y: 220
+    type: link
+    path: /Applications
+  title: schild.report 2.2.${env.RUN_NUMBER}
+  window:
+    width: 680
+    height: 420

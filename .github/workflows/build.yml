@@ -6,7 +6,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -32,6 +32,9 @@ jobs:
       - name: show version
         run: cat src/version.js
       - name: Build
+        env:
+          THE_AUTHOR: ${{ secrets.AUTHOR }}
+          THE_EMAIL: ${{ secrets.EMAIL }}
         run: npm run build -m
       - name: Package
         run: npm run dist
@@ -43,7 +46,7 @@ jobs:
           path: "./dist"
       - uses: ncipollo/release-action@v1
         with:
-          artifact: "./dist/schild.report.msi"
+          artifact: "./dist/schild.report.*"
           allowUpdates: true
           tag: v2.2.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
