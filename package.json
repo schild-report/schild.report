@@ -17,22 +17,6 @@
     "dev:electron": "electron .",
     "postinstall": "electron-builder install-app-deps"
   },
-  "build": {
-    "appId": "im.hmt.report.schild",
-    "productName": "schild.report",
-    "artifactName": "schild.report.${ext}",
-    "files": [
-      "./build/**/*"
-    ],
-    "win": {
-      "icon": "icons/icon.ico",
-      "target": [
-        {
-          "target": "msi"
-        }
-      ]
-    }
-  },
   "devDependencies": {
     "electron": "^8.0.1",
     "electron-builder": "^22.3.2",
