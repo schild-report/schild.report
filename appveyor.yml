@@ -29,7 +29,7 @@ artifacts:
 
 deploy:
   release: v$(appveyor_build_version)
-  description: 'Automatisiertes Push-Build. Für aktuelle Änderungen die Commit-Logs anschauen.'
+  description: 'Appveyor erstelltes MSI. Dies ist die ursprüngliche Version mit eigenem schild.report-Verzeichnis. App entspricht den anderen Releases.'
   provider: GitHub
   auth_token:
     secure: xf39YWukS9Xjl8akZBdy3e/7xbl4pQn7qdpsguMuV2JcZkZ4zBj2nyh1D0ooi9pW
