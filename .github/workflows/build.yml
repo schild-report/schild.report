@@ -45,10 +45,6 @@ jobs:
         run: npm run dist
       - name: show dir
         run: ls dist
-      - uses: actions/upload-artifact@v1
-        with:
-          name: schild.report
-          path: "./dist"
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "./dist/schild.report.msi,./dist/schild.report.dmg,./dist/schild.report.AppImage,./dist/schild.report.snap"
