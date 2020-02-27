@@ -31,6 +31,12 @@ mac:
 dmg:
   icon: icons/icon.icns
   contents:
+  - x: 130
+    y: 220
+  - x: 550
+    y: 22
     type: link
     path: /Applications
-  title: schild.report 2.2.${env.GITHUB_RUN_NUMBER}
+  window:
+    width: 680
+    height: 42
