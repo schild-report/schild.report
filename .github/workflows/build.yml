@@ -1,9 +1,10 @@
 name: Build and release schild.report
-on: push
-  branches:
-    - '**'
-  tags-ignore:
-    - '*.*.*'
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '*.*.*'
 jobs:
   release:
     runs-on: ${{ matrix.os }}
