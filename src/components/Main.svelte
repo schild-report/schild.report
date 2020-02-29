@@ -44,7 +44,9 @@
     </div>
   </div>
   <div class="header">
-    <Navbar {schule} />
+    {#await schule then schule}
+      <Navbar {schule} />
+    {/await}
   </div>
 </div>
 

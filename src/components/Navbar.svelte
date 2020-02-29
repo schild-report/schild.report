@@ -147,24 +147,22 @@
 
 <nav class="navbar is-info">
   <div class="navbar-item">
-    {#await schule then schule}
-      <div
-        in:fade="{{ duration: 2000 }}"
-        class="has-text-white-ter brand is-size-7"
-        on:click={() => ($component = Start)}>
-        <b>{schule.Bezeichnung1 || 'schild.report'}</b>
-        <br />
-        {schule.Bezeichnung2 || ''}
-        {#if $warten}
-          <Spinner
-            size="10"
-            speed="750"
-            color="tomato"
-            thickness="6"
-            gap="40" />
-        {/if}
-      </div>
-    {/await}
+    <div
+      in:fade="{{ duration: 2000 }}"
+      class="has-text-white-ter brand is-size-7"
+      on:click={() => ($component = Start)}>
+      <b>{schule.Bezeichnung1 || 'schild.report'}</b>
+      <br />
+      {schule.Bezeichnung2 || ''}
+      {#if $warten}
+        <Spinner
+          size="10"
+          speed="750"
+          color="tomato"
+          thickness="6"
+          gap="40" />
+      {/if}
+    </div>
     <Autocomplete bind:zurueck_zu />
     {#if ![Einstellungen, Start].includes($component) && !$plugin}
       <button class="button" on:click={() => refresh()}>
