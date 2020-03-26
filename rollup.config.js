@@ -26,7 +26,7 @@ export default [
       }),
       externals({deps: true})
     ],
-    external: ['svelte/internal', 'svelte/store'],
+    external: ['svelte/internal', 'svelte/store', 'rollup'],
     onwarn (warning, warn) {
       if (warning.code === 'CIRCULAR_DEPENDENCY') return;
       warn(warning);
