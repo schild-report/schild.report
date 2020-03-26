@@ -3,9 +3,9 @@ import { join, resolve as presolve, dirname } from 'path'
 import CheapWatch from 'cheap-watch'
 import { rollup } from 'rollup'
 import svelte from 'rollup-plugin-svelte'
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
-import json from 'rollup-plugin-json'
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import postcss from 'rollup-plugin-postcss'
 
 // svelte components möchten svelte importieren. Da wir aber auch components
@@ -56,7 +56,7 @@ export default class RollupBuild {
           accessors: true,
           dev: !!this.options.debug
         }),
-        this.options.plugin && postcss(),
+        // this.options.plugin && postcss(),
         moduleIds(ids => this._ids = Array.from(ids)),
         resolve({ preferBuiltins: false, browser: true }),
         commonjs()
