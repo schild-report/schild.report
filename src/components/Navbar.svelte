@@ -154,14 +154,6 @@
       <b>{schule.Bezeichnung1 || 'schild.report'}</b>
       <br />
       {schule.Bezeichnung2 || ''}
-      {#if $warten}
-        <Spinner
-          size="10"
-          speed="750"
-          color="tomato"
-          thickness="6"
-          gap="40" />
-      {/if}
     </div>
     <Autocomplete bind:zurueck_zu />
     {#if ![Einstellungen, Start].includes($component) && !$plugin}
@@ -181,7 +173,10 @@
       </button>
     {/if}
     {#if !$error && !$component}
-      <button class="button is-primary" on:click={open_pdf}>
+      <button class="button is-primary"
+              class:is-loading={$warten}
+              on:click={open_pdf}
+              disabled={$warten}>
         PDF erstellen
       </button>
     {/if}
