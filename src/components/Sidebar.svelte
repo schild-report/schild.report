@@ -12,6 +12,7 @@
   import { join } from "path";
 
   export let repos;
+  export let highlight;
 
   function callback() {
     console.log("Modul wurde modifiziert, ...");
@@ -116,7 +117,7 @@
           {#each values as v}
             <li
               class="tree-item hoverable"
-              class:active={key === $repo && v === $dokument}
+              class:active={key === $repo && v === $dokument && !highlight}
               on:click={() => run_rollup({ repo: key, file: v })}>
               <span class="tree-item-label">{v.replace(/\.[^/.]+$/, '')}</span>
             </li>

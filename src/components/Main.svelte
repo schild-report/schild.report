@@ -26,7 +26,7 @@
 <div class="grid-container" class:sidebar>
   {#if sidebar}
     <div class="menu has-background-white-ter">
-      <Sidebar {repos} />
+      <Sidebar {repos} highlight="{show}"/>
     </div>
   {/if}
   <div class="main">
