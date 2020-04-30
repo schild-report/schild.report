@@ -52,6 +52,7 @@
 
 <style>
   .sidebar {
+    padding-top: .3rem;
     border-right: 1px solid #c5cad3;
   }
   .sidebar .tree-group {
