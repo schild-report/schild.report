@@ -30,7 +30,9 @@
             plugin: args.file.startsWith("plugin")
           }
         : null;
-    await rollup.set_options(options);
+    try {
+      await rollup.set_options(options);
+    } catch (error) { console.log(error)}
     try {
       const res = await rollup.build();
       if (args) {

@@ -6,7 +6,6 @@
   import Klasse from "./Klasse.svelte";
   import Einstellungen from "./Einstellungen.svelte";
   import Start from "./Start.svelte";
-  import Spinner from "svelte-spinner";
   import {
     configData,
     selected,
