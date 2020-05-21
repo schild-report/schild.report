@@ -39,7 +39,7 @@ function createWindow() {
       nodeIntegrationInWorker: true
     },
     title: `${app.name} ${VERSION['buildVersion']}`,
-    icon: join(__dirname, '../icons/icon.icns')
+    // icon: join(__dirname, '../icons/icon.icns')
   })
   mainWindow.removeMenu()
   mainWindow.loadURL(
