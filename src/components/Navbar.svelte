@@ -74,7 +74,7 @@
       writeFile(pdfPath, data, error => {
         if (error) throw error;
       });
-      shell.openItem(pdfPath);
+      shell.openPath(pdfPath);
     } catch (e) {
       console.log(
         `PDF konnte nicht geöffnet oder geschrieben werden: `,
