@@ -42,8 +42,8 @@ class Schild {
       .whereRaw(`
         Geloescht='-'
           AND Gesperrt='-'
-          AND (CONCAT(Vorname,' ',Name) LIKE ?
-            OR CONCAT(Name,', ',Vorname) LIKE ?)
+          AND (CONCAT(LOWER(Vorname),' ',LOWER(Name)) LIKE ?
+            OR CONCAT(LOWER(Name),', ',LOWER(Vorname)) LIKE ?)
           `
         , [pattern_w, pattern_w])
       .select('Name', 'Vorname', 'Klasse', 'Status', 'AktSchuljahr', 'ID')
@@ -56,7 +56,7 @@ class Schild {
           id: s.ID
         };
       })
-      const kres = await Versetzung.query().where('Klasse', 'like', pattern + '%').select('Klasse').orderBy('Klasse', 'desc')
+      const kres = await Versetzung.query().whereRaw(`LOWER(Klasse) LIKE ?`, [`${pattern}%`]).select('Klasse').orderBy('Klasse', 'desc')
       const klassen = kres.map(k => {
           return {
             value: k.Klasse,
