@@ -30,7 +30,7 @@ const configFile = new Store({
         charset: "utf8",
         dateStrings: false,
         timezone: '',
-        debug: true
+        debug: false
       }
     }
   }
