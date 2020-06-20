@@ -18,7 +18,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^9.0.2",
+    "electron": "^9.0.4",
     "electron-builder": "^22.7.0",
     "electron-packager": "^14.2.1",
     "electron-wix-msi": "^2.2.0",
@@ -26,25 +26,25 @@
     "rollup-plugin-node-externals": "^2.2.0"
   },
   "dependencies": {
-    "@rollup/plugin-commonjs": "^12.0.0",
-    "@rollup/plugin-json": "^4.0.3",
-    "@rollup/plugin-node-resolve": "^8.0.0",
-    "bulma": "^0.8.2",
+    "@rollup/plugin-commonjs": "^13.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^8.0.1",
+    "bulma": "^0.9.0",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
-    "electron-store": "^5.1.1",
+    "electron-store": "^5.2.0",
     "electron-util": "^0.14.1",
     "knex": "^0.21.1",
     "mark.js": "^8.11.1",
     "mysql": "^2.18.1",
-    "objection": "^2.1.5",
+    "objection": "^2.2.0",
     "pg": "^8.2.1",
-    "rollup": "^2.13.1",
-    "rollup-plugin-postcss": "^3.1.1",
+    "rollup": "^2.17.1",
+    "rollup-plugin-postcss": "^3.1.2",
     "rollup-plugin-svelte": "5.1.1",
     "schild": "^0.6.0",
     "serialize-error": "^7.0.1",
     "snarkdown": "^1.2.2",
-    "svelte": "^3.23.0"
+    "svelte": "^3.23.2"
   }
 }
