@@ -187,7 +187,7 @@
           {$jahr}/{$abschnitt}
         </span>
         <div class="navbar-dropdown">
-          {#each $schueler[0].abschnitte as a}
+          {#each $selected[0].abschnitte as a}
             <span
               class="navbar-item abschnittwahl"
               class:has-background-success={$jahr === a.Jahr && $abschnitt === a.Abschnitt}

@@ -74,12 +74,15 @@
       $schueler = $klasse.schueler;
       schueler_sortieren()
     }
-    ({ AktSchuljahr: $jahr, AktAbschnitt: $abschnitt } =
-      $schueler.length > 0
-        ? $schueler[0]
-        : { AktSchuljahr: null, AktAbschnitt: null });
     $warten = false
   }
+  function update_abschnitt () {
+    ({ AktSchuljahr: $jahr, AktAbschnitt: $abschnitt } =
+      $selected.length > 0
+        ? $selected[0]
+        : { AktSchuljahr: null, AktAbschnitt: null });
+  }
+  $: $selected && update_abschnitt()
 </script>
 
 <style>
