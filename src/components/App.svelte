@@ -19,6 +19,7 @@
       $connected = await schild.testConnection()
     } catch (e) {
       console.log(e)
+      throw e
     }
   }
 </script>
@@ -28,12 +29,12 @@
 </style>
 
 {#await init()} Verbinde mit der Datenbank …
-{:then weiter}
+{:then}
   {#if $connected && ($user || !production)}
     <Main />
   {:else}
     <Intro />
   {/if}
 {:catch}
-    <Intro />
+  <Intro />
 {/await}
