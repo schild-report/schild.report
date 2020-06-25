@@ -49,7 +49,7 @@ jobs:
         run: ls dist
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "./dist/schild.report.msi,./dist/schild.report.dmg,./dist/schild.report.AppImage,./dist/schild.report.snap"
+          artifacts: "./dist/schild.report.msi,./dist/schild.report.dmg,./dist/schild.report.AppImage,./dist/schild.report.snap,./dist/schild.report.rpm,./dist/schild.report.deb"
           allowUpdates: true
           tag: v2.2.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -23,6 +23,8 @@ linux:
   target:
     - AppImage
     - snap
+    - deb
+    - rpm
 
 mac:
   icon: icons/icon.icns
