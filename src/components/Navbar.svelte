@@ -53,7 +53,6 @@
     $warten = true;
     console.log("öffne PDF");
     const d = $dokument.replace(/\.[^/.]+$/, "");
-    const jahr = $jahr;
     let pdfName;
     if ($generic_pdf) {
       pdfName = `${$pdf_name || d}.pdf`;
@@ -61,9 +60,9 @@
       const s = $schueler[0];
       const schuelerName = $schueler.length === 1 ? `${s.Name}_` : "";
       const abschnitt = $abschnitt;
-      pdfName = `${jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`;
+      pdfName = `${$jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`;
     }
-    const pdfPath = join($configData.pdf, jahr.toString(), pdfName);
+    const pdfPath = join($configData.pdf, $jahr.toString(), pdfName);
     const options = {
       marginsType: 1,
       printBackground: true
