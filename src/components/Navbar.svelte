@@ -59,8 +59,7 @@
     } else {
       const s = $schueler[0];
       const schuelerName = $schueler.length === 1 ? `${s.Name}_` : "";
-      const abschnitt = $abschnitt;
-      pdfName = `${$jahr}_${abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`;
+      pdfName = `${$jahr}_${$abschnitt}_${s.Klasse}_${schuelerName}${d}.pdf`;
     }
     const pdfPath = join($configData.pdf, $jahr.toString(), pdfName);
     const options = {
