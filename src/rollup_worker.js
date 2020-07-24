@@ -24,7 +24,7 @@ function moduleIds (event) {
   }
 }
 
-export default class RollupBuild {
+class RollupBuild {
   constructor () {
     this.cache = null
     this.options = null

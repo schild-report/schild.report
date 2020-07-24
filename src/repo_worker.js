@@ -15,7 +15,7 @@ function scanSource (report_location) {
   return obj
 }
 
-export default class RepoWatcher {
+class RepoWatcher {
   constructor () {
     this.report_location = null
   }
