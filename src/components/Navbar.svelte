@@ -106,10 +106,9 @@
   const md_kommentar = _ => snarkdown($kommentar);
   const einstellungen_oder_so = _ => {
     if ($component === Einstellungen) {
-      if (!$schueler.length) {
-        $component = Start;
-        return;
-      } else $component = zurueck_zu.status ? Schueler : Klasse;
+      if ($schueler && $schueler.length) {
+        $component = zurueck_zu.status ? Schueler : Klasse;
+      } else $component = Start;
     } else $component = Einstellungen;
   };
   const refresh = async _ => {
