@@ -6,7 +6,7 @@
   <p class="subtitle is-4 has-text-grey has-text-centered">Erweiterte Einstellungen</p><br>
   <div class="field">
     <p class="control">
-      <label class="checkbox">
+      <label class="label">
         <input type="checkbox" bind:checked={$configData.debug}>
         Svelte Debug
       </label>
@@ -21,27 +21,30 @@
     </p>
   </div>
   <div class="field">
-    <label class="label">Reportverzeichnis</label>
     <p class="control">
-      <input class="input"
-              type="text"
-              bind:value={$configData.reports}>
+      <label class="label">Reportverzeichnis
+        <input class="input"
+        type="text"
+        bind:value={$configData.reports}>
+      </label>
     </p>
   </div>
   <div class="field">
-    <label class="label">PDF-Verzeichnis</label>
     <p class="control">
-      <input class="input"
-              type="text"
-              bind:value={$configData.pdf}>
+      <label class="label">PDF-Verzeichnis
+        <input class="input"
+        type="text"
+        bind:value={$configData.pdf}>
+      </label>
     </p>
   </div>
   <div class="field">
-    <label class="label">Datenverzeichnis</label>
     <p class="control">
-      <input class="input"
-              type="text"
-              bind:value={$configData.userData}>
+      <label class="label">Datenverzeichnis
+        <input class="input"
+        type="text"
+        bind:value={$configData.userData}>
+      </label>
     </p>
   </div>
 </div>
