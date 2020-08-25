@@ -37,9 +37,9 @@
         </div>
       </section>
     {/if}
-    <div class:show>
+    <div class:show style="height: -webkit-fill-available;">
       {#await schule then schule}
-        <Dokument {schule} />
+        <Dokument {schule}/>
       {/await}
     </div>
   </div>

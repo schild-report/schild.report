@@ -6,35 +6,38 @@
 </script>
 
 <script>
-  import { configData, connected, user } from './../stores.js';
-  import { VERSION } from './../version.js';
+  import { configData, connected, user } from "./../stores.js";
+  import { VERSION } from "./../version.js";
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
 
-  const production =  VERSION.production
+  const production = VERSION.production;
 
   const init = async () => {
     try {
-      await schild.connect($configData.db)
-      $connected = await schild.testConnection()
+      await schild.connect($configData.db);
+      $connected = await schild.testConnection();
     } catch (e) {
-      console.log(e)
-      throw e
+      console.log(e);
+      throw e;
     }
-  }
+  };
 </script>
+
+{#if $configData}
+  {#await init()}
+    Verbinde mit der Datenbank …
+  {:then}
+    {#if $connected && ($user || !production)}
+      <Main />
+    {:else}
+      <Intro />
+    {/if}
+  {:catch}
+    <Intro />
+  {/await}
+{/if}
 
 <style>
   @import "../node_modules/bulma/css/bulma.css";
 </style>
-
-{#await init()} Verbinde mit der Datenbank …
-{:then}
-  {#if $connected && ($user || !production)}
-    <Main />
-  {:else}
-    <Intro />
-  {/if}
-{:catch}
-  <Intro />
-{/await}

@@ -1,6 +1,6 @@
 import { join, normalize } from 'path'
 import url from 'url'
-import { app, BrowserWindow, shell, protocol } from 'electron'
+import { app, BrowserWindow, shell, protocol, ipcMain } from 'electron'
 import { is } from 'electron-util'
 
 import configFile from './configstore'
@@ -81,3 +81,6 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
+
+ipcMain.handle('get_store', (event, key) => configData );
+ipcMain.handle('set_store', (event, value) => configFile.set(value))
