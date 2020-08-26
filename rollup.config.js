@@ -1,7 +1,7 @@
 import svelte from "rollup-plugin-svelte";
 import externals from "rollup-plugin-node-externals";
 
-const production = process.env.NODE_ENV !== "development";
+import { VERSION } from './version'
 
 export default [
   {
@@ -15,14 +15,14 @@ export default [
     ],
     output: [
       {
-        sourcemap: !production,
+        sourcemap: VERSION.production,
         dir: "build",
         format: "cjs",
       },
     ],
     plugins: [
       svelte({
-        dev: !production,
+        dev: VERSION.production,
         css: (css) => {
           css.write("build/bundle.css");
         },

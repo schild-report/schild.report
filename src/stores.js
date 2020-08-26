@@ -2,12 +2,14 @@ import { writable } from "svelte/store";
 import { ipcRenderer } from 'electron';
 
 export const configData = writable();
-ipcRenderer.invoke("get_store").then((res) => {
+const store = ipcRenderer.invoke("get_store").then((res) => {
   configData.set(res);
   configData.subscribe((value) => {
     ipcRenderer.invoke("set_store", value);
   });
+  return res
 });
+export const db = writable(store.then(res=>res.db))
 export const klasse = writable();
 export const schueler = writable();
 export const schueler_sortiert = writable();
