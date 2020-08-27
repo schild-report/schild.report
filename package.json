@@ -41,7 +41,7 @@
     "pg": "^8.3.3",
     "rollup": "^2.26.6",
     "rollup-plugin-postcss": "^3.1.6",
-    "rollup-plugin-svelte": "5.1.1",
+    "rollup-plugin-svelte": "^6.0.0",
     "schild": "^0.6.0",
     "serialize-error": "^7.0.1",
     "snarkdown": "^1.2.2",

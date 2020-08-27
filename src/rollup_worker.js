@@ -51,12 +51,13 @@ class RollupBuild {
             if (warning.code === 'css-unused-selector') return
             handler(warning)
           },
+          emitCss: true,
           sveltePath: __nodeModules,
           immutable: false,
           accessors: true,
           dev: !!this.options.debug
         }),
-        this.options.plugin && postcss(),
+        postcss(),
         moduleIds(ids => this._ids = Array.from(ids)),
         resolve({ preferBuiltins: false, browser: true }),
         commonjs()

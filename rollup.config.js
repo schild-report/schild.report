@@ -1,6 +1,5 @@
 import svelte from "rollup-plugin-svelte";
 import externals from "rollup-plugin-node-externals";
-
 import { VERSION } from './src/version'
 
 export default [
@@ -24,7 +23,7 @@ export default [
       svelte({
         dev: VERSION.production,
         css: (css) => {
-          css.write("build/bundle.css");
+          css.write("bundle.css");
         },
       }),
       externals({ deps: true }),
