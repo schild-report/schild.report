@@ -14,7 +14,6 @@
   function callback(obj) {
     repos = obj;
   }
-  repo_worker.set_report_location($configData.reports);
   repo_worker.watch_repos(Comlink.proxy(callback));
   const sidebar_components = [Einstellungen, Start];
   $component = Start;
