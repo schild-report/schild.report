@@ -18,7 +18,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^10.0.0",
+    "electron": "^10.1.0",
     "electron-builder": "^22.8.0",
     "electron-packager": "^15.1.0",
     "electron-wix-msi": "^3.0.0",
@@ -39,7 +39,7 @@
     "mysql": "^2.18.1",
     "objection": "^2.2.3",
     "pg": "^8.3.3",
-    "rollup": "^2.26.6",
+    "rollup": "^2.26.8",
     "rollup-plugin-postcss": "^3.1.6",
     "rollup-plugin-svelte": "^6.0.0",
     "schild": "^0.6.0",
