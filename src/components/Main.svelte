@@ -10,13 +10,18 @@
 
   let repos;
   let schule = schild.getSchule();
+  const sidebar_components = [Einstellungen, Start];
 
   function callback(obj) {
     repos = obj;
   }
-  repo_worker.watch_repos(Comlink.proxy(callback));
-  const sidebar_components = [Einstellungen, Start];
-  $component = Start;
+  try {
+    repo_worker.watch_repos(Comlink.proxy(callback));
+    $component = Start;
+  } catch (e) {
+    console.log("Fehler beim Einlesen der Verzeichnisse: ", e)
+    $component = Einstellungen
+  }
 
   $: sidebar = !sidebar_components.includes($component) && !$plugin;
   $: show = !!$component;
