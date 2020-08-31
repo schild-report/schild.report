@@ -26,7 +26,12 @@
 </script>
 
 {#await init()}
-  Verbinde mit der Datenbank …
+  <div class="box">
+    <div class="mitte">
+      Verbinde mit der Datenbank...
+      <progress class="progress is-small is-primary" max="100" />
+    </div>
+  </div>
 {:then}
   {#if $connected && ($user || !production)}
     <Main />
@@ -39,4 +44,6 @@
 
 <style>
   @import "../node_modules/bulma/css/bulma.css";
+  .box { display: grid; height: 100vh; }
+  .mitte { margin: auto;}
 </style>

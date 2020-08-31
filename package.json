@@ -40,7 +40,7 @@
     "objection": "^2.2.3",
     "pg": "^8.3.3",
     "rollup": "^2.26.8",
-    "rollup-plugin-postcss": "^3.1.6",
+    "rollup-plugin-postcss": "^3.1.8",
     "rollup-plugin-svelte": "^6.0.0",
     "schild": "^0.6.0",
     "serialize-error": "^7.0.1",

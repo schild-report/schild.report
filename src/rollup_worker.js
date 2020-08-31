@@ -51,7 +51,7 @@ class RollupBuild {
             if (warning.code === 'css-unused-selector') return
             handler(warning)
           },
-          emitCss: true,
+          // emitCss: true,
           sveltePath: __nodeModules,
           immutable: false,
           accessors: true,
