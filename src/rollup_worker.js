@@ -56,7 +56,7 @@ class RollupBuild {
           accessors: true,
           dev: !!this.options.debug
         }),
-        postcss(),
+        // postcss(),
         moduleIds(ids => this._ids = Array.from(ids)),
         resolve({ preferBuiltins: false, browser: true }),
         commonjs()
