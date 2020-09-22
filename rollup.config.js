@@ -22,7 +22,6 @@ export default [
     plugins: [
       svelte({
         dev: VERSION.production,
-        accessors: true,
         css: (css) => {
           css.write("bundle.css");
         },
