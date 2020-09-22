@@ -6,7 +6,6 @@ import svelte from 'rollup-plugin-svelte'
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import postcss from 'rollup-plugin-postcss'
 
 // svelte components möchten svelte importieren. Da wir aber auch components
 // ohne node_modules zulassen, müssen wir das Verzeichnis an svelte weiterreichen
@@ -56,7 +55,6 @@ class RollupBuild {
           accessors: true,
           dev: !!this.options.debug
         }),
-        // postcss(),
         moduleIds(ids => this._ids = Array.from(ids)),
         resolve({ preferBuiltins: false, browser: true }),
         commonjs()
