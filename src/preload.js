@@ -1,8 +1,10 @@
 const ipcRenderer = require('electron').ipcRenderer
 const Mark = require('mark.js')
+const requireFromString = require('require-from-string');
+
 
 global.R = (lib) => require(lib)
-let svelte, props, Component, componentPath, mark
+let svelte, props, Component, componentPath, mark, compiled_module
 
 function runMark () {
   mark = new Mark(document.querySelector('body'))
@@ -15,13 +17,11 @@ ipcRenderer.on('props', (event, data) => {
   props = data.svelteProps
   svelte && svelte.$set(props)
   componentPath = data.componentPath
+  compiled_module = data.compiled_module
+  console.log(compiled_module)
 })
 ipcRenderer.on('set_dokument', () => {
-  if (svelte) {
-    svelte.$destroy()
-    delete require.cache[componentPath]
-  }
-  Component = require(componentPath)
+  Component = requireFromString(compiled_module.code);
   try {
     svelte = new Component({ target: document.querySelector('svelte'), props })
     console.log('Svelte-Dokument erfolgreich geladen.')

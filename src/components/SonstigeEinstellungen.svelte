@@ -22,6 +22,22 @@
   </div>
   <div class="field">
     <p class="control">
+      <label class="label">
+        <input type="checkbox" bind:checked={$configData.write}>
+        Rollup Bundle schreiben
+      </label>
+    </p>
+  </div>
+  <div class="field">
+    <p class="control">
+      <label class="label">
+        <input type="checkbox" bind:checked={$configData.source_maps}>
+        Source Maps erstellen
+      </label>
+    </p>
+  </div>
+  <div class="field">
+    <p class="control">
       <label class="label">Reportverzeichnis
         <input class="input"
         type="text"

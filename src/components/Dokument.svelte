@@ -1,13 +1,52 @@
 <script>
+  import { rollup } from "./App.svelte";
+  import * as Comlink from "comlink";
   import { configData, component, set_edit, set_mark, error, repo, dokument,
-  plugin, plugin_entry, klasse, selected, jahr, abschnitt, reload,
-  kommentar, pdf_name, generic_pdf, webview } from './../stores.js';
+  plugin, plugin_entry, klasse, selected, jahr, abschnitt,
+  kommentar, pdf_name, generic_pdf, webview, compiled_module,
+  warten } from './../stores.js';
   import { join } from 'path'
 
   export let schule
+  function callback() {
+    console.log("Modul wurde modifiziert...");
+    run_rollup();
+  }
+  export async function run_rollup(args) {
+    $warten = true;
+    console.log("rollup starten...");
+    const options =
+      args && args.file
+        ? {
+            source: join($configData.reports, args.repo, args.file),
+            dest: join($configData.userData),
+            debug: $configData.debug,
+            write: $configData.write,
+            source_maps: $configData.source_maps,
+            plugin: args.file.startsWith("plugin")
+          }
+        : null;
+    try {
+      await rollup.set_options(options);
+    } catch (error) { console.log(error)}
+    try {
+      $compiled_module = await rollup.build();
+      if (args) {
+        $component = null;
+        $dokument = args.file;
+        $repo = args.repo;
+      }
+      set_repo()
+    } catch (error) {
+      console.log(error);
+    }
+    $warten = false;
+    await rollup.watch(Comlink.proxy(callback));
+  }
 
   $: props = {
     componentPath: !$plugin ? join($configData.userData, 'bundle.js') : join($plugin || '', $plugin_entry || ''),
+    compiled_module: $compiled_module,
     debug: $configData.debug,
     svelteProps: {
       schule: schule,
@@ -19,13 +58,11 @@
       knexConfig: $configData.db
     }
   }
-  $: $reload > 1 && set_repo()
-  $: $reload > 1 && $component && set_destroy()
+  $: if ($component) set_destroy()
   $: props && set_props()
 
   async function set_destroy () {
     $plugin = null
-    $reload = 1
     $webview && await $webview.send('destroy')
   }
   async function set_props () {

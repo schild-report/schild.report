@@ -32,3 +32,5 @@ export const component = writable();
 export const connected = writable();
 export const webview = writable();
 export const warten = writable();
+export const compiled_module = writable();
+export const dokument_component = writable();

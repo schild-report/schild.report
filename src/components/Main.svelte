@@ -1,5 +1,5 @@
 <script>
-  import { configData, component, plugin } from "./../stores.js";
+  import { component, plugin, dokument_component } from "./../stores.js";
   import Dokument from "./Dokument.svelte";
   import Sidebar from "./Sidebar.svelte";
   import Navbar from "./Navbar.svelte";
@@ -43,7 +43,7 @@
     {/if}
     <div class:show style="height: -webkit-fill-available;">
       {#await schule then schule}
-        <Dokument {schule}/>
+        <Dokument {schule} bind:this={$dokument_component}/>
       {/await}
     </div>
   </div>

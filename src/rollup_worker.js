@@ -53,7 +53,7 @@ class RollupBuild {
           sveltePath: __nodeModules,
           immutable: false,
           accessors: true,
-          dev: !!this.options.debug
+          dev: this.options.debug
         }),
         moduleIds(ids => this._ids = Array.from(ids)),
         resolve({ preferBuiltins: false, browser: true }),
@@ -64,16 +64,24 @@ class RollupBuild {
       file: join(this.options.dest, '/bundle.js'),
       format: 'cjs',
       name: 'components',
-      sourcemap: true
+      sourcemap: this.options.source_maps && 'inline'
     }
   }
   async build () {
     try {
       const bundle = await rollup(this.inputOptions)
       this.cache = bundle.cache
-      await bundle.write(this.outputOptions)
+      const {output} = await bundle.generate(this.outputOptions)
       console.log('Komponenten erfolgreich kompiliert')
-      // console.log(bundle.getTimings())
+      const [compiled_module] = output
+      if (this.options.write) {
+        await bundle.write(this.outputOptions)
+        console.log('Komponenten erfolgreich geschrieben')
+      }
+      if (this.options.source_maps) {
+        compiled_module.code += `\n//# sourceMappingURL=${compiled_module.map.toUrl()}\n`;
+      }
+      return compiled_module
     } catch (error) {
       throw error
     }

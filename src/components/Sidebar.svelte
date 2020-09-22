@@ -1,52 +1,14 @@
 <script>
-  import { rollup } from "./App.svelte";
-  import * as Comlink from "comlink";
   import {
     configData,
-    component,
     dokument,
     repo,
-    reload,
-    warten
+    dokument_component
   } from "./../stores.js";
-  import { join } from "path";
 
   export let repos;
   export let highlight;
 
-  function callback() {
-    console.log("Modul wurde modifiziert, ...");
-    run_rollup();
-  }
-  async function run_rollup(args) {
-    $warten = true;
-    console.log("rollup starten...");
-    const options =
-      args && args.file
-        ? {
-            source: join($configData.reports, args.repo, args.file),
-            dest: join($configData.userData),
-            debug: args.debug || true,
-            plugin: args.file.startsWith("plugin")
-          }
-        : null;
-    try {
-      await rollup.set_options(options);
-    } catch (error) { console.log(error)}
-    try {
-      const res = await rollup.build();
-      if (args) {
-        $component = null;
-        $dokument = args.file;
-        $repo = args.repo;
-      }
-      $reload += 1;
-    } catch (error) {
-      console.log(error);
-    }
-    $warten = false;
-    await rollup.watch(Comlink.proxy(callback));
-  }
   function toggle_folder_state(key) {
     $configData.folderStates[key] = !$configData.folderStates[key];
   }
@@ -121,7 +83,7 @@
             <li
               class="tree-item hoverable"
               class:active={key === $repo && v === $dokument && !highlight}
-              on:click={() => run_rollup({ repo: key, file: v })}>
+              on:click={() => $dokument_component.run_rollup({ repo: key, file: v })}>
               <span class="tree-item-label">{v.replace(/\.[^/.]+$/, '')}</span>
             </li>
           {/each}
