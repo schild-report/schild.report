@@ -124,6 +124,7 @@
     }
     $warten = false;
   };
+  $: console.log($jahr,$abschnitt)
 </script>
 
 <style>

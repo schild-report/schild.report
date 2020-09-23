@@ -78,9 +78,10 @@
   }
   function update_abschnitt () {
     ({ AktSchuljahr: $jahr, AktAbschnitt: $abschnitt } =
-      $selected.length > 0
-        ? $selected[0]
-        : { AktSchuljahr: null, AktAbschnitt: null });
+    $selected.length > 0
+    ? $selected[0]
+    : { AktSchuljahr: null, AktAbschnitt: null });
+    console.log('mache update', $jahr, $abschnitt);
   }
   $: $selected && update_abschnitt()
 </script>

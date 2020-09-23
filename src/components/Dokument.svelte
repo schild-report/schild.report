@@ -26,12 +26,12 @@
 
   export let schule;
 
-  function callback(ret) {
-    if (ret.code === "ERROR") {
-      $error = ret.error
+  function callback(failure, result) {
+    if (failure) {
+      $error = failure.error
       return
     } else {
-      $compiled_module = ret;
+      $compiled_module = result;
       set_repo();
     }
   }
@@ -55,7 +55,7 @@
       console.log(error);
     }
     try {
-      $compiled_module = await rollup.build(Comlink.proxy(callback));
+      rollup.build(Comlink.proxy(callback));
       if (args) {
         $component = null;
         $dokument = args.file;
@@ -109,7 +109,7 @@
     }/`;
     $webview.loadURL(
       // <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-      //<style ✂prettier:content✂="QG1lZGlhIHByaW50ey5ub3ByaW50ICp7ZGlzcGxheTpub25lO2hlaWdodDowO319"></style></head>
+      // <style>@media print{.noprint *{display:none;height:0;}}</style></head>
       // <body><div id="content" contenteditable="false"><svelte></svelte></div></body></html>
       `data:text/html;charset=utf-8;base64,
       PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
@@ -120,6 +120,8 @@
       { baseURLForDataURL: base_url }
     );
     $webview.addEventListener("dom-ready", set_dokument);
+    // $webview.addEventListener('did-start-loading', _ => $warten = true)
+    // $webview.addEventListener('did-stop-loading', _ => $warten = false)
   }
 
   function startup(node) {
