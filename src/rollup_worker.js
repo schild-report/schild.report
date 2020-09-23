@@ -54,7 +54,6 @@ class RollupBuild {
   async build(callback) {
     try {
       this.watcher && this.watcher.close();
-      console.log(this.options)
       this.watcher = watch(this.options);
       this.watcher.on("event", async (event) => {
         if (event.code === "ERROR") {
