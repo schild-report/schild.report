@@ -40,11 +40,11 @@
     "objection": "^2.2.3",
     "pg": "^8.3.3",
     "require-from-string": "^2.0.2",
-    "rollup": "^2.28.1",
+    "rollup": "^2.28.2",
     "rollup-plugin-svelte": "^6.0.1",
     "schild": "^0.6.0",
     "serialize-error": "^7.0.1",
     "snarkdown": "^2.0.0",
-    "svelte": "^3.25.1"
+    "svelte": "^3.28.0"
   }
 }

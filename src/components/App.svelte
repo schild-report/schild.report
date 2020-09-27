@@ -6,7 +6,7 @@
 </script>
 
 <script>
-  import { db, connected, user, configData } from "./../stores.js";
+  import { db, connected, user } from "./../stores.js";
   import { VERSION } from "./../version.js";
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
@@ -17,7 +17,6 @@
     try {
       await schild.connect(await $db);
       $connected = await schild.testConnection();
-      repo_worker.set_report_location($configData.reports);
     } catch (e) {
       console.log(e);
       throw e;

@@ -16,22 +16,13 @@ function scanSource (report_location) {
     return obj
   } catch (e) {
     console.log('Fehler beim Scannen des Report-Verzeichnisses: ', e)
+    throw e
   }
 }
 
 class RepoWatcher {
-  constructor () {
-    this.report_location = null
-  }
-
-  set_report_location (location) {
-    if (existsSync(location)) {
-      this.report_location = location
-    } else throw 'Verzeichnis existiert nicht'
-  }
-
-  async watch_repos (cb) {
-    const report_location = this.report_location
+  async watch_repos (report_location, cb) {
+    if (!existsSync(report_location)) throw 'Verzeichnis existiert nicht'
     cb(scanSource(report_location))
     try {
       const fileWatcher = new CheapWatch({
@@ -44,6 +35,7 @@ class RepoWatcher {
       fileWatcher.on('-', ({ path, stats }) => { cb(scanSource(report_location)) })
     } catch (e) {
       console.log('Fehler beim File-Watcher: ', e)
+      throw e
     }
   }
 }

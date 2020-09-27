@@ -5,23 +5,11 @@
   import Navbar from "./Navbar.svelte";
   import Einstellungen from "./Einstellungen.svelte";
   import Start from "./Start.svelte";
-  import { repo_worker, schild } from "./App.svelte";
-  import * as Comlink from "comlink";
+  import { schild } from "./App.svelte";
 
-  let repos;
   let schule = schild.getSchule();
   const sidebar_components = [Einstellungen, Start];
-
-  function callback(obj) {
-    repos = obj;
-  }
-  try {
-    repo_worker.watch_repos(Comlink.proxy(callback));
-    $component = Start;
-  } catch (e) {
-    console.log("Fehler beim Einlesen der Verzeichnisse: ", e)
-    $component = Einstellungen
-  }
+  $component = Start
 
   $: sidebar = !sidebar_components.includes($component) && !$plugin;
   $: show = !!$component;
@@ -30,7 +18,7 @@
 <div class="grid-container" class:sidebar>
   {#if sidebar}
     <div class="menu has-background-white-ter">
-      <Sidebar {repos} highlight="{show}"/>
+      <Sidebar highlight="{show}"/>
     </div>
   {/if}
   <div class="main">

@@ -3,20 +3,58 @@
     configData,
     dokument,
     repo,
-    dokument_component
+    dokument_component,
   } from "./../stores.js";
+  import { repo_worker } from "./App.svelte";
+  import * as Comlink from "comlink";
 
-  export let repos;
+  let repos = {};
   export let highlight;
 
   function toggle_folder_state(key) {
     $configData.folderStates[key] = !$configData.folderStates[key];
   }
+  function callback(obj) {
+    repos = obj;
+  }
+  try {
+    repo_worker.watch_repos($configData.reports, Comlink.proxy(callback));
+  } catch (e) {
+    console.log("Fehler beim Einlesen der Verzeichnisse: ", e)
+  }
 </script>
+
+<div class="sidebar">
+  {#each Object.entries(repos) as [key, values]}
+    <ul class="tree-group">
+      <li
+        class="tree-item tree-item--chevron-down"
+        class:closed={$configData.folderStates[key]}
+        on:click={() => toggle_folder_state(key)}>
+        <span class="tree-item-label tree-header">{key}</span>
+      </li>
+      {#if !$configData.folderStates[key]}
+        <ul class="tree-group">
+          {#each values as v}
+            <li
+              class="tree-item hoverable"
+              class:active={key === $repo && v === $dokument && !highlight}
+              on:click={() => $dokument_component.run_rollup({
+                  repo: key,
+                  file: v,
+                })}>
+              <span class="tree-item-label">{v.replace(/\.[^/.]+$/, '')}</span>
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    </ul>
+  {:else}Keine Dokumente vorhanden{/each}
+</div>
 
 <style>
   .sidebar {
-    padding-top: .3rem;
+    padding-top: 0.3rem;
     border-right: 1px solid #c5cad3;
   }
   .sidebar .tree-group {
@@ -67,28 +105,3 @@
     margin-right: 10px;
   }
 </style>
-
-<div class="sidebar">
-  {#each Object.entries(repos) as [key, values]}
-    <ul class="tree-group">
-      <li
-        class="tree-item tree-item--chevron-down"
-        class:closed={$configData.folderStates[key]}
-        on:click={() => toggle_folder_state(key)}>
-        <span class="tree-item-label tree-header">{key}</span>
-      </li>
-      {#if !$configData.folderStates[key]}
-        <ul class="tree-group">
-          {#each values as v}
-            <li
-              class="tree-item hoverable"
-              class:active={key === $repo && v === $dokument && !highlight}
-              on:click={() => $dokument_component.run_rollup({ repo: key, file: v })}>
-              <span class="tree-item-label">{v.replace(/\.[^/.]+$/, '')}</span>
-            </li>
-          {/each}
-        </ul>
-      {/if}
-    </ul>
-  {:else}Keine Dokumente vorhanden{/each}
-</div>

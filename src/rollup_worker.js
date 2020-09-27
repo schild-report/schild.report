@@ -39,6 +39,7 @@ class RollupBuild {
         file: join(this.temp.dest, "/bundle.js"),
         format: "cjs",
         name: "components",
+        exports: "default",
         sourcemap: this.temp.source_maps && "inline",
     }
     this.watch = {
