@@ -106,7 +106,7 @@
   const md_kommentar = _ => snarkdown($kommentar);
   const einstellungen_oder_so = _ => {
     if ($component === Einstellungen) {
-      if ($schueler && $schueler.length) {
+      if ($schueler?.length) {
         $component = zurueck_zu.status ? Schueler : Klasse;
       } else $component = Start;
     } else $component = Einstellungen;

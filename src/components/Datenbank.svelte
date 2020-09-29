@@ -4,7 +4,7 @@
   import { focus } from './../helfer.js';
 
   let fehler = false
-  const db = $configData.db && $configData.db.connection || {}
+  const db = $configData?.db.connection || {}
 
   const key = e => {
     if (e.key === "Enter") {

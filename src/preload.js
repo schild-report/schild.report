@@ -9,12 +9,9 @@ function runMark () {
   mark = new Mark(document.querySelector('body'))
   mark.mark(['undefined', '01.01.1970', 'null'])
 }
-ipcRenderer.on('destroy', (event, data) => {
-  svelte && svelte.$destroy()
-})
 ipcRenderer.on('props', (event, data) => {
   props = data.svelteProps
-  svelte && svelte.$set(props)
+  svelte?.$set(props)
   componentPath = data.componentPath
   compiled_module = data.compiled_module
 })
