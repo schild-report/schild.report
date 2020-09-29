@@ -13,10 +13,9 @@ const __nodeModules = process.env.PROD
   : presolve(__dirname, "../node_modules/svelte");
 
 class RollupBuild {
-  set_options(options) {
-    this.temp = options ? options : this.temp;
+  async build(options, callback) {
     this.input = {
-      input: this.temp.source,
+      input: options.source,
       perf: true,
       treeshake: false,
       plugins: [
@@ -29,21 +28,21 @@ class RollupBuild {
           sveltePath: __nodeModules,
           immutable: false,
           accessors: true,
-          dev: this.temp.debug
+          dev: options.debug
         }),
         resolve({ preferBuiltins: false, browser: true }),
         commonjs()
       ]
     }
     this.output = {
-        file: join(this.temp.dest, "/bundle.js"),
+        file: join(options.dest, "/bundle.js"),
         format: "cjs",
         name: "components",
         exports: "default",
-        sourcemap: this.temp.source_maps && "inline",
+        sourcemap: options.source_maps && "inline",
     }
     this.watch = {
-        skipWrite: !this.temp.write,
+        skipWrite: !options.write,
         exclude: "node_modules/**",
     }
     this.options = {
@@ -51,10 +50,8 @@ class RollupBuild {
       output: [this.output],
       watch: this.watch
     }
-  }
-  async build(callback) {
     try {
-      this.watcher && this.watcher.close();
+      this.watcher?.close();
       this.watcher = watch(this.options);
       this.watcher.on("event", async (event) => {
         if (event.code === "ERROR") {

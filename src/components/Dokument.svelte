@@ -29,8 +29,8 @@
   function callback(failure, result) {
     if (failure) {
       $error = failure.error
-      return
     } else {
+      $error = null
       $compiled_module = result;
       set_repo();
     }
@@ -38,29 +38,18 @@
   export async function run_rollup(args) {
     $warten = true;
     console.log("rollup starten...");
-    const options =
-      args && args.file
-        ? {
-            source: join($configData.reports, args.repo, args.file),
-            dest: join($configData.userData),
-            debug: $configData.debug,
-            write: $configData.write,
-            source_maps: $configData.source_maps,
-            plugin: args.file.startsWith("plugin"),
-          }
-        : null;
+    const options = {
+      source: join($configData.reports, args.repo, args.file),
+      dest: join($configData.userData),
+      debug: $configData.debug,
+      write: $configData.write,
+      source_maps: $configData.source_maps,
+      plugin: args.file.startsWith("plugin")}
     try {
-      await rollup.set_options(options);
-    } catch (error) {
-      console.log(error);
-    }
-    try {
-      rollup.build(Comlink.proxy(callback));
-      if (args) {
-        $component = null;
-        $dokument = args.file;
-        $repo = args.repo;
-      }
+      rollup.build(options, Comlink.proxy(callback));
+      $component = null;
+      $dokument = args.file;
+      $repo = args.repo;
     } catch (error) {
       console.log(error);
     }
@@ -83,13 +72,8 @@
       knexConfig: $configData.db,
     },
   };
-  $: if ($component) set_destroy();
   $: props && set_props();
 
-  async function set_destroy() {
-    $plugin = null;
-    $webview && (await $webview.send("destroy"));
-  }
   async function set_props() {
     if ($component || !$webview) return;
     $webview.send("props", props);
@@ -102,8 +86,6 @@
     $webview.removeEventListener("dom-ready", set_dokument);
   }
   async function set_repo() {
-    $error = null;
-    if ($component) return;
     const base_url = `file2://${
       $plugin ? join($plugin) : join($configData.reports, $repo)
     }/`;
@@ -120,8 +102,6 @@
       { baseURLForDataURL: base_url }
     );
     $webview.addEventListener("dom-ready", set_dokument);
-    // $webview.addEventListener('did-start-loading', _ => $warten = true)
-    // $webview.addEventListener('did-stop-loading', _ => $warten = false)
   }
 
   function startup(node) {
