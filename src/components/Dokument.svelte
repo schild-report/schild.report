@@ -135,6 +135,7 @@
   }
 </script>
 
+<!-- svelte-ignore component-name-lowercase -->
 <webview src="about:blank" preload="./preload.js" use:startup />
 {#if $error}
   <div class="fehlermeldung">
