@@ -42,7 +42,6 @@
 {/await}
 
 <style>
-  @import "../node_modules/bulma/css/bulma.css";
   .box { display: grid; height: 100vh; }
   .mitte { margin: auto;}
 </style>

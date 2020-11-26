@@ -1,5 +1,6 @@
 import svelte from "rollup-plugin-svelte";
 import externals from "rollup-plugin-node-externals";
+import css from 'rollup-plugin-css-only'
 import { VERSION } from './src/version'
 
 export default [
@@ -16,41 +17,17 @@ export default [
       {
         sourcemap: VERSION.production,
         dir: "build",
-        format: "cjs",
+        format: "cjs"
       },
     ],
     plugins: [
       svelte({
-        dev: VERSION.production,
-        css: (css) => {
-          css.write("bundle.css");
-        },
+        compilerOptions: {
+          dev: VERSION.production
+        }
       }),
       externals({ deps: true }),
-    ],
-    external: [
-      "svelte/internal",
-      "svelte/store",
-      "@rollup/plugin-commonjs",
-      "@rollup/plugin-json",
-      "@rollup/plugin-node-resolve",
-      "bulma",
-      "cheap-watch",
-      "comlink",
-      "electron-store",
-      "electron-util",
-      "knex",
-      "mark.js",
-      "mysql",
-      "objection",
-      "pg",
-      "rollup",
-      "rollup-plugin-postcss",
-      "rollup-plugin-svelte",
-      "schild",
-      "serialize-error",
-      "snarkdown",
-      "svelte",
+      css({ output: 'bundle.css' })
     ],
     onwarn(warning, warn) {
       if (warning.code === "CIRCULAR_DEPENDENCY") return;

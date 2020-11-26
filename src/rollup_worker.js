@@ -21,14 +21,17 @@ class RollupBuild {
       plugins: [
         json({ preferConst: true }),
         svelte({
+          emitCss: false,
           onwarn: (warning, handler) => {
             if (warning.code === "css-unused-selector") return;
             handler(warning);
           },
-          sveltePath: __nodeModules,
-          immutable: false,
-          accessors: true,
-          dev: options.debug
+          compilerOptions: {
+            sveltePath: __nodeModules,
+            immutable: false,
+            accessors: true,
+            dev: options.debug
+          }
         }),
         resolve({ preferBuiltins: false, browser: true }),
         commonjs()
