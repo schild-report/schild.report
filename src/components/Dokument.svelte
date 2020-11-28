@@ -40,6 +40,7 @@
     console.log("rollup starten...");
     const options = {
       source: join($configData.reports, args.repo, args.file),
+      basedir: join($configData.reports, args.repo),
       dest: join($configData.userData),
       debug: $configData.debug,
       write: $configData.write,

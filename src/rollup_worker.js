@@ -55,7 +55,13 @@ class RollupBuild {
             dev: options.debug
           }
         }),
-        resolve({ preferBuiltins: false, browser: true }),
+        resolve({
+          preferBuiltins: false,
+          browser: true,
+          customResolveOptions: {
+            basedir: options.basedir
+          }
+        }),
         commonjs(),
       ]
     }
