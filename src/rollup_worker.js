@@ -36,7 +36,7 @@ const __nodeModules = process.env.PROD
 class RollupBuild {
   async build(options, callback) {
     this.input = {
-      input: options.source,
+      input: presolve(options.source),
       perf: true,
       treeshake: false,
       plugins: [
