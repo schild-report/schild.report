@@ -25,7 +25,9 @@ const __nodeModules = process.env.PROD
         return null; // other ids should be handled as usually
       },
       moduleParsed(moduleInfo) {
-        console.log('Imported Ids: ', moduleInfo.importedIds)
+        try {
+          console.log('Imported Ids: ', moduleInfo.importedIds)
+        } catch (e) { console.log('Missgeschick')}
         return null
       }
     };
