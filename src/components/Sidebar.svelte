@@ -35,7 +35,7 @@
       </li>
       {#if !$configData.folderStates[key]}
         <ul class="tree-group">
-          {#each values as v}
+          {#each values.sort() as v}
             <li
               class="tree-item hoverable"
               class:active={key === $repo && v === $dokument && !highlight}
