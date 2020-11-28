@@ -12,6 +12,25 @@ const __nodeModules = process.env.PROD
   ? presolve(__dirname, "node_modules/svelte")
   : presolve(__dirname, "../node_modules/svelte");
 
+  function bugfu (options) {
+    if (!options.debug) return null;
+    return {
+      name: 'Debugger', // this name will show up in warnings and errors
+      resolveId ( source ) {
+        console.log('Das ist source: ', source)
+        return null; // other ids should be handled as usually
+      },
+      load ( id ) {
+        console.log('Das ist die ID: ', id)
+        return null; // other ids should be handled as usually
+      },
+      moduleParsed(moduleInfo) {
+        console.log('Modul Info: ', moduleInfo)
+        return null
+      }
+    };
+  }
+
 class RollupBuild {
   async build(options, callback) {
     this.input = {
@@ -19,6 +38,7 @@ class RollupBuild {
       perf: true,
       treeshake: false,
       plugins: [
+        bugfu(options),
         json({ preferConst: true }),
         svelte({
           emitCss: false,
@@ -34,7 +54,7 @@ class RollupBuild {
           }
         }),
         resolve({ preferBuiltins: false, browser: true }),
-        commonjs()
+        commonjs(),
       ]
     }
     this.output = {
