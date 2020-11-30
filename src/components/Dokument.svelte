@@ -20,7 +20,7 @@
     generic_pdf,
     webview,
     compiled_module,
-    warten,
+    warten
   } from "./../stores.js";
   import { join } from "path";
 
@@ -34,6 +34,7 @@
       $compiled_module = result;
       set_repo();
     }
+    $warten = false;
   }
   export async function run_rollup(args) {
     $warten = true;
@@ -54,7 +55,6 @@
     } catch (error) {
       console.log(error);
     }
-    $warten = false;
   }
 
   $: props = {
