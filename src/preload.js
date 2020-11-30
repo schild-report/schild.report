@@ -16,6 +16,7 @@ ipcRenderer.on('props', (event, data) => {
   compiled_module = data.compiled_module
 })
 ipcRenderer.on('set_dokument', () => {
+  if (svelte) svelte.$destroy()
   try {
     Component = requireFromString(compiled_module.code);
     svelte = new Component({ target: document.querySelector('svelte'), props })

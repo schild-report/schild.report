@@ -27,13 +27,11 @@ jobs:
             ${{ runner.os }}-node-
       - name: Install Node.js, NPM
         uses: actions/setup-node@v1
-        with:
-          node-version: 13
       - name: Install Dependencies
         run: npm install
       - name: set version
         run: |
-          echo "export const VERSION = { gitHash: '${{ github.sha }}', buildVersion: '2.2.${{ github.run_number }}', production: true }" > src/version.js
+          echo "export const VERSION = { gitHash: '${{ github.sha }}', buildVersion: '2.3.${{ github.run_number }}', production: true }" > src/version.js
       - name: show version
         run: cat src/version.js
       - name: Build
@@ -51,5 +49,5 @@ jobs:
         with:
           artifacts: "./dist/schild.report.msi,./dist/schild.report.dmg,./dist/schild.report.AppImage,./dist/schild.report.snap,./dist/schild.report.rpm,./dist/schild.report.deb"
           allowUpdates: true
-          tag: v2.2.${{ github.run_number }}
+          tag: v2.3.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}

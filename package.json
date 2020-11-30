@@ -1,7 +1,7 @@
 {
   "name": "schild.report",
   "author": "hmt",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "main": "build/main.js",
   "private": true,
   "scripts": {
@@ -35,6 +35,7 @@
     "comlink": "^4.3.0",
     "electron-store": "^6.0.1",
     "electron-util": "^0.14.2",
+    "idb-keyval": "^3.2.0",
     "knex": "^0.21.6",
     "mark.js": "^8.11.1",
     "mysql": "^2.18.1",

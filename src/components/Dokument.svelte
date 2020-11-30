@@ -20,7 +20,7 @@
     generic_pdf,
     webview,
     compiled_module,
-    warten
+    warten,
   } from "./../stores.js";
   import { join } from "path";
 
@@ -28,30 +28,33 @@
 
   function callback(failure, result) {
     if (failure) {
-      $error = failure.error
+      $error = failure.error;
     } else {
-      $error = null
+      $error = null;
       $compiled_module = result;
-      set_repo();
+      set_dokument()
     }
     $warten = false;
   }
   export async function run_rollup(args) {
     $warten = true;
+    $component = null;
+    $dokument = args.file;
+    $repo = args.repo;
+    await set_repo();
     console.log("rollup starten...");
     const options = {
       source: join($configData.reports, args.repo, args.file),
       basedir: join($configData.reports, args.repo),
       dest: join($configData.userData),
       debug: $configData.debug,
+      cache: $configData.cache,
       write: $configData.write,
       source_maps: $configData.source_maps,
-      plugin: args.file.startsWith("plugin")}
+      plugin: args.file.startsWith("plugin"),
+    };
     try {
       rollup.build(options, Comlink.proxy(callback));
-      $component = null;
-      $dokument = args.file;
-      $repo = args.repo;
     } catch (error) {
       console.log(error);
     }
@@ -84,15 +87,14 @@
     $webview.send("set_dokument");
     $set_mark = true;
     $set_edit = false;
-    $webview.removeEventListener("dom-ready", set_dokument);
   }
   async function set_repo() {
     const base_url = `file2://${
       $plugin ? join($plugin) : join($configData.reports, $repo)
     }/`;
-    $webview.loadURL(
+    await $webview.loadURL(
       // <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-      // <style>@media print{.noprint *{display:none;height:0;}}</style></head>
+      //<style ✂prettier:content✂="QG1lZGlhIHByaW50ey5ub3ByaW50ICp7ZGlzcGxheTpub25lO2hlaWdodDowO319"></style></head>
       // <body><div id="content" contenteditable="false"><svelte></svelte></div></body></html>
       `data:text/html;charset=utf-8;base64,
       PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
@@ -102,7 +104,6 @@
       `,
       { baseURLForDataURL: base_url }
     );
-    $webview.addEventListener("dom-ready", set_dokument);
   }
 
   function startup(node) {
