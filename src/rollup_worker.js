@@ -45,9 +45,6 @@ class RollupBuild {
         resolve({
           preferBuiltins: false,
           browser: true,
-          customResolveOptions: {
-            basedir: options.basedir,
-          },
         }),
         commonjs(),
       ],
