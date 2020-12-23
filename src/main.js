@@ -82,5 +82,10 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
+if (configData.certificate_errors) {
+  app.commandLine.appendSwitch('ignore-certificate-errors', 'true')
+  app.commandLine.appendSwitch('allow-insecure-localhost', 'true')
+}
+
 ipcMain.handle('get_store', (event, key) => configData );
 ipcMain.handle('set_store', (event, value) => configFile.set(value))

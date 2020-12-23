@@ -27,6 +27,14 @@
   <div class="field">
     <p class="control">
       <label class="label">
+        <input type="checkbox" bind:checked={$configData.certificate_errors} />
+          Unsichere Zertifikate zulassen
+      </label>
+    </p>
+  </div>
+  <div class="field">
+    <p class="control">
+      <label class="label">
         <input type="checkbox" bind:checked={$configData.write} />
         Rollup Bundle schreiben
       </label>
