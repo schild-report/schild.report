@@ -33,9 +33,9 @@
     "bulma": "^0.9.1",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
-    "electron-store": "^6.0.1",
+    "electron-store": "^7.0.0",
     "electron-util": "^0.14.2",
-    "idb-keyval": "^3.2.0",
+    "idb-keyval": "^5.0.2",
     "knex": "^0.21.6",
     "mark.js": "^8.11.1",
     "mysql": "^2.18.1",
@@ -45,7 +45,7 @@
     "rollup": "^2.32.1",
     "rollup-plugin-svelte": "^7.0.0",
     "schild": "^0.6.0",
-    "serialize-error": "^7.0.1",
+    "serialize-error": "^8.0.1",
     "snarkdown": "^2.0.0",
     "svelte": "^3.29.4"
   }
