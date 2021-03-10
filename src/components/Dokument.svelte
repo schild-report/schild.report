@@ -93,14 +93,11 @@
       $plugin ? join($plugin) : join($configData.reports, $repo)
     }/`;
     await $webview.loadURL(
-      // <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-      //<style ✂prettier:content✂="QG1lZGlhIHByaW50ey5ub3ByaW50ICp7ZGlzcGxheTpub25lO2hlaWdodDowO319"></style></head>
-      // <body><div id="content" contenteditable="false"><svelte></svelte></div></body></html>
-      `data:text/html;charset=utf-8;base64,
-      PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04
-      Ij48c3R5bGU+QG1lZGlhIHByaW50ey5ub3ByaW50ICp7ZGlzcGxheTpub25lO2hlaWdodDowO319
-      PC9zdHlsZT48L2hlYWQ+PGJvZHk+PGRpdiBpZD0iY29udGVudCIgY29udGVudGVkaXRhYmxlPSJm
-      YWxzZSI+PHN2ZWx0ZT48L3N2ZWx0ZT48L2Rpdj48L2JvZHk+PC9odG1sPg==
+      /*
+      <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><style>@media print{.noprint *{display:none;height:0;}}</style></head><body><div id="content" contenteditable="false"><svelte></svelte></div></body></html>
+      */
+     `data:text/html;charset=utf-8;base64,
+      IDwhRE9DVFlQRSBodG1sPjxodG1sIGxhbmc9ImVuIj48aGVhZD48bWV0YSBjaGFyc2V0PSJ1dGYtOCI+PHN0eWxlPkBtZWRpYSBwcmludHsubm9wcmludCAqe2Rpc3BsYXk6bm9uZTtoZWlnaHQ6MDt9fTwvc3R5bGU+PC9oZWFkPjxib2R5PjxkaXYgaWQ9ImNvbnRlbnQiIGNvbnRlbnRlZGl0YWJsZT0iZmFsc2UiPjxzdmVsdGU+PC9zdmVsdGU+PC9kaXY+PC9ib2R5PjwvaHRtbD4=
       `,
       { baseURLForDataURL: base_url }
     );
