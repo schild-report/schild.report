@@ -1,7 +1,7 @@
 appId: im.hmt.report.schild
 productName: schild.report
 artifactName: schild.report.${ext}
-buildVersion: 2.3.${env.GITHUB_RUN_NUMBER}
+buildVersion: 2.4.${env.GITHUB_RUN_NUMBER}
 copyright: Copyright ${author}
 
 extraMetadata:

@@ -32,11 +32,12 @@ function createWindow() {
     ...configData.windowBounds.main,
     show: false,
     useContentSize: true,
-    defaultEncoding: 'utf-8',
     webPreferences: {
+      defaultEncoding: 'utf-8',
       nodeIntegration: true,
       webviewTag: true,
-      nodeIntegrationInWorker: true
+      nodeIntegrationInWorker: true,
+      contextIsolation: false
     },
     title: `${app.name} ${VERSION['buildVersion']}`,
     // icon: join(__dirname, '../icons/icon.icns')
@@ -48,14 +49,15 @@ function createWindow() {
       protocol: "file:",
       slashes: true
     }))
-  if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.openDevTools()
+  if (is.development || process.argv.some(a => a === '--devtools')) mainWindow.webContents.openDevTools()
 
+  let close = false
   mainWindow.on('close', e => {
-    if (!configData.close) {
+    if (!close) {
       e.preventDefault()
       configFile.set('windowBounds.main', mainWindow.getBounds())
       console.log('Konfigurationsdaten gespeichert.')
-      configData.close = true
+      close = true
       mainWindow.close()
     }
   })
@@ -81,11 +83,6 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
-
-if (configData.certificate_errors) {
-  app.commandLine.appendSwitch('ignore-certificate-errors', 'true')
-  app.commandLine.appendSwitch('allow-insecure-localhost', 'true')
-}
 
 ipcMain.handle('get_store', (event, key) => configData );
 ipcMain.handle('set_store', (event, value) => configFile.set(value))
