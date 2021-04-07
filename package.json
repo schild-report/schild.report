@@ -34,7 +34,7 @@
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
     "electron-store": "^7.0.0",
-    "electron-util": "^0.14.2",
+    "electron-util": "^0.15.0",
     "idb-keyval": "^5.0.2",
     "knex": "^0.95.1",
     "mark.js": "^8.11.1",
