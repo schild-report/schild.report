@@ -33,7 +33,7 @@
     "bulma": "^0.9.1",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
-    "electron-store": "^7.0.0",
+    "electron-store": "^8.0.0",
     "electron-util": "^0.15.0",
     "idb-keyval": "^5.0.2",
     "knex": "^0.95.1",
