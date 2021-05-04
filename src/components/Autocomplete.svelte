@@ -46,7 +46,9 @@
     if (e.key === "ArrowDown") sel += 1;
     else if (e.key === "ArrowUp") sel -= 1;
     else if (e.key === "Enter") {
-      show_selected(res[sel]);
+      sel === -1 ? 0 : sel
+      console.log(sel=== -1 ? 0 : sel)
+      show_selected(res[sel=== -1 ? 0 : sel]);
       return;
     } else return;
     if (sel > res.length - 1) sel = 0;
