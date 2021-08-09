@@ -7,11 +7,13 @@
   <div class="hero-body">
     <div class="container">
       <div class="column is-4 is-offset-4">
-        {#if $connected}
+        <div class="box">
+          {#if $connected}
           <Login />
-        {:else}
+          {:else}
           <Datenbank />
-        {/if}
+          {/if}
+        </div>
       </div>
     </div>
   </div>
