@@ -50,6 +50,20 @@
 <div class="field">
   <p class="control">
     <label class="label"
+      >Port
+      <input
+        class="input"
+        type="text"
+        placeholder="Port"
+        on:keydown={key}
+        bind:value={db.port}
+      />
+    </label>
+  </p>
+</div>
+<div class="field">
+  <p class="control">
+    <label class="label"
       >Datenbank
       <input
         class="input"

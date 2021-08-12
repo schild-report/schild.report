@@ -25,6 +25,7 @@ const configFile = new Store({
       connection: {
         host: "localhost",
         database: "schild_berufskolleg",
+        port: "3306",
         user: "schild",
         password: "schild",
         charset: "utf8",
