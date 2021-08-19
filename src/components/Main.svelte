@@ -1,5 +1,5 @@
 <script>
-  import { component, plugin, dokument_component } from "./../stores.js";
+  import { component, dokument_component } from "./../stores.js";
   import Dokument from "./Dokument.svelte";
   import Sidebar from "./Sidebar.svelte";
   import Navbar from "./Navbar.svelte";
@@ -11,7 +11,7 @@
   const sidebar_components = [Einstellungen, Start];
   $component = Start
 
-  $: sidebar = !sidebar_components.includes($component) && !$plugin;
+  $: sidebar = !sidebar_components.includes($component);
   $: show = !!$component;
 </script>
 

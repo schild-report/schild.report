@@ -13,9 +13,8 @@ const configData = configFile.store
 console.log('Verzeichnisse anlegen oder verwenden …')
 try {
   mkDirByPathSync(configData.reports)
-  mkDirByPathSync(configData.plugins)
 } catch (e) {
-  console.log(e, 'Verzeichnisse konnten nicht angelegt werden: ', configData.reports, configData.plugins)
+  console.log(e, 'Verzeichnisse konnten nicht angelegt werden: ', configData.reports)
 }
 
 let mainWindow

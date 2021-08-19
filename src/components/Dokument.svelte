@@ -9,8 +9,6 @@
     error,
     repo,
     dokument,
-    plugin,
-    plugin_entry,
     klasse,
     selected,
     jahr,
@@ -51,7 +49,6 @@
       cache: $configData.cache,
       write: $configData.write,
       source_maps: $configData.source_maps,
-      plugin: args.file.startsWith("plugin"),
     };
     try {
       rollup.build(options, Comlink.proxy(callback));
@@ -61,9 +58,7 @@
   }
 
   $: props = {
-    componentPath: !$plugin
-      ? join($configData.userData, "bundle.js")
-      : join($plugin || "", $plugin_entry || ""),
+    componentPath: join($configData.userData, "bundle.js"),
     compiled_module: $compiled_module,
     debug: $configData.debug,
     svelteProps: {
@@ -89,9 +84,7 @@
     $set_edit = false;
   }
   async function set_repo() {
-    const base_url = `file2://${
-      $plugin ? join($plugin) : join($configData.reports, $repo)
-    }/`;
+    const base_url = `file2://${join($configData.reports, $repo)}/`;
     await $webview.loadURL(
       /*
       <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><style>@media print{.noprint *{display:none;height:0;}}</style></head><body><div id="content" contenteditable="false"><svelte></svelte></div></body></html>

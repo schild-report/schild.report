@@ -21,7 +21,6 @@
     klasse,
     component,
     error,
-    plugin,
     kommentar,
     warten
   } from "./../stores.js";
@@ -152,14 +151,14 @@
       {schule.Bezeichnung2 || ''}
     </div>
     <Autocomplete bind:zurueck_zu />
-    {#if ![Einstellungen, Start].includes($component) && !$plugin}
+    {#if ![Einstellungen, Start].includes($component)}
       <button class="button" on:click={() => refresh()}>
         <span class="icon">
           <i class="mdi">sync</i>
         </span>
       </button>
     {/if}
-    {#if !$component && !$plugin}
+    {#if !$component}
       <button
         class="button"
         on:click={() => ($component = zurueck_zu.status ? Schueler : Klasse)}>
@@ -178,7 +177,7 @@
     {/if}
   </div>
   <div class="navbar-end">
-    {#if !$component && $schueler.length && !$plugin}
+    {#if !$component && $schueler.length}
       <div class="navbar-item has-dropdown is-hoverable">
         <span class="navbar-link" style="font-variant-numeric: tabular-nums;">
           {$jahr}/{$abschnitt}

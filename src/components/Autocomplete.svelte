@@ -5,7 +5,6 @@
     selected,
     schueler_sortiert,
     component,
-    plugin,
     klasse,
     abschnitt,
     jahr,
@@ -64,13 +63,13 @@
     zurueck_zu = item;
     if (Number.isInteger(item.status)) {
       const res = await schild.getSchueler(item.id);
-      $component = ($component || $plugin) && Schueler;
+      $component = $component && Schueler;
       $schueler = [res];
       $klasse = {};
       $selected = $schueler
     } else {
       $klasse = await schild.getKlasse(item.id);
-      $component = ($component || $plugin) && Klasse;
+      $component = $component && Klasse;
       $schueler = $klasse.schueler;
       schueler_sortieren()
     }
