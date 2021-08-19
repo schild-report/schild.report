@@ -1,7 +1,7 @@
 {
   "name": "schild.report",
   "author": "hmt",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "main": "build/main.js",
   "private": true,
   "scripts": {
