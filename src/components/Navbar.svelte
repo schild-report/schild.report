@@ -1,6 +1,5 @@
 <script>
 	import { fade } from 'svelte/transition';
-  import { schild } from "./App.svelte";
   import Autocomplete from "./Autocomplete.svelte";
   import Schueler from "./Schueler.svelte";
   import Klasse from "./Klasse.svelte";
@@ -110,19 +109,6 @@
       } else $component = Start;
     } else $component = Einstellungen;
   };
-  const refresh = async _ => {
-    $warten = true;
-    const item = zurueck_zu;
-    if (Number.isInteger(item.status)) {
-      const res = await schild.getSchueler(item.id);
-      $schueler = [res];
-      $selected = $schueler;
-    } else {
-      $klasse = await schild.getKlasse(item.id);
-      $schueler = $klasse.schueler;
-    }
-    $warten = false;
-  };
 </script>
 
 <style>
@@ -151,13 +137,6 @@
       {schule.Bezeichnung2 || ''}
     </div>
     <Autocomplete bind:zurueck_zu />
-    {#if ![Einstellungen, Start].includes($component)}
-      <button class="button" on:click={() => refresh()}>
-        <span class="icon">
-          <i class="mdi">sync</i>
-        </span>
-      </button>
-    {/if}
     {#if !$component}
       <button
         class="button"
