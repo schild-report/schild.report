@@ -14,7 +14,6 @@ export const klasse = writable(undefined);
 export const schueler = writable(undefined);
 export const schueler_sortiert = writable(undefined);
 export const selected = writable(undefined);
-export const reload = writable(1);
 export const abschnitt = writable(undefined);
 export const jahr = writable(undefined);
 export const dokument = writable(undefined);
