@@ -44,7 +44,7 @@ class RollupBuild {
     // lade dynamisch node resolve, json und commonjs plugins für rollup, wenn
     // eine package.json vorliegt. Es ist davon auszugehen, dass Bibliotheken
     // geholt werden müssen.
-    if (!existsSync(resolve(input, 'package.json'))) {
+    if (existsSync(resolve(input, 'package.json'))) {
       console.log('package.json vorhanden, lade Plugins nach…')
       const { default: rollup_resolve } = await import("@rollup/plugin-node-resolve");
       const { default: commonjs } = await import("@rollup/plugin-commonjs");
