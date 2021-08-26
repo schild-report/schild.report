@@ -1,17 +1,15 @@
+import { join, resolve } from "path";
+import { existsSync } from "fs";
 import { expose } from "comlink";
-import { join, resolve as presolve } from "path";
+import { get, set } from 'idb-keyval';
 import { watch } from "rollup";
 import svelte from "rollup-plugin-svelte";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import json from "@rollup/plugin-json";
-import { get, set } from 'idb-keyval';
 
 // svelte components möchten svelte importieren. Da wir aber auch components
 // ohne node_modules zulassen, müssen wir das Verzeichnis an svelte weiterreichen
 const __nodeModules = process.env.PROD
-  ? presolve(__dirname, "node_modules/svelte")
-  : presolve(__dirname, "../node_modules/svelte");
+  ? resolve(__dirname, "node_modules/svelte")
+  : resolve(__dirname, "../node_modules/svelte");
 
 class RollupBuild {
   async build(options, callback) {
@@ -23,12 +21,11 @@ class RollupBuild {
         console.log('Komponente wurde im Cache gefunden')
       }
     }
+    const input = resolve(options.source)
     this.input = {
-      input: presolve(options.source),
-      perf: true,
+      input,
       treeshake: false,
       plugins: [
-        json({ preferConst: true }),
         svelte({
           emitCss: false,
           onwarn: (warning, handler) => {
@@ -42,13 +39,25 @@ class RollupBuild {
             dev: options.debug,
           },
         }),
-        resolve({
+      ],
+    };
+    // lade dynamisch node resolve, json und commonjs plugins für rollup, wenn
+    // eine package.json vorliegt. Es ist davon auszugehen, dass Bibliotheken
+    // geholt werden müssen.
+    if (!existsSync(resolve(input, 'package.json'))) {
+      console.log('package.json vorhanden, lade Plugins nach…')
+      const { default: rollup_resolve } = await import("@rollup/plugin-node-resolve");
+      const { default: commonjs } = await import("@rollup/plugin-commonjs");
+      const { default: json } = await import("@rollup/plugin-json");
+      this.input.plugins.push(
+        json({ preferConst: true }),
+        rollup_resolve({
           preferBuiltins: false,
           browser: true,
         }),
-        commonjs(),
-      ],
-    };
+        commonjs()
+      )
+    }
     this.output = {
       file: join(options.dest, "/bundle.js"),
       format: "cjs",
