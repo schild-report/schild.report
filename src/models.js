@@ -88,6 +88,11 @@ class Schueler extends Model {
         relation: Model.HasOneRelation,
         modelClass: Versetzung,
         join: { from: 'schueler.Klasse', to: 'versetzung.Klasse' }
+      },
+      zubringerschule: {
+        relation: Model.HasOneRelation,
+        modelClass: FremdSchule,
+        join: { from: 'schueler.LSSchulNr', to: 'k_schule.SchulNr' }
       }
     }
   }
@@ -265,6 +270,9 @@ class Vermerk extends Model {
 class Schuelerfoto extends Model {
   static get tableName () { return 'schuelerfotos' }
 }
+class FremdSchule extends Model {
+  static get tableName () { return 'k_schule' }
+}
 class Schule extends Model {
   static get tableName () { return 'eigeneschule' }
   static get virtualAttributes () {
@@ -292,6 +300,7 @@ export {
   AbiAbschlussFach,
   FHRAbschluss,
   FHRAbschlussFach,
+  FremdSchule,
   Sprachenfolge,
   FachGliederung,
   Vermerk,
