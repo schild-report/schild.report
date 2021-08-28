@@ -1,6 +1,6 @@
 import { expose } from "comlink";
 import CheapWatch from 'cheap-watch'
-import { lstatSync, readdirSync, existsSync, closeSync, openSync } from 'fs'
+import { lstatSync, readdirSync, existsSync, writeFile } from 'fs'
 import { join, basename } from 'path'
 
 function scanSource (report_location) {
@@ -13,11 +13,10 @@ function scanSource (report_location) {
         ...o,
         [basename(element)]: readdirSync(element).filter(fn => /\.((html)|(svelte))$/.test(fn) && fn.charAt(0) !== '_')
       }), {})
-    
+    // lege package.json an, damit Windows die Reports erstellen kann
     Object.keys(obj).forEach(e=> {
-      if (!existsSync(join(report_location, e, 'package.json'))) {
-        closeSync(openSync(join(report_location, e, 'package.json'), 'a'))
-      }
+      const location = join(report_location, e, 'package.json')
+      if (!existsSync(location)) writeFile(location, '{}', e => console.log('Package.json konnte nicht angelegt werden: ',e))
     })
     return obj
   } catch (e) {
