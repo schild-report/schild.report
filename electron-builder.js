@@ -1,4 +1,3 @@
-
 const config = {
     appId: "im.hmt.report.schild",
     productName: "schild.report",
