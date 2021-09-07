@@ -49,7 +49,7 @@
       </div>
       <div class="media-content">
         <p class="title is-4">{s.Name}, {s.Vorname}</p>
-        <p class="subtitle is-6">{s.Klasse}</p>
+        <p class="subtitle is-6">{s.Klasse} | {s.ID}</p>
         {s.Strasse}, {s.PLZ} {s.OrtAbk}
         <p />
         <br />

@@ -18,7 +18,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^13.0.1",
+    "electron": "^14.0.0",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-wix-msi": "^3.0.4",
@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "bulma": "^0.9.1",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
