@@ -2,7 +2,6 @@ const config = {
     appId: "im.hmt.report.schild",
     productName: "schild.report",
     artifactName: "schild.report.${ext}",
-    buildVersion: `2.5.${process.env.GITHUB_RUN_NUMBER}`,
     copyright: `Copyright ${process.env.THE_AUTHOR}`,
     extraMetadata: {
         author: {
@@ -15,7 +14,8 @@ const config = {
     ],
     win: {
         icon: "icons/icon.ico",
-        target: "msi"
+        target: "msi",
+
     },
     linux: {
         icon: "icons/icon.png",
