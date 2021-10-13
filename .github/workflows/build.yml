@@ -46,6 +46,9 @@ jobs:
         run: npm run dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          THE_AUTHOR: ${{ secrets.AUTHOR }}
+          THE_EMAIL: ${{ secrets.EMAIL }}
       - name: show dir
         run: ls dist
       - uses: ncipollo/release-action@v1
