@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.0",
-    "electron": "^15.0.0",
+    "electron": "^16.0.0",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-wix-msi": "^3.0.4",
