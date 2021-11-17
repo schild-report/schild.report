@@ -45,7 +45,7 @@
     "rollup": "^2.42.0",
     "rollup-plugin-svelte": "^7.0.0",
     "schild": "^0.7.0",
-    "serialize-error": "^8.0.1",
+    "serialize-error": "^9.0.0",
     "snarkdown": "^2.0.0",
     "svelte": "^3.29.4"
   }
