@@ -14,11 +14,11 @@
   };
   const connect = async (_) => {
     try {
-      await schild.connect({ client: "mysql", connection: db });
+      await schild.connect(db);
       $connected = await schild.testConnection();
       fehler = false;
       $configData.db = {
-        client: "mysql",
+        client: db.client,
         useNullAsDefault: true,
         connection: db,
       };
@@ -32,6 +32,19 @@
 
 <p class="subtitle is-4 has-text-grey has-text-centered">Datenbank</p>
 <br />
+<div class="field">
+  <div class="control">
+    <label class="label" for="client"
+      >Datenbank
+      <div class="select">
+        <select bind:value={db.client} name="client">
+          <option value="mysql">MySQL/MariaDB</option>
+          <option value="mssql">MSSQL</option>
+        </select>
+      </div>
+    </label>
+  </div>
+</div>
 <div class="field">
   <p class="control">
     <label class="label"
@@ -101,15 +114,6 @@
         bind:value={db.password}
       />
     </label>
-  </p>
-</div>
-<div class="field">
-  <p class="control">
-    <label class="label checkbox">
-      <input type="checkbox" bind:checked={db.dateStrings} />
-      Daten als String
-    </label>
-    Daten als String verwenden – verhindert Probleme bei Geburtsdaten etc.
   </p>
 </div>
 <div class="field">
