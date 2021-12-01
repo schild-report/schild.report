@@ -18,7 +18,6 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.0.0",
     "electron": "^16.0.0",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
@@ -30,6 +29,7 @@
   "dependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-commonjs": "^21.0.0",
     "bulma": "^0.9.1",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
