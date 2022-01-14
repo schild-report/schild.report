@@ -1,7 +1,8 @@
 <script>
   import { configData, schueler, selected } from "./../stores.js";
-  import mysql from "mysql";
+  import knex from "knex";
   import { datum } from "./../helfer.js";
+  const connection = knex($configData.db)
   $: s = $schueler[0];
   $: $selected = $schueler
   $: faecher = new Set(
@@ -11,17 +12,10 @@
       .flat()
   );
   $: foto = new Promise((resolve, reject) => {
-    const connection = mysql.createConnection($configData.db.connection);
-    connection.connect();
-    connection.query(
-      "SELECT Foto FROM `schuelerfotos` WHERE `Schueler_ID` = ?",
-      [s.ID],
-      (err, rows) => {
-        connection.end();
-        if (err || rows.length === 0) return reject();
-        resolve(Buffer.from(rows[0].Foto, "binary").toString("base64"));
-      }
-    );
+    connection.select("Foto").from("schuelerfotos").where('Schueler_ID', s.ID).then(rows => {
+      if (rows.length === 0) return reject()
+      resolve(Buffer.from(rows[0].Foto, "binary").toString("base64"));
+    })
   });
 </script>
 

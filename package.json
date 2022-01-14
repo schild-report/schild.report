@@ -1,7 +1,7 @@
 {
   "name": "schild.report",
   "author": "hmt",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "main": "build/main.js",
   "private": true,
   "scripts": {
@@ -11,14 +11,14 @@
     "package-win": "electron-packager . --overwrite --name=schild.report --platform=win32  --arch=ia32 --icon=icons/icon.ico  --asar --out=release",
     "package-mac": "electron-packager . --overwrite --name=schild.report --platform=darwin --arch=x64  --icon=icons/icon.icns --asar --out=release",
     "package-linux": "electron-packager . --overwrite --name=schild.report --platform=linux  --arch=x64  --icon=icons/icon.png  --asar --out=release",
-    "dist": "electron-builder",
+    "dist": "electron-builder --config electron-builder-config.js",
     "start:electron": "electron .",
     "dev:development": "rollup --config --watch",
     "dev:electron": "electron .",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^14.0.0",
+    "electron": "^16.0.0",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-wix-msi": "^3.0.4",
@@ -27,26 +27,27 @@
     "rollup-plugin-node-externals": "^2.2.0"
   },
   "dependencies": {
-    "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-commonjs": "^21.0.0",
     "bulma": "^0.9.1",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
     "electron-store": "^8.0.0",
     "electron-util": "^0.17.0",
-    "idb-keyval": "^5.0.2",
-    "knex": "<0.95.0",
+    "idb-keyval": "^6.0.2",
+    "knex": "^0.95.14",
     "mark.js": "^8.11.1",
     "mysql": "^2.18.1",
-    "objection": "^2.2.3",
+    "objection": "^3.0.0",
     "pg": "^8.4.1",
     "require-from-string": "^2.0.2",
     "rollup": "^2.42.0",
     "rollup-plugin-svelte": "^7.0.0",
-    "schild": "^0.7.0",
-    "serialize-error": "^8.0.1",
+    "schild": "^0.8.0",
+    "serialize-error": "^9.0.0",
     "snarkdown": "^2.0.0",
-    "svelte": "^3.29.4"
+    "svelte": "^3.29.4",
+    "tedious": "^14.0.0"
   }
 }
