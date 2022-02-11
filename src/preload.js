@@ -15,7 +15,7 @@ ipcRenderer.on('props', (event, data) => {
   componentPath = data.componentPath
   compiled_module = data.compiled_module
 })
-ipcRenderer.on('set_dokument', () => {
+ipcRenderer.on('set_dokument', async () => {
   if (svelte) svelte.$destroy()
   try {
     Component = requireFromString(compiled_module.code);
@@ -27,9 +27,9 @@ ipcRenderer.on('set_dokument', () => {
       generic_pdf: svelte.generic_pdf
     })
   } catch (error) {
-    const { serializeError } = require('serialize-error')
+    // const { serializeError } = await import('serialize-error')
     console.log('Das Svelte-Dokument konnte nicht geladen werden:', error)
-    ipcRenderer.sendToHost('error_message', serializeError(error))
+    // ipcRenderer.sendToHost('error_message', serializeError(error))
   }
   runMark()
 })
