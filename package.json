@@ -22,6 +22,7 @@
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-wix-msi": "^3.0.4",
+    "knex": "^1.0.3",
     "npm-run-all": "^4.1.5",
     "rollup-plugin-css-only": "^3.0.0",
     "rollup-plugin-node-externals": "^4.0.0"
@@ -36,7 +37,6 @@
     "electron-store": "^8.0.0",
     "electron-util": "^0.17.0",
     "idb-keyval": "^6.0.2",
-    "knex": "^0.95.14",
     "mark.js": "^8.11.1",
     "mysql": "^2.18.1",
     "objection": "^3.0.0",
