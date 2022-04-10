@@ -57,20 +57,43 @@
     }
   }
 
-  $: props = {
-    componentPath: join($configData.userData, "bundle.js"),
-    compiled_module: $compiled_module,
-    debug: $configData.debug,
-    svelteProps: {
-      schule: schule,
-      klasse: $klasse,
-      schueler: $selected,
-      jahr: $jahr,
-      abschnitt: $abschnitt,
-      privat: $configData.privateDaten,
-      knexConfig: $configData.db,
-    },
+  let props = {}
+  $: {
+      // übergebe Auswahlinformation an das schuelerobjekt 
+      if ($selected) {
+					$selected.forEach(s => {
+						s.gewaehltesJahr = $jahr;
+						s.gewaehlteAbschnittsNummer = $abschnitt;
+					});
+			}
+      props = {
+        componentPath: join($configData.userData, "bundle.js"),
+        compiled_module: $compiled_module,
+        debug: $configData.debug,
+        svelteProps: {
+          // mache alle Informationen über das "auswahl" Objekt verfügbar
+          // -> es ist nur ein Import im Dokument erforderlich, der einfach erweitert werden kann 
+          auswahl: { 
+              schule: schule, 
+              klasse: $klasse, 
+              schueler: $selected,
+              jahr: $jahr,
+              abschnitt: $abschnitt,
+              privat: $configData.privateDaten,
+              db: $configData.db,
+            },
+          // alternative Nutzung: 
+          schule: schule,
+          klasse: $klasse,
+          schueler: $selected,
+          jahr: $jahr,
+          abschnitt: $abschnitt,
+          privat: $configData.privateDaten,
+          knexConfig: $configData.db,
+        }
+      }
   };
+
   $: props && set_props();
 
   async function set_props() {

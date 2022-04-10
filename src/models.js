@@ -2,31 +2,6 @@ import { Model } from 'objection'
 
 class Schueler extends Model {
   static get tableName () { return 'schueler' }
-  static get virtualAttributes () {
-    return ['anrede', 'akt_halbjahr', 'schueler_in', 'studierende_r', 'berufsbezeichnung_mw', 'volljaehrig']
-  }
-  get anrede () {
-    return (this.Geschlecht === 3 ? 'Herr' : 'Frau')
-  }
-  get schueler_in () {
-    return (this.Geschlecht === 3 ? 'Schüler' : 'Schülerin')
-  }
-  get studierende_r () {
-    return (this.Geschlecht === 3 ? 'Studierender' : 'Studierende')
-  }
-  get berufsbezeichnung_mw () {
-    if (this.fachklasse) return this.Geschlecht === 3 ? this.fachklasse.Bezeichnung : this.fachklasse.Beschreibung_W
-    else return 'Keine Fachklasse zugeordnet'
-  }
-  get volljaehrig () {
-    return this.Volljaehrig === '+'
-  }
-  volljaehrig_bei (datum) {
-    if (!datum || !this.Geburtsdatum) return false
-    var g = new Date(this.Geburtsdatum)
-    var d = new Date(datum)
-    return (d.getFullYear() - g.getFullYear() - ((d.getMonth() > g.getMonth() || (d.getMonth() === g.getMonth() && d.getDay() >= g.getDay())) ? 0 : 1)) >= 18
-  }
   static get relationMappings () {
     return {
       fachklasse: {
@@ -93,6 +68,11 @@ class Schueler extends Model {
         relation: Model.HasOneRelation,
         modelClass: FremdSchule,
         join: { from: 'schueler.LSSchulNr', to: 'k_schule.SchulNr' }
+      },
+      erziehungsberechtigung: {
+        relation: Model.HasOneRelation,
+        modelClass: Erziehungsberechtigung,
+        join: { from: 'schueler.ID', to: 'schuelererzadr.Schueler_ID' }
       }
     }
   }
@@ -273,6 +253,18 @@ class Schuelerfoto extends Model {
 class FremdSchule extends Model {
   static get tableName () { return 'k_schule' }
 }
+class Erziehungsberechtigung extends Model {
+  static get tableName () { return 'schuelererzadr' }
+  static get relationMappings () {
+    return {
+      ort: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Ort,
+        join: { from: 'schuelererzadr.ErzPLZ', to: 'k_ort.PLZ' }
+      }
+    }
+  }
+}
 class Schule extends Model {
   static get tableName () { return 'eigeneschule' }
   static get virtualAttributes () {
@@ -281,6 +273,9 @@ class Schule extends Model {
   get schulleiter_in () {
     return this.SchulleiterGeschlecht === 3 ? 'Schulleiter' : 'Schulleiterin'
   }
+}
+class Ort extends Model {
+  static get tableName () { return 'k_ort' }
 }
 class Nutzer extends Model {
   static get tableName () { return 'users' }
@@ -306,6 +301,8 @@ export {
   Vermerk,
   Schuelerfoto,
   Schule,
+  Ort,
   Nutzer,
-  Jahrgang
+  Jahrgang,
+  Erziehungsberechtigung
 }

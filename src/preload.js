@@ -1,3 +1,6 @@
+import { DErziehungsberechtigung } from './document_models/derziehungsberechtigung';
+import { DSchueler } from './document_models/dschueler'
+
 const ipcRenderer = require('electron').ipcRenderer
 const Mark = require('mark.js')
 const requireFromString = require('require-from-string');
@@ -9,8 +12,17 @@ function runMark () {
   mark = new Mark(document.querySelector('body'))
   mark.mark(['undefined', '01.01.1970', 'null'])
 }
+
+
 ipcRenderer.on('props', (event, data) => {
   props = data.svelteProps
+  // weise Typen zu
+  props.schueler.forEach((s) => {
+    Object.setPrototypeOf(s, DSchueler.prototype)
+    if(s.erziehungsberechtigung)
+      Object.setPrototypeOf(s.erziehungsberechtigung, DErziehungsberechtigung.prototype)
+  });
+
   svelte?.$set(props)
   componentPath = data.componentPath
   compiled_module = data.compiled_module
