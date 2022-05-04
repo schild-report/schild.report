@@ -80,7 +80,8 @@ class Schild {
           [abschnitte.[noten.fach, lehrer],
           fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
           bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
-          abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach, zubringerschule]
+          abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach, 
+          zubringerschule, erziehungsberechtigung.[ort]]
         `)
         .modifyGraph('abschnitte', builder => {
           builder.orderBy('ID');
@@ -99,7 +100,8 @@ class Schild {
           [schueler.[abschnitte.[noten.fach, lehrer],
           fachklasse.[fach_gliederungen], versetzung, bk_abschluss,
           bk_abschluss_faecher.fach, fhr_abschluss, fhr_abschluss_faecher.fach,
-          abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach, zubringerschule], fachklasse,
+          abi_abschluss, abi_abschluss_faecher.fach, vermerke, sprachenfolgen.fach, 
+          zubringerschule, erziehungsberechtigung.[ort]], fachklasse,
           jahrgang]
         `)
         .modifyGraph('schueler', builder => {

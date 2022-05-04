@@ -29,12 +29,12 @@ jobs:
       - name: Install Node.js, NPM
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '16'
           check-latest: true
       - run: npm install
       - name: set version
         run: |
-          echo "export const VERSION = { gitHash: '${{ github.sha }}', buildVersion: '2.5.${{ github.run_number }}', production: true }" > src/version.js
+          echo "export const VERSION = { gitHash: '${{ github.sha }}', buildVersion: '2.6.${{ github.run_number }}', production: true }" > src/version.js
       - name: show version
         run: cat src/version.js
       - name: Build
@@ -44,13 +44,17 @@ jobs:
         run: npm run build -m
       - name: Package
         run: npm run dist
+        # Build number is automatically appended to version from package.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          THE_AUTHOR: ${{ secrets.AUTHOR }}
+          THE_EMAIL: ${{ secrets.EMAIL }}
       - name: show dir
         run: ls dist
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "./dist/schild.report.msi,./dist/schild.report.dmg,./dist/schild.report.AppImage,./dist/schild.report.snap,./dist/schild.report.rpm,./dist/schild.report.deb"
           allowUpdates: true
-          tag: v2.5.${{ github.run_number }}
+          tag: v2.6.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
