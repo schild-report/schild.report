@@ -10,7 +10,7 @@ let svelte, props, Component, componentPath, mark, compiled_module
 
 function runMark () {
   mark = new Mark(document.querySelector('body'))
-  mark.mark(['undefined', '01.01.1970', 'null', '1. Januar 1970'])
+  mark.mark(['undefined', '01.01.1970', 'null', '1. Januar 1970'], {accuracy:'exactly'})
 }
 
 
