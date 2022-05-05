@@ -10,12 +10,21 @@ export class DSchueler {
     }
   
     get vorhergehenderAbschnitt () {
-      // TODO: Jahresübergreifende Umsetzung
-      return this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr && a.Abschnitt === this.gewaehlteAbschnittsNummer-1)
+      let na=this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr && a.Abschnitt === this.gewaehlteAbschnittsNummer-1)
+      if(na) return na
+      let ab=1
+      let s
+      do {
+        na=s;
+        s=this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr-1 && a.Abschnitt === ab)
+        ab++
+      } while(s)
+      return na
     }
     get naechsterAbschnitt () {
-      // TODO: Jahresübergreifende Umsetzung
-      return this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr && a.Abschnitt === this.gewaehlteAbschnittsNummer+1)
+      let na= this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr && a.Abschnitt === this.gewaehlteAbschnittsNummer+1)
+      if(na) return na
+      return this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr+1 && a.Abschnitt === 0)
     }
     volljaehrigAm (datum) {
       if (!datum || !this.Geburtsdatum) return false
@@ -26,6 +35,9 @@ export class DSchueler {
   
     get gewaehlterAbschnitt () {
       return this.abschnitte.find(a => a.Jahr === this.gewaehltesJahr && a.Abschnitt === this.gewaehlteAbschnittsNummer)
+    }
+    get gewaehlterJahrgang () {
+      return this.gewaehlterAbschnitt.Jahrgang
     }
     get anrede () {
       return (this.Geschlecht === 3 ? 'Herr' : 'Frau')
