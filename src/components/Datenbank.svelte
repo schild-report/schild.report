@@ -3,10 +3,12 @@
   import { configData, connected } from "./../stores.js";
   import { focus } from "./../helfer.js";
 
-  let fehler = false;
-  const db = $configData?.db.connection || {};
+  let tested=false
+  let caption={"false":"Testen", "error":"Verbindung fehlgeschlagen", "success": "Verbindung erfolgreich"}
+  const db = $configData?.db || {};
 
   const key = (e) => {
+    tested=false
     if (e.key === "Enter") {
       connect();
       e.preventDefault();
@@ -16,17 +18,18 @@
     try {
       await schild.connect(db);
       $connected = await schild.testConnection();
-      fehler = false;
-      $configData.db = {
-        client: db.client,
-        useNullAsDefault: true,
-        connection: db,
-      };
-      if (!$connected) throw "Fehler";
+      $configData.db = db
+      if (!$connected) {
+        throw "Verbindungstest gescheitert";
+      }
+      tested="success"
     } catch (e) {
       console.log(e);
-      fehler = true;
+      tested="error"
     }
+    setTimeout(() => {
+      tested=false
+    }, 3000);
   };
 </script>
 
@@ -55,7 +58,7 @@
         placeholder="z.B. localhost oder 192.168.178.99"
         use:focus
         on:keydown={key}
-        bind:value={db.host}
+        bind:value={db.connection.host}
       />
     </label>
   </p>
@@ -69,7 +72,7 @@
         type="text"
         placeholder="Port"
         on:keydown={key}
-        bind:value={db.port}
+        bind:value={db.connection.port}
       />
     </label>
   </p>
@@ -83,7 +86,7 @@
         type="text"
         placeholder="Datenbank"
         on:keydown={key}
-        bind:value={db.database}
+        bind:value={db.connection.database}
       />
     </label>
   </p>
@@ -97,7 +100,7 @@
         type="text"
         placeholder="Benutzername"
         on:keydown={key}
-        bind:value={db.user}
+        bind:value={db.connection.user}
       />
     </label>
   </p>
@@ -111,7 +114,7 @@
         type="password"
         placeholder="Passwort"
         on:keydown={key}
-        bind:value={db.password}
+        bind:value={db.connection.password}
       />
     </label>
   </p>
@@ -119,7 +122,7 @@
 <div class="field">
   <p class="control">
     <label class="label">
-      <input type="checkbox" bind:checked={db.debug} />
+      <input type="checkbox" bind:checked={db.connection.debug} />
       MySQL Debug-Modus
     </label>
     Alle MySQL-Anfragen werden in der Konsole ausgegeben.
@@ -134,7 +137,7 @@
         type="text"
         placeholder="'local', 'Z' oder als Offset +HH:MM / -HH:MM"
         on:keydown={key}
-        bind:value={db.timezone}
+        bind:value={db.connection.timezone}
       />
     </label>
   </p>
@@ -148,15 +151,15 @@
         type="text"
         placeholder="utf8"
         on:keydown={key}
-        bind:value={db.charset}
+        bind:value={db.connection.charset}
       />
     </label>
   </p>
 </div>
 <button
   class="button is-block is-link is-fullwidth"
-  class:is-danger={fehler}
+  class:is-danger={ tested =="error"}
   class:is-success={$connected}
   on:click={connect}
-  >{fehler ? "Verbindung fehlgeschlagen" : "Verbinden"}</button
+  >{caption[tested]}</button
 ><br />
