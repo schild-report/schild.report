@@ -1,7 +1,7 @@
 // Wrapper für den Schüler
 
 export class DSchueler {
-    DSchueler () {
+  constructor () {
       this.gewaehlteAbschnittsNummer=0
       this.gewaehltesJahr=0
     }
