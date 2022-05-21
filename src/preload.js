@@ -6,6 +6,7 @@ const Mark = require('mark.js')
 const requireFromString = require('require-from-string');
 
 global.R = (lib) => require(lib)
+
 let svelte, props, Component, componentPath, mark, compiled_module
 
 function runMark () {
@@ -39,9 +40,8 @@ ipcRenderer.on('set_dokument', async () => {
       generic_pdf: svelte.generic_pdf
     })
   } catch (error) {
-    // const { serializeError } = await import('serialize-error')
     console.log('Das Svelte-Dokument konnte nicht geladen werden:', error)
-    // ipcRenderer.sendToHost('error_message', serializeError(error))
+    ipcRenderer.sendToHost('error_message', error)
   }
   runMark()
 })
