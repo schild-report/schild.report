@@ -6,6 +6,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import { get, set } from 'idb-keyval';
+import includePaths from 'rollup-plugin-includepaths'
+import replace from '@rollup/plugin-replace'
 
 // svelte components möchten svelte importieren. Da wir aber auch components
 // ohne node_modules zulassen, müssen wir das Verzeichnis an svelte weiterreichen
@@ -13,6 +15,7 @@ const __nodeModules = process.env.PROD
   ? presolve(__dirname, "node_modules/svelte")
   : presolve(__dirname, "../node_modules/svelte");
 
+  
 class RollupBuild {
   async build(options, callback) {
     let cache
@@ -23,11 +26,28 @@ class RollupBuild {
         console.log('Komponente wurde im Cache gefunden')
       }
     }
+    console.log(`${options.rootdir}/.js`)
     this.input = {
       input: presolve(options.source),
       perf: true,
       treeshake: false,
       plugins: [
+         includePaths({
+          include: {},
+          paths: [`${options.rootdir}/.js`],
+          external: [],
+          extensions: ['.js']
+        }),
+        includePaths({
+          include: {},
+          paths: [`${options.rootdir}/.vorlagen`],
+          external: [],
+          extensions: ['.svelte']
+        }),
+        replace({
+          "__rootdir":options.rootdir.replace(/\\/g, "/"),
+          "__basedir":options.basedir.replace("\\","/"),
+        }),
         json({ preferConst: true }),
         svelte({
           emitCss: false,

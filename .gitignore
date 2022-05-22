@@ -1,5 +1,6 @@
 node_modules/
 release/
+dist/
 package-lock.jsonbuild
 build/bundle.*
 build/*.js
@@ -7,3 +8,6 @@ build/*.map
 .DS_Store
 .vscode
 schild-report.code-workspace
+package-lock.json
+
+out/

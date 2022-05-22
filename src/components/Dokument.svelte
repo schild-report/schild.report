@@ -44,6 +44,7 @@
     const options = {
       source: join($configData.reports, args.repo, args.file),
       basedir: join($configData.reports, args.repo),
+      rootdir: join($configData.reports),
       dest: join($configData.userData),
       debug: $configData.debug,
       cache: $configData.cache,
@@ -57,20 +58,43 @@
     }
   }
 
-  $: props = {
-    componentPath: join($configData.userData, "bundle.js"),
-    compiled_module: $compiled_module,
-    debug: $configData.debug,
-    svelteProps: {
-      schule: schule,
-      klasse: $klasse,
-      schueler: $selected,
-      jahr: $jahr,
-      abschnitt: $abschnitt,
-      privat: $configData.privateDaten,
-      knexConfig: $configData.db,
-    },
+  let props = {}
+  $: {
+      // übergebe Auswahlinformation an das schuelerobjekt 
+      if ($selected) {
+					$selected.forEach(s => {
+						s.gewaehltesJahr = $jahr;
+						s.gewaehlteAbschnittsNummer = $abschnitt;
+					});
+			}
+      props = {
+        componentPath: join($configData.userData, "bundle.js"),
+        compiled_module: $compiled_module,
+        debug: $configData.debug,
+        svelteProps: {
+          // mache alle Informationen über das "auswahl" Objekt verfügbar
+          // -> es ist nur ein Import im Dokument erforderlich, der einfach erweitert werden kann 
+          auswahl: { 
+              schule: schule, 
+              klasse: $klasse, 
+              schueler: $selected,
+              jahr: $jahr,
+              abschnitt: $abschnitt,
+              privat: $configData.privateDaten,
+              db: $configData.db,
+            },
+          // alternative Nutzung: 
+          schule: schule,
+          klasse: $klasse,
+          schueler: $selected,
+          jahr: $jahr,
+          abschnitt: $abschnitt,
+          privat: $configData.privateDaten,
+          knexConfig: $configData.db,
+        }
+      }
   };
+
   $: props && set_props();
 
   async function set_props() {
@@ -128,11 +152,14 @@
 </script>
 
 <!-- svelte-ignore component-name-lowercase -->
-<webview src="about:blank" preload="./preload.js" use:startup />
+<webview src="about:blank" preload="./preload.js" disablewebsecurity use:startup />
 {#if $error}
   <div class="fehlermeldung">
-    <h3 class="is-size-3">{$error.message}</h3>
-    <pre>{$error.stack}</pre>
+    <div style="margin-bottom:1em">Bei der Verarbeitung des Dokuments ist folgender Fehler aufgetreten:</div>
+    <div style="overflow:auto">
+      <pre style="font-size:1.3rem; font-weigth:bold; color:white; background-color:rgba(100,100,100,0.8); white-space: pre-wrap;">{$error.message}</pre>
+      <pre style="background-color:rgba(200, 220, 240, 0.8); white-space: pre-wrap;">{$error.stack}</pre>
+    </div>
   </div>
 {/if}
 
@@ -141,12 +168,17 @@
     height: -webkit-fill-available;
   }
   .fehlermeldung {
-    position: absolute;
-    left: 250px;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    width: 100%;
-    height: 200px;
-    overflow: auto;
+    position: sticky;
+    margin: auto;
+    width: 90%;
+    left: auto;
+    height: 30%;
+    border: 2px solid red;
+    bottom: 1em;
+    padding: 1em;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
   }
 </style>
