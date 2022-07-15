@@ -49,7 +49,7 @@
     "schild": "^0.8.0",
     "serialize-error": "^9.0.0",
     "snarkdown": "^2.0.0",
-    "svelte": "^3.29.4",
+    "svelte": "^3.49.0",
     "tedious": "^14.0.0"
   }
 }
