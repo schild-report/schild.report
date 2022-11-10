@@ -18,7 +18,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
-    "electron": "^18.0.0",
+    "electron": "^18.3.7",
     "electron-builder": "^22.9.1",
     "electron-packager": "^15.1.0",
     "electron-wix-msi": "^3.0.4",
