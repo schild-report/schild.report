@@ -37,7 +37,7 @@
     "electron-store": "^8.0.0",
     "electron-util": "^0.17.0",
     "idb-keyval": "^6.0.2",
-    "knex": "^1.0.3",
+    "knex": "^2.4.0",
     "mark.js": "^8.11.1",
     "mysql": "^2.18.1",
     "objection": "^3.0.0",
