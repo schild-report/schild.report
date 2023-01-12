@@ -128,7 +128,7 @@
 </script>
 
 <!-- svelte-ignore component-name-lowercase -->
-<webview src="about:blank" preload="./preload.js" use:startup />
+<webview src="about:blank" preload="./preload.js" nodeintegration use:startup />
 {#if $error}
   <div class="fehlermeldung">
     <h3 class="is-size-3">{$error.message}</h3>
