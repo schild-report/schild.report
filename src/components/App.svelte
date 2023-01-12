@@ -7,7 +7,7 @@
 
 <script>
   import { db, connected, user } from "./../stores.js";
-  import { VERSION } from "./../version.js";
+  import VERSION from "./../version";
   import Main from "./Main.svelte";
   import Intro from "./Intro.svelte";
 

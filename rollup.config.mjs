@@ -1,7 +1,7 @@
 import svelte from "rollup-plugin-svelte";
 import externals from "rollup-plugin-node-externals";
 import css from 'rollup-plugin-css-only'
-import { VERSION } from './src/version'
+import VERSION from './src/version.mjs'
 
 export default [
   {

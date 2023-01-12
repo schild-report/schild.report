@@ -4,7 +4,7 @@ import { app, BrowserWindow, shell, protocol, ipcMain } from 'electron'
 import { is } from 'electron-util'
 
 import configFile from './configstore'
-import { VERSION } from './version'
+import VERSION from './version'
 import { mkDirByPathSync } from './mkdir'
 
 console.log(VERSION)
@@ -36,7 +36,8 @@ function createWindow() {
       nodeIntegration: true,
       webviewTag: true,
       nodeIntegrationInWorker: true,
-      contextIsolation: false
+      contextIsolation: false,
+      sandbox: false
     },
     title: `${app.name} ${VERSION['buildVersion']}`,
     // icon: join(__dirname, '../icons/icon.icns')

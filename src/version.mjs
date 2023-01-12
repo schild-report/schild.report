@@ -1,0 +1,1 @@
+export default { buildVersion: 'development', gitHash: 'development', production: false }

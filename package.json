@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rollup --config",
     "start": "npm run build && run-s start:*",
-    "dev": "rollup -c && run-p dev:*",
+    "dev": "rollup -c --bundleConfigAsCjs && run-p dev:*",
     "package-win": "electron-packager . --overwrite --name=schild.report --platform=win32  --arch=ia32 --icon=icons/icon.ico  --asar --out=release",
     "package-mac": "electron-packager . --overwrite --name=schild.report --platform=darwin --arch=x64  --icon=icons/icon.icns --asar --out=release",
     "package-linux": "electron-packager . --overwrite --name=schild.report --platform=linux  --arch=x64  --icon=icons/icon.png  --asar --out=release",
@@ -24,13 +24,14 @@
     "electron-wix-msi": "^5.0.0",
     "knex": "^1.0.3",
     "npm-run-all": "^4.1.5",
-    "rollup-plugin-css-only": "^3.0.0",
-    "rollup-plugin-node-externals": "^4.0.0"
+    "rollup-plugin-css-only": "^4.3.0",
+    "rollup-plugin-node-externals": "^5.1.0"
   },
   "dependencies": {
-    "@rollup/plugin-commonjs": "^21.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/browser": "^3.10.0",
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
     "bulma": "^0.9.1",
     "cheap-watch": "^1.0.2",
     "comlink": "^4.3.0",
@@ -42,12 +43,12 @@
     "objection": "^3.0.0",
     "pg": "^8.4.1",
     "require-from-string": "^2.0.2",
-    "rollup": "^2.42.0",
+    "rollup": "^3.10.0",
     "rollup-plugin-svelte": "^7.0.0",
     "schild": "^0.8.0",
-    "serialize-error": "^9.0.0",
+    "serialize-error": "^11.0.0",
     "snarkdown": "^2.0.0",
     "svelte": "^3.29.4",
-    "tedious": "^14.0.0"
+    "tedious": "^15.1.2"
   }
 }

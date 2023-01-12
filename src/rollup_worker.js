@@ -1,6 +1,6 @@
 import { expose } from "comlink";
 import { join, resolve as presolve } from "path";
-import { watch } from "rollup";
+import { rollup } from "rollup";
 import svelte from "rollup-plugin-svelte";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
@@ -16,6 +16,7 @@ const __nodeModules = process.env.PROD
 class RollupBuild {
   async build(options, callback) {
     let cache
+    console.log(rollup)
     if (options.cache) {
       cache = await get(options.source)
       if (cache) {
@@ -66,16 +67,13 @@ class RollupBuild {
       watch: this.watch,
     };
     try {
-      this.watcher?.close();
-      this.watcher = watch(this.options);
-      this.watcher.on("event", async (event) => {
-        if (event.code === "ERROR") {
-          console.log(event);
-          callback(event, null);
-        }
-        if (event.code === "BUNDLE_END") {
-          const { output } = await event.result.generate(this.output);
+      rollup(this.options)
+        .then(bundle => {
+          const res = bundle.generate(this.output)
           console.log("Komponenten erfolgreich kompiliert");
+          return res
+        })
+        .then(({ output }) => {
           const [compiled_module] = output;
           if (this.options.sourcemap) {
             compiled_module.code += `\n//# sourceMappingURL=${compiled_module.map.toUrl()}\n`;
@@ -85,8 +83,30 @@ class RollupBuild {
           } else { console.log('Build weicht vom Cache ab, neu rendern')}
           if (options.cache) { set(options.source, compiled_module) }
           callback(false, compiled_module);
-        }
-      });
+        });
+
+      // this.watcher?.close();
+      // this.watcher = watch(this.options);
+      // console.log(this.watcher)
+      // this.watcher.on("event", async (event) => {
+      //   if (event.code === "ERROR") {
+      //     console.log(event);
+      //     callback(event, null);
+      //   }
+      //   if (event.code === "BUNDLE_END") {
+      //     const { output } = await event.result.generate(this.output);
+      //     console.log("Komponenten erfolgreich kompiliert");
+      //     const [compiled_module] = output;
+      //     if (this.options.sourcemap) {
+      //       compiled_module.code += `\n//# sourceMappingURL=${compiled_module.map.toUrl()}\n`;
+      //     }
+      //     if (cache?.code === compiled_module.code) {
+      //       return
+      //     } else { console.log('Build weicht vom Cache ab, neu rendern')}
+      //     if (options.cache) { set(options.source, compiled_module) }
+      //     callback(false, compiled_module);
+      //   }
+      // });
     } catch (error) {
       console.log(error);
       throw error;
