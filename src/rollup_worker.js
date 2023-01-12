@@ -16,7 +16,6 @@ const __nodeModules = process.env.PROD
 class RollupBuild {
   async build(options, callback) {
     let cache
-    console.log(rollup)
     if (options.cache) {
       cache = await get(options.source)
       if (cache) {
