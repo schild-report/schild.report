@@ -61,8 +61,11 @@
     }
     const pdfPath = join($configData.pdf, $jahr.toString(), pdfName);
     const options = {
-      marginsType: 1,
-      printBackground: true
+      margin: {top: 0, bottom: 0, left: 0, right: 0},
+      printBackground: true,
+      // pageSize: "A4",
+      // wird per @page gesteuert
+      preferCSSPageSize: true
     };
     try {
       const data = await $webview.printToPDF(options);
